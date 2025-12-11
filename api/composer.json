@@ -15,7 +15,8 @@
         "symfony/dotenv": "7.1.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "7.1.*",
-        "symfony/runtime": "7.1.*",
+        "symfony/monolog-bundle": "^4.0",
+        "symfony/runtime": "7.3.*",
         "symfony/yaml": "7.1.*"
     },
     "config": {
@@ -56,16 +57,31 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "go": [
+            "symfony serve -d",
+            "start https://localhost:8000"
+        ],
+        "reboot": [
+            "symfony server:stop",
+            "php bin/console cache:clear --env=dev",
+            "symfony serve -d"
+        ],
+        "diff": [
+            "symfony console doctrine:migrations:diff"
         ]
     },
     "conflict": {
-        "symfony/symfony": "*"
+        "symfony/symfony": "^7.3"
     },
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "7.1.*",
+            "require": "7.3.*",
             "docker": true
         }
+    },
+    "require-dev": {
+        "symfony/maker-bundle": "^1.65"
     }
 }

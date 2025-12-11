@@ -1,5 +1,7 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
+controllers_api:
+    resource: ../src/Http/Controller/
+    type: attribute
+
+kernel:
+    resource: ../src/Kernel.php
     type: attribute

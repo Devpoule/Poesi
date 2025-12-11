@@ -1,0 +1,22 @@
+monolog:
+    channels: ['poesi']
+
+    handlers:
+        # Handler principal : logs locaux uniquement
+        main:
+            type: fingers_crossed
+            action_level: warning
+            handler: stream
+
+        # Fichier de logs local (classique)
+        stream:
+            type: stream
+            path: '%kernel.logs_dir%/%kernel.environment%.log'
+            level: debug
+
+        # Handler spécifique au channel "poesi"
+        poesi:
+            type: fingers_crossed
+            action_level: info
+            handler: stream
+            channels: ['poesi']
