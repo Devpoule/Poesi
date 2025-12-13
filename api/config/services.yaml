@@ -34,3 +34,7 @@ services:
         alias: App\Infrastructure\Repository\TotemRepository
     App\Domain\Repository\UserRepositoryInterface:
         alias: App\Infrastructure\Repository\UserRepository
+
+    App\Infrastructure\EventListener\ApiExceptionSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }

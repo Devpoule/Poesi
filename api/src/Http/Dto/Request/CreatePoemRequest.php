@@ -1,60 +1,153 @@
 <?php
 
-namespace App\Http\Dto\Request;
+namespace App\Http\Request;
+
+use App\Domain\Enum\MoodColor;
+use App\Http\Exception\ValidationException;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Represents the incoming payload for poem creation.
+ * DTO-like request object responsible for:
+ * - extracting payload from HTTP request
+ * - validating required fields
+ * - converting raw values to domain types
+ *
+ * This keeps controllers thin and predictable.
  */
-class CreatePoemRequest
+final class CreatePoemRequest
 {
-    public function __construct(
-        public readonly int $authorId,
-        public readonly string $title,
-        public readonly string $content,
-        public readonly string $moodColor, // raw string, will be converted to MoodColor enum
+    /**
+     * @param int       $authorId
+     * @param string    $title
+     * @param string    $content
+     * @param MoodColor $moodColor
+     */
+    private function __construct(
+        private int $authorId,
+        private string $title,
+        private string $content,
+        private MoodColor $moodColor
     ) {
     }
 
     /**
-     * Build a DTO from raw payload array.
-     *
-     * @param array<string,mixed> $data
+     * @return int
      */
-    public static function fromArray(array $data): self
+    public function getAuthorId(): int
     {
+        return $this->authorId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    /**
+     * @return MoodColor
+     */
+    public function getMoodColor(): MoodColor
+    {
+        return $this->moodColor;
+    }
+
+    /**
+     * Build and validate a CreatePoemRequest from an HTTP Request.
+     *
+     * Expected JSON payload:
+     * {
+     *   "authorId": 1,
+     *   "title": "My poem",
+     *   "content": "Text...",
+     *   "moodColor": "blue"
+     * }
+     *
+     * @param Request $request
+     *
+     * @return self
+     *
+     * @throws ValidationException When payload is invalid
+     */
+    public static function fromHttpRequest(Request $request): self
+    {
+        $payload = self::decodeJson($request);
+        $errors  = [];
+
+        $authorIdRaw = $payload['authorId'] ?? null;
+        $titleRaw    = $payload['title'] ?? null;
+        $contentRaw  = $payload['content'] ?? null;
+        $moodRaw     = $payload['moodColor'] ?? null;
+
+        if (!is_int($authorIdRaw)) {
+            $errors['authorId'] = 'authorId must be an integer.';
+        }
+
+        if (!is_string($titleRaw) || trim($titleRaw) === '') {
+            $errors['title'] = 'title is required.';
+        }
+
+        if (!is_string($contentRaw) || trim($contentRaw) === '') {
+            $errors['content'] = 'content is required.';
+        }
+
+        $moodColor = null;
+        if (!is_string($moodRaw) || trim($moodRaw) === '') {
+            $errors['moodColor'] = 'moodColor is required.';
+        } else {
+            $moodColor = MoodColor::tryFrom($moodRaw);
+            if ($moodColor === null) {
+                $errors['moodColor'] = 'moodColor is invalid.';
+            }
+        }
+
+        if ($errors !== []) {
+            throw new ValidationException('Invalid payload.', $errors);
+        }
+
         return new self(
-            authorId: (int) ($data['authorId'] ?? 0),
-            title: (string) ($data['title'] ?? ''),
-            content: (string) ($data['content'] ?? ''),
-            moodColor: (string) ($data['moodColor'] ?? ''),
+            authorId: $authorIdRaw,
+            title: trim($titleRaw),
+            content: trim($contentRaw),
+            moodColor: $moodColor
         );
     }
 
     /**
-     * Basic payload validation.
+     * Decode JSON safely.
      *
-     * @return string[] List of validation error messages.
+     * @param Request $request
+     *
+     * @return array<string, mixed>
+     *
+     * @throws ValidationException When JSON is invalid
      */
-    public function validate(): array
+    private static function decodeJson(Request $request): array
     {
-        $errors = [];
-
-        if ($this->authorId <= 0) {
-            $errors[] = 'authorId must be a positive integer.';
+        $content = $request->getContent();
+        if (!is_string($content) || trim($content) === '') {
+            throw new ValidationException('Request body must be valid JSON.', [
+                'body' => 'Empty request body.'
+            ]);
         }
 
-        if ($this->title === '') {
-            $errors[] = 'title must not be empty.';
+        $decoded = json_decode($content, true);
+        if (!is_array($decoded)) {
+            throw new ValidationException('Request body must be valid JSON.', [
+                'body' => 'Invalid JSON.'
+            ]);
         }
 
-        if ($this->content === '') {
-            $errors[] = 'content must not be empty.';
-        }
-
-        if ($this->moodColor === '') {
-            $errors[] = 'moodColor must not be empty.';
-        }
-
-        return $errors;
+        return $decoded;
     }
 }

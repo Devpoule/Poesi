@@ -6,6 +6,7 @@ use App\Domain\Entity\Poem;
 use App\Domain\Enum\MoodColor;
 use App\Domain\Enum\PoemStatus;
 use App\Domain\Exception\AuthorNotFoundException;
+use App\Domain\Exception\CannotDeletePoemWithVotesException;
 use App\Domain\Exception\PoemNotFoundException;
 use App\Domain\Repository\AuthorRepositoryInterface;
 use App\Domain\Repository\PoemRepositoryInterface;
@@ -177,13 +178,25 @@ class PoemService
     /**
      * Delete a poem by id.
      *
+     * A poem cannot be deleted if it still has feather votes attached.
+     *
      * @param int $poemId
      *
      * @return void
+     *
+     * @throws PoemNotFoundException
+     * @throws CannotDeletePoemWithVotesException
      */
     public function deletePoem(int $poemId): void
     {
         $poem = $this->getPoemOrFail($poemId);
+
+        // Guard: prevent deletion if votes exist to keep referential integrity
+        if ($poem->getFeatherVotes()->count() > 0) {
+            throw new CannotDeletePoemWithVotesException(
+                sprintf('Cannot delete poem %d because it still has feather votes.', $poemId)
+            );
+        }
 
         $this->poemRepository->delete($poem);
     }

@@ -1,62 +1,57 @@
 <?php
 
-namespace App\Http\Dto\Response;
+namespace App\Http\Response;
 
 use App\Domain\Entity\Poem;
 
 /**
- * Represents the JSON response for a Poem resource.
+ * Read-only API DTO representing a Poem for output.
+ *
+ * This isolates your API from internal entity structure changes.
  */
-class PoemResponse
+final class PoemResponse
 {
+    /**
+     * @param int         $id
+     * @param int         $authorId
+     * @param string      $status
+     * @param string      $moodColor
+     * @param string      $title
+     * @param string      $content
+     * @param string      $createdAt
+     * @param string|null $publishedAt
+     * @param int         $votesCount
+     */
     public function __construct(
-        public readonly int $id,
-        public readonly int $authorId,
-        public readonly string $authorPseudo,
-        public readonly string $title,
-        public readonly string $content,
-        public readonly string $moodColor,
-        public readonly string $status,
-        public readonly string $createdAt,
-        public readonly ?string $publishedAt,
+        public int $id,
+        public int $authorId,
+        public string $status,
+        public string $moodColor,
+        public string $title,
+        public string $content,
+        public string $createdAt,
+        public ?string $publishedAt,
+        public int $votesCount,
     ) {
     }
 
     /**
-     * Build a response DTO from a Poem entity.
-     */
-    public static function fromPoem(Poem $poem): self
-    {
-        return new self(
-            id: $poem->getId() ?? 0,
-            authorId: $poem->getAuthor()?->getId() ?? 0,
-            authorPseudo: $poem->getAuthor()?->getPseudo() ?? '',
-            title: $poem->getTitle(),
-            content: $poem->getContent(),
-            moodColor: $poem->getMoodColor()->value,
-            status: $poem->getStatus()->value,
-            createdAt: $poem->getCreatedAt()->format(\DateTimeInterface::ATOM),
-            publishedAt: $poem->getPublishedAt()?->format(\DateTimeInterface::ATOM),
-        );
-    }
-
-    /**
-     * Convert the DTO to a plain array for JSON encoding.
+     * Convert to array for JsonResponse.
      *
-     * @return array<string,mixed>
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
         return [
-            'id'           => $this->id,
-            'authorId'     => $this->authorId,
-            'authorPseudo' => $this->authorPseudo,
-            'title'        => $this->title,
-            'content'      => $this->content,
-            'moodColor'    => $this->moodColor,
-            'status'       => $this->status,
-            'createdAt'    => $this->createdAt,
-            'publishedAt'  => $this->publishedAt,
+            'id'          => $this->id,
+            'authorId'    => $this->authorId,
+            'status'      => $this->status,
+            'moodColor'   => $this->moodColor,
+            'title'       => $this->title,
+            'content'     => $this->content,
+            'createdAt'   => $this->createdAt,
+            'publishedAt' => $this->publishedAt,
+            'votesCount'  => $this->votesCount,
         ];
     }
 }
