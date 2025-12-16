@@ -5,17 +5,12 @@ namespace App\Http\Mapper;
 use App\Domain\Entity\Reward;
 
 /**
- * Maps Reward domain entities to array structures
- * for JSON API responses.
+ * Maps Reward entities to API arrays.
  */
-class RewardMapper
+final class RewardMapper
 {
     /**
-     * Transform a Reward entity into a flat array representation.
-     *
-     * @param Reward $reward
-     *
-     * @return array<string, mixed>
+     * Convert a Reward into array.
      */
     public function toArray(Reward $reward): array
     {
@@ -27,18 +22,18 @@ class RewardMapper
     }
 
     /**
-     * Transform a collection of Reward entities into an array of arrays.
+     * Convert a list of rewards.
      *
-     * @param iterable<Reward> $rewards
-     *
-     * @return array<int, array<string, mixed>>
+     * @param Reward[] $rewards
      */
-    public function toCollection(iterable $rewards): array
+    public function toCollection(array $rewards): array
     {
         $result = [];
 
         foreach ($rewards as $reward) {
-            $result[] = $this->toArray($reward);
+            if ($reward instanceof Reward) {
+                $result[] = $this->toArray($reward);
+            }
         }
 
         return $result;

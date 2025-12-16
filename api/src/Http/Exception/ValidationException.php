@@ -5,42 +5,103 @@ namespace App\Http\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * API validation exception for invalid request payload.
+ * Exception thrown when a request payload fails validation.
  *
- * Carries field-level errors for client display:
- * - "title" => "Title is required."
- * - "moodColor" => "Invalid mood color."
+ * This exception belongs to the HTTP layer.
+ * It is meant to be thrown by Request DTOs or controllers
+ * when user input is syntactically or semantically invalid.
+ *
+ * It carries:
+ * - a human-readable message
+ * - a stable technical error code
+ * - a list of field-level validation errors
  */
-class ValidationException extends AbstractApiException
+final class ValidationException extends \RuntimeException implements ApiExceptionInterface
 {
     /**
-     * @var array<string, string>
+     * Validation errors grouped by field.
+     *
+     * @var array<string, string[]>
      */
     private array $errors;
 
     /**
-     * @param string                $message General validation message
-     * @param array<string, string> $errors  Field => error message map
+     * Stable technical error code.
+     *
+     * @var string
      */
-    public function __construct(string $message, array $errors = [])
-    {
-        parent::__construct(
-            message: $message,
-            errorCode: 'VALIDATION_FAILED',
-            httpStatus: Response::HTTP_BAD_REQUEST,
-            type: 'validation_error'
-        );
+    private string $errorCode;
+
+    /**
+     * HTTP status code.
+     *
+     * @var int
+     */
+    private int $httpStatus;
+
+    /**
+     * @param string                 $message
+     * @param array<string, string[]> $errors
+     * @param string                 $errorCode
+     * @param int                    $httpStatus
+     */
+    private function __construct(
+        string $message,
+        array $errors,
+        string $errorCode,
+        int $httpStatus
+    ) {
+        parent::__construct($message);
 
         $this->errors = $errors;
+        $this->errorCode = $errorCode;
+        $this->httpStatus = $httpStatus;
     }
 
     /**
-     * Returns field-level validation errors.
+     * Create a ValidationException from field-level errors.
      *
-     * @return array<string, string>
+     * @param string                 $message
+     * @param array<string, string[]> $errors
+     * @param string                 $errorCode
+     * @param int                    $httpStatus
+     *
+     * @return self
+     */
+    public static function fromErrors(
+        string $message,
+        array $errors,
+        string $errorCode = 'VALIDATION_ERROR',
+        int $httpStatus = Response::HTTP_UNPROCESSABLE_ENTITY
+    ): self {
+        return new self(
+            message: $message,
+            errors: $errors,
+            errorCode: $errorCode,
+            httpStatus: $httpStatus
+        );
+    }
+
+    /**
+     * @return array<string, string[]>
      */
     public function getErrors(): array
     {
         return $this->errors;
+    }
+
+    public function getErrorCode(): string
+    {
+        return $this->errorCode;
+    }
+
+    public function getHttpStatus(): int
+    {
+        return $this->httpStatus;
+    }
+
+    public function getType(): string
+    {
+        return 'error';
     }
 }

@@ -2,10 +2,14 @@
 
 namespace App\Http\Controller;
 
-use App\Domain\Enum\MoodColor;
 use App\Domain\Service\AuthorService;
+use App\Http\Exception\ApiExceptionInterface;
+use App\Http\Exception\ValidationException;
 use App\Http\Mapper\AuthorMapper;
+use App\Http\Request\Author\CreateAuthorRequest;
+use App\Http\Request\Author\UpdateAuthorRequest;
 use App\Http\Response\ApiResponseFactory;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * HTTP API controller exposing CRUD operations for authors.
  */
 #[Route('/api/authors', name: 'api_authors_')]
-class AuthorController extends AbstractController
+final class AuthorController extends AbstractController
 {
     public function __construct(
         private readonly AuthorService $authorService,
@@ -32,12 +36,23 @@ class AuthorController extends AbstractController
     #[Route('', name: 'list', methods: ['GET'])]
     public function list(): JsonResponse
     {
-        $authors = $this->authorService->listAll();
+        try {
+            $authors = $this->authorService->listAll();
 
-        return ApiResponseFactory::success(
-            data: $this->authorMapper->toCollection($authors),
-            message: 'Authors list retrieved.'
-        );
+            return ApiResponseFactory::success(
+                data: $this->authorMapper->toCollection($authors),
+                message: 'Authors list retrieved.'
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     /**
@@ -48,149 +63,133 @@ class AuthorController extends AbstractController
     #[Route('/{id<\d+>}', name: 'show', methods: ['GET'])]
     public function show(int $id): JsonResponse
     {
-        $author = $this->authorService->getAuthorOrFail($id);
+        try {
+            $author = $this->authorService->getAuthorOrFail($id);
 
-        return ApiResponseFactory::success(
-            data: $this->authorMapper->toArray($author),
-            message: 'Author retrieved.'
-        );
+            return ApiResponseFactory::success(
+                data: $this->authorMapper->toArray($author),
+                message: 'Author retrieved.'
+            );
+        } catch (ApiExceptionInterface $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: $e->getErrorCode(),
+                type: $e->getType(),
+                errors: null,
+                data: null,
+                httpStatus: $e->getHttpStatus()
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     /**
      * Create a new author.
      *
-     * Expected JSON body:
-     * {
-     *   "pseudo": "Tito",
-     *   "email": "tito@example.com",
-     *   "totemId": 1,           // optional
-     *   "moodColor": "blue"     // optional, one of MoodColor values
-     * }
-     *
-     * POST /api/authors
+     * POST /api/authors/add
      */
-    #[Route('', name: 'create', methods: ['POST'])]
+    #[Route('/add', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $payload = json_decode($request->getContent(), true);
+        try {
+            $dto = CreateAuthorRequest::fromHttpRequest($request);
 
-        if (!is_array($payload)) {
+            $author = $this->authorService->createAuthor(
+                pseudo: $dto->getPseudo(),
+                email: $dto->getEmail(),
+                totemId: $dto->getTotemId(),
+                moodColor: $dto->getMoodColor()
+            );
+
+            return ApiResponseFactory::success(
+                data: $this->authorMapper->toArray($author),
+                message: 'Author created successfully.',
+                httpStatus: Response::HTTP_CREATED
+            );
+        } catch (ValidationException $e) {
             return ApiResponseFactory::validationError(
-                message: 'Invalid JSON payload.',
-                errors: ['body' => ['Request body must be valid JSON.']]
+                message: $e->getMessage(),
+                errors: $e->getErrors(),
+                code: $e->getErrorCode()
+            );
+        } catch (ApiExceptionInterface $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: $e->getErrorCode(),
+                type: $e->getType(),
+                errors: null,
+                data: null,
+                httpStatus: $e->getHttpStatus()
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
-
-        $pseudo = $payload['pseudo'] ?? null;
-        $email  = $payload['email'] ?? null;
-
-        $errors = [];
-
-        if ($pseudo === null || trim((string) $pseudo) === '') {
-            $errors['pseudo'][] = 'Pseudo is required.';
-        }
-
-        if ($email === null || trim((string) $email) === '') {
-            $errors['email'][] = 'Email is required.';
-        }
-
-        if (!empty($errors)) {
-            return ApiResponseFactory::validationError(
-                message: 'Invalid author payload.',
-                errors: $errors
-            );
-        }
-
-        $totemId   = isset($payload['totemId']) ? (int) $payload['totemId'] : null;
-        $moodColor = null;
-
-        if (isset($payload['moodColor'])) {
-            try {
-                $moodColor = MoodColor::from($payload['moodColor']);
-            } catch (\ValueError $e) {
-                $errors['moodColor'][] = 'Invalid moodColor value.';
-            }
-        }
-
-        if (!empty($errors)) {
-            return ApiResponseFactory::validationError(
-                message: 'Invalid author payload.',
-                errors: $errors
-            );
-        }
-
-        $author = $this->authorService->createAuthor(
-            pseudo: (string) $pseudo,
-            email: (string) $email,
-            totemId: $totemId,
-            moodColor: $moodColor
-        );
-
-        return ApiResponseFactory::success(
-            data: $this->authorMapper->toArray($author),
-            message: 'Author created successfully.',
-            httpStatus: Response::HTTP_CREATED
-        );
     }
 
     /**
      * Update an existing author.
      *
-     * All fields are optional; only provided keys will be updated.
-     *
-     * Example JSON body:
-     * {
-     *   "pseudo": "New pseudo",
-     *   "moodColor": "red",
-     *   "totemId": 2
-     * }
-     *
      * PUT /api/authors/{id}
+     *
+     * All fields are optional; only provided keys will be updated.
      */
     #[Route('/{id<\d+>}', name: 'update', methods: ['PUT'])]
     public function update(int $id, Request $request): JsonResponse
     {
-        $payload = json_decode($request->getContent(), true);
+        try {
+            $dto = UpdateAuthorRequest::fromHttpRequest($request);
 
-        if (!is_array($payload)) {
+            $author = $this->authorService->updateAuthor(
+                authorId: $id,
+                pseudo: $dto->getPseudo(),
+                moodColor: $dto->getMoodColor(),
+                totemId: $dto->getTotemId()
+            );
+
+            return ApiResponseFactory::success(
+                data: $this->authorMapper->toArray($author),
+                message: 'Author updated successfully.'
+            );
+        } catch (ValidationException $e) {
             return ApiResponseFactory::validationError(
-                message: 'Invalid JSON payload.',
-                errors: ['body' => ['Request body must be valid JSON.']]
+                message: $e->getMessage(),
+                errors: $e->getErrors(),
+                code: $e->getErrorCode()
+            );
+        } catch (ApiExceptionInterface $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: $e->getErrorCode(),
+                type: $e->getType(),
+                errors: null,
+                data: null,
+                httpStatus: $e->getHttpStatus()
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
-
-        $pseudo    = array_key_exists('pseudo', $payload) ? $payload['pseudo'] : null;
-        $moodColor = null;
-        $totemId   = array_key_exists('totemId', $payload) ? (int) $payload['totemId'] : null;
-
-        $errors = [];
-
-        if (array_key_exists('moodColor', $payload)) {
-            try {
-                $moodColor = MoodColor::from($payload['moodColor']);
-            } catch (\ValueError $e) {
-                $errors['moodColor'][] = 'Invalid moodColor value.';
-            }
-        }
-
-        if (!empty($errors)) {
-            return ApiResponseFactory::validationError(
-                message: 'Invalid author payload.',
-                errors: $errors
-            );
-        }
-
-        $author = $this->authorService->updateAuthor(
-            authorId: $id,
-            pseudo: $pseudo !== null ? (string) $pseudo : null,
-            moodColor: $moodColor,
-            totemId: $totemId !== 0 ? $totemId : null
-        );
-
-        return ApiResponseFactory::success(
-            data: $this->authorMapper->toArray($author),
-            message: 'Author updated successfully.'
-        );
     }
 
     /**
@@ -201,11 +200,40 @@ class AuthorController extends AbstractController
     #[Route('/{id<\d+>}', name: 'delete', methods: ['DELETE'])]
     public function delete(int $id): JsonResponse
     {
-        $this->authorService->deleteAuthor($id);
+        try {
+            $this->authorService->deleteAuthor($id);
 
-        return ApiResponseFactory::success(
-            data: null,
-            message: 'Author deleted successfully.'
-        );
+            return ApiResponseFactory::success(
+                data: null,
+                message: 'Author deleted successfully.'
+            );
+        } catch (ForeignKeyConstraintViolationException) {
+            return ApiResponseFactory::error(
+                message: 'Cannot delete author because it is still referenced by other resources.',
+                code: 'AUTHOR_DELETE_CONFLICT',
+                type: 'warning',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_CONFLICT
+            );
+        } catch (ApiExceptionInterface $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: $e->getErrorCode(),
+                type: $e->getType(),
+                errors: null,
+                data: null,
+                httpStatus: $e->getHttpStatus()
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

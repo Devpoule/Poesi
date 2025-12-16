@@ -45,7 +45,7 @@ class Poem
     /**
      * @var Collection<int, FeatherVote>
      */
-    #[ORM\OneToMany(mappedBy: 'poem', targetEntity: FeatherVote::class)]
+    #[ORM\OneToMany(mappedBy: 'poem', targetEntity: FeatherVote::class, cascade: ['remove'], orphanRemoval: true)]
     private Collection $featherVotes;
 
     public function __construct()

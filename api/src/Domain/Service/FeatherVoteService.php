@@ -4,17 +4,20 @@ namespace App\Domain\Service;
 
 use App\Domain\Entity\FeatherVote;
 use App\Domain\Enum\FeatherType;
-use App\Domain\Exception\AuthorNotFoundException;
-use App\Domain\Exception\FeatherVoteNotFoundException;
-use App\Domain\Exception\PoemNotFoundException;
+use App\Domain\Exception\NotFound\AuthorNotFoundException;
+use App\Domain\Exception\NotFound\PoemNotFoundException;
 use App\Domain\Repository\AuthorRepositoryInterface;
 use App\Domain\Repository\FeatherVoteRepositoryInterface;
 use App\Domain\Repository\PoemRepositoryInterface;
 
 /**
  * Domain service managing feather votes between authors and poems.
+ *
+ * Policy:
+ * - One vote per (voter, poem).
+ * - If the vote already exists, its feather type is updated instead of creating a duplicate.
  */
-class FeatherVoteService
+final class FeatherVoteService
 {
     public function __construct(
         private FeatherVoteRepositoryInterface $featherVoteRepository,
@@ -24,43 +27,17 @@ class FeatherVoteService
     }
 
     /**
-     * Cast a feather vote on a poem by a given author.
+     * Return all votes.
      *
-     * @param int         $voterAuthorId
-     * @param int         $poemId
-     * @param FeatherType $featherType
-     *
-     * @return FeatherVote
+     * @return FeatherVote[]
      */
-    public function castVote(
-        int $voterAuthorId,
-        int $poemId,
-        FeatherType $featherType
-    ): FeatherVote {
-        $author = $this->authorRepository->getById($voterAuthorId);
-
-        if ($author === null) {
-            throw new AuthorNotFoundException('Author not found for id ' . $voterAuthorId . '.');
-        }
-
-        $poem = $this->poemRepository->getById($poemId);
-
-        if ($poem === null) {
-            throw new PoemNotFoundException('Poem not found for id ' . $poemId . '.');
-        }
-
-        $vote = new FeatherVote();
-        $vote->setVoter($author);
-        $vote->setPoem($poem);
-        $vote->setFeatherType($featherType);
-
-        $this->featherVoteRepository->save($vote);
-
-        return $vote;
+    public function listAll(): array
+    {
+        return $this->featherVoteRepository->findAll();
     }
 
     /**
-     * Retrieve a FeatherVote by id or throw an exception if not found.
+     * Retrieve a vote by id or throw.
      *
      * @param int $voteId
      *
@@ -71,10 +48,53 @@ class FeatherVoteService
         $vote = $this->featherVoteRepository->getById($voteId);
 
         if ($vote === null) {
-            throw new FeatherVoteNotFoundException('Feather vote not found for id ' . $voteId . '.');
+            throw new \RuntimeException('FeatherVote not found for id ' . $voteId . '.');
         }
 
         return $vote;
+    }
+
+    /**
+     * Cast (or update) a feather vote on a poem by a given author.
+     *
+     * @param int         $voterAuthorId
+     * @param int         $poemId
+     * @param FeatherType $featherType
+     *
+     * @return array{vote: FeatherVote, created: bool}
+     */
+    public function castVote(
+        int $voterAuthorId,
+        int $poemId,
+        FeatherType $featherType
+    ): array {
+        $author = $this->authorRepository->getById($voterAuthorId);
+        if ($author === null) {
+            throw new AuthorNotFoundException('Author not found for id ' . $voterAuthorId . '.');
+        }
+
+        $poem = $this->poemRepository->getById($poemId);
+        if ($poem === null) {
+            throw new PoemNotFoundException('Poem not found for id ' . $poemId . '.');
+        }
+
+        $existing = $this->featherVoteRepository->findOneByVoterAndPoem($author, $poem);
+
+        if ($existing !== null) {
+            $existing->setFeatherType($featherType);
+            $this->featherVoteRepository->save($existing);
+
+            return ['vote' => $existing, 'created' => false];
+        }
+
+        $vote = new FeatherVote();
+        $vote->setVoter($author);
+        $vote->setPoem($poem);
+        $vote->setFeatherType($featherType);
+
+        $this->featherVoteRepository->save($vote);
+
+        return ['vote' => $vote, 'created' => true];
     }
 
     /**
@@ -87,7 +107,6 @@ class FeatherVoteService
     public function listVotesForPoem(int $poemId): array
     {
         $poem = $this->poemRepository->getById($poemId);
-
         if ($poem === null) {
             throw new PoemNotFoundException('Poem not found for id ' . $poemId . '.');
         }
@@ -105,7 +124,6 @@ class FeatherVoteService
     public function listVotesByAuthor(int $authorId): array
     {
         $author = $this->authorRepository->getById($authorId);
-
         if ($author === null) {
             throw new AuthorNotFoundException('Author not found for id ' . $authorId . '.');
         }
@@ -114,17 +132,7 @@ class FeatherVoteService
     }
 
     /**
-     * List all feather votes.
-     *
-     * @return FeatherVote[]
-     */
-    public function listAll(): array
-    {
-        return $this->featherVoteRepository->findAll();
-    }
-
-    /**
-     * Delete a feather vote by id.
+     * Delete a vote by id.
      *
      * @param int $voteId
      *

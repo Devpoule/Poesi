@@ -2,36 +2,24 @@
 
 namespace App\Domain\Service;
 
-use App\Domain\Entity\AuthorReward;
 use App\Domain\Entity\Reward;
-use App\Domain\Exception\AuthorNotFoundException;
-use App\Domain\Exception\AuthorRewardNotFoundException;
-use App\Domain\Exception\RewardNotFoundException;
-use App\Domain\Repository\AuthorRepositoryInterface;
-use App\Domain\Repository\AuthorRewardRepositoryInterface;
+use App\Domain\Exception\NotFound\RewardNotFoundException;
 use App\Domain\Repository\RewardRepositoryInterface;
 
 /**
- * Domain service responsible for managing rewards and associations to authors.
+ * Domain service responsible for Reward lifecycle.
  */
 class RewardService
 {
     public function __construct(
-        private RewardRepositoryInterface $rewardRepository,
-        private AuthorRepositoryInterface $authorRepository,
-        private AuthorRewardRepositoryInterface $authorRewardRepository,
+        private RewardRepositoryInterface $rewardRepository
     ) {
     }
 
     /**
-     * Create a new Reward with the given code and label.
-     *
-     * @param string $code
-     * @param string $label
-     *
-     * @return Reward
+     * Create a new reward.
      */
-    public function createReward(string $code, string $label): Reward
+    public function create(string $code, string $label): Reward
     {
         $reward = new Reward();
         $reward->setCode($code);
@@ -43,18 +31,14 @@ class RewardService
     }
 
     /**
-     * Retrieve a Reward by id or throw if not found.
-     *
-     * @param int $rewardId
-     *
-     * @return Reward
+     * Retrieve a reward or fail.
      */
-    public function getRewardOrFail(int $rewardId): Reward
+    public function getOrFail(int $id): Reward
     {
-        $reward = $this->rewardRepository->getById($rewardId);
+        $reward = $this->rewardRepository->getById($id);
 
         if ($reward === null) {
-            throw new RewardNotFoundException('Reward not found for id ' . $rewardId . '.');
+            throw new RewardNotFoundException();
         }
 
         return $reward;
@@ -65,76 +49,20 @@ class RewardService
      *
      * @return Reward[]
      */
-    public function listAllRewards(): array
+    public function listAll(): array
     {
         return $this->rewardRepository->findAll();
     }
 
     /**
-     * Assign an existing reward (by code) to an author.
-     *
-     * @param int    $authorId
-     * @param string $rewardCode
-     *
-     * @return AuthorReward
+     * Update a reward.
      */
-    public function assignRewardToAuthor(int $authorId, string $rewardCode): AuthorReward
-    {
-        $author = $this->authorRepository->getById($authorId);
-
-        if ($author === null) {
-            throw new AuthorNotFoundException('Author not found for id ' . $authorId . '.');
-        }
-
-        $reward = $this->rewardRepository->findOneByCode($rewardCode);
-
-        if ($reward === null) {
-            throw new RewardNotFoundException('Reward not found for code ' . $rewardCode . '.');
-        }
-
-        $authorReward = new AuthorReward();
-        $authorReward->setAuthor($author);
-        $authorReward->setReward($reward);
-
-        $this->authorRewardRepository->save($authorReward);
-
-        return $authorReward;
-    }
-
-    /**
-     * List all rewards assigned to a given author.
-     *
-     * @param int $authorId
-     *
-     * @return AuthorReward[]
-     */
-    public function listRewardsForAuthor(int $authorId): array
-    {
-        $author = $this->authorRepository->getById($authorId);
-
-        if ($author === null) {
-            throw new AuthorNotFoundException('Author not found for id ' . $authorId . '.');
-        }
-
-        return $this->authorRewardRepository->findByAuthor($author);
-    }
-
-    /**
-     * Update a Reward properties (code / label).
-     * Only non-null parameters are updated.
-     *
-     * @param int         $rewardId
-     * @param string|null $code
-     * @param string|null $label
-     *
-     * @return Reward
-     */
-    public function updateReward(
-        int $rewardId,
+    public function update(
+        int $id,
         ?string $code = null,
         ?string $label = null
     ): Reward {
-        $reward = $this->getRewardOrFail($rewardId);
+        $reward = $this->getOrFail($id);
 
         if ($code !== null) {
             $reward->setCode($code);
@@ -150,34 +78,12 @@ class RewardService
     }
 
     /**
-     * Delete a Reward by id.
-     *
-     * @param int $rewardId
-     *
-     * @return void
+     * Delete a reward.
      */
-    public function deleteReward(int $rewardId): void
+    public function delete(int $id): void
     {
-        $reward = $this->getRewardOrFail($rewardId);
+        $reward = $this->getOrFail($id);
 
         $this->rewardRepository->delete($reward);
-    }
-
-    /**
-     * Delete a specific AuthorReward link by id.
-     *
-     * @param int $authorRewardId
-     *
-     * @return void
-     */
-    public function deleteAuthorReward(int $authorRewardId): void
-    {
-        $authorReward = $this->authorRewardRepository->getById($authorRewardId);
-
-        if ($authorReward === null) {
-            throw new AuthorRewardNotFoundException('AuthorReward not found for id ' . $authorRewardId . '.');
-        }
-
-        $this->authorRewardRepository->delete($authorReward);
     }
 }

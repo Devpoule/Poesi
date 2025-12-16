@@ -3,7 +3,7 @@
 namespace App\Domain\Service;
 
 use App\Domain\Entity\User;
-use App\Domain\Exception\UserNotFoundException;
+use App\Domain\Exception\NotFound\UserNotFoundException;
 use App\Domain\Repository\UserRepositoryInterface;
 
 /**

@@ -4,6 +4,7 @@ namespace App\Domain\Repository;
 
 use App\Domain\Entity\Author;
 use App\Domain\Entity\AuthorReward;
+use App\Domain\Entity\Reward;
 
 /**
  * @extends EntityRepositoryInterface<AuthorReward>
@@ -20,25 +21,28 @@ interface AuthorRewardRepositoryInterface extends EntityRepositoryInterface
     public function findByAuthor(Author $author): array;
 
     /**
-     * Find all author rewards.
+     * Find a specific author->reward link (to prevent duplicates).
      *
-     * @return AuthorReward[]
+     * @param Author $author
+     * @param Reward $reward
+     *
+     * @return AuthorReward|null
      */
-    public function findAll(): array;
+    public function findOneByAuthorAndReward(Author $author, Reward $reward): ?AuthorReward;
 
     /**
-     * Persist the given author reward.
+     * Persist and flush an AuthorReward.
      *
-     * @param AuthorReward $authorReward
+     * @param object $authorReward
      *
      * @return void
      */
     public function save(object $authorReward): void;
 
     /**
-     * Remove the given author reward.
+     * Remove and flush an AuthorReward.
      *
-     * @param AuthorReward $authorReward
+     * @param object $authorReward
      *
      * @return void
      */

@@ -15,7 +15,7 @@ use InvalidArgumentException;
  *
  * @extends ServiceEntityRepository<FeatherVote>
  */
-class FeatherVoteRepository extends ServiceEntityRepository implements FeatherVoteRepositoryInterface
+final class FeatherVoteRepository extends ServiceEntityRepository implements FeatherVoteRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -23,7 +23,7 @@ class FeatherVoteRepository extends ServiceEntityRepository implements FeatherVo
     }
 
     /**
-     * Retrieve a FeatherVote by its id.
+     * Retrieve a FeatherVote by id.
      *
      * @param int $id
      *
@@ -38,57 +38,57 @@ class FeatherVoteRepository extends ServiceEntityRepository implements FeatherVo
     }
 
     /**
-     * Retrieve all feather votes.
-     *
      * @return FeatherVote[]
      */
     public function findAll(): array
     {
-        /** @var FeatherVote[] $votes */
-        $votes = parent::findAll();
+        /** @var FeatherVote[] $rows */
+        $rows = parent::findBy([], ['updatedAt' => 'DESC']);
 
-        return $votes;
+        return $rows;
     }
 
     /**
-     * Retrieve all votes for a given poem.
-     *
      * @param Poem $poem
      *
      * @return FeatherVote[]
      */
     public function findByPoem(Poem $poem): array
     {
-        /** @var FeatherVote[] $votes */
-        $votes = $this->findBy(
-            ['poem' => $poem],
-            ['createdAt' => 'DESC']
-        );
+        /** @var FeatherVote[] $rows */
+        $rows = $this->findBy(['poem' => $poem], ['updatedAt' => 'DESC']);
 
-        return $votes;
+        return $rows;
     }
 
     /**
-     * Retrieve all votes cast by a given author.
-     *
-     * @param Author $author
+     * @param Author $voter
      *
      * @return FeatherVote[]
      */
-    public function findByVoter(Author $author): array
+    public function findByVoter(Author $voter): array
     {
-        /** @var FeatherVote[] $votes */
-        $votes = $this->findBy(
-            ['voter' => $author],
-            ['createdAt' => 'DESC']
-        );
+        /** @var FeatherVote[] $rows */
+        $rows = $this->findBy(['voter' => $voter], ['updatedAt' => 'DESC']);
 
-        return $votes;
+        return $rows;
     }
 
     /**
-     * Persist and flush the given FeatherVote.
+     * @param Author $voter
+     * @param Poem   $poem
      *
+     * @return FeatherVote|null
+     */
+    public function findOneByVoterAndPoem(Author $voter, Poem $poem): ?FeatherVote
+    {
+        /** @var FeatherVote|null $row */
+        $row = $this->findOneBy(['voter' => $voter, 'poem' => $poem]);
+
+        return $row;
+    }
+
+    /**
      * @param object $vote
      *
      * @return void
@@ -105,8 +105,6 @@ class FeatherVoteRepository extends ServiceEntityRepository implements FeatherVo
     }
 
     /**
-     * Remove and flush the given FeatherVote.
-     *
      * @param object $vote
      *
      * @return void

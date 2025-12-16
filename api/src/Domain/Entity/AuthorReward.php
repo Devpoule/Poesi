@@ -6,9 +6,11 @@ use App\Infrastructure\Repository\AuthorRewardRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Represents a reward earned by a specific author.
+ * Represents the association between an Author and a Reward.
  */
 #[ORM\Entity(repositoryClass: AuthorRewardRepository::class)]
+#[ORM\Table(name: 'author_reward')]
+#[ORM\UniqueConstraint(name: 'uniq_author_reward', columns: ['author_id', 'reward_id'])]
 class AuthorReward
 {
     #[ORM\Id]
@@ -20,20 +22,20 @@ class AuthorReward
     #[ORM\JoinColumn(nullable: false)]
     private ?Author $author = null;
 
-    #[ORM\ManyToOne(targetEntity: Reward::class, inversedBy: 'authorRewards')]
+    #[ORM\ManyToOne(targetEntity: Reward::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Reward $reward = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private \DateTimeImmutable $earnedAt;
+    private \DateTimeImmutable $createdAt;
 
     public function __construct()
     {
-        $this->earnedAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     /**
-     * Returns the unique identifier of the author reward.
+     * Returns the unique identifier.
      */
     public function getId(): ?int
     {
@@ -41,7 +43,7 @@ class AuthorReward
     }
 
     /**
-     * Returns the author who earned this reward.
+     * Returns the author owning this reward.
      */
     public function getAuthor(): ?Author
     {
@@ -49,7 +51,7 @@ class AuthorReward
     }
 
     /**
-     * Sets the author who earned this reward.
+     * Sets the author owning this reward.
      */
     public function setAuthor(?Author $author): self
     {
@@ -59,7 +61,7 @@ class AuthorReward
     }
 
     /**
-     * Returns the reward that was earned.
+     * Returns the reward.
      */
     public function getReward(): ?Reward
     {
@@ -67,7 +69,7 @@ class AuthorReward
     }
 
     /**
-     * Sets the reward that was earned.
+     * Sets the reward.
      */
     public function setReward(?Reward $reward): self
     {
@@ -77,20 +79,10 @@ class AuthorReward
     }
 
     /**
-     * Returns the date when the reward was earned.
+     * Returns the creation date of the association.
      */
-    public function getEarnedAt(): \DateTimeImmutable
+    public function getCreatedAt(): \DateTimeImmutable
     {
-        return $this->earnedAt;
-    }
-
-    /**
-     * Sets the date when the reward was earned.
-     */
-    public function setEarnedAt(\DateTimeImmutable $earnedAt): self
-    {
-        $this->earnedAt = $earnedAt;
-
-        return $this;
+        return $this->createdAt;
     }
 }

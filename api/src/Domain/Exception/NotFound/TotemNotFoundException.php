@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Domain\Exception;
+namespace App\Domain\Exception\NotFound;
 
 use App\Http\Exception\ApiExceptionInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Thrown when a poem cannot be found for a given identifier or criteria.
+ * Thrown when a Totem entity cannot be found.
  */
-class PoemNotFoundException extends \RuntimeException implements ApiExceptionInterface
+class TotemNotFoundException extends \RuntimeException implements ApiExceptionInterface
 {
     private string $errorCode;
     private int $httpStatus;
 
     public function __construct(
-        string $message = 'Poem not found.',
-        string $errorCode = 'POEM_NOT_FOUND',
+        string $message = 'Totem not found.',
+        string $errorCode = 'TOTEM_NOT_FOUND',
         int $httpStatus = Response::HTTP_NOT_FOUND
     ) {
         parent::__construct($message);
 
-        $this->errorCode = $errorCode;
+        $this->errorCode  = $errorCode;
         $this->httpStatus = $httpStatus;
     }
 

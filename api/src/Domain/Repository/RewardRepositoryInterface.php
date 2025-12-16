@@ -11,35 +11,23 @@ interface RewardRepositoryInterface extends EntityRepositoryInterface
 {
     /**
      * Find a reward by its technical code.
-     *
-     * @param string $code
-     *
-     * @return Reward|null
      */
     public function findOneByCode(string $code): ?Reward;
 
     /**
-     * Find all rewards.
+     * Retrieve all rewards.
      *
      * @return Reward[]
      */
     public function findAll(): array;
 
     /**
-     * Persist the given reward.
-     *
-     * @param Reward $reward
-     *
-     * @return void
+     * Persist a reward.
      */
     public function save(object $reward): void;
 
     /**
-     * Remove the given reward.
-     *
-     * @param Reward $reward
-     *
-     * @return void
+     * Delete a reward.
      */
     public function delete(object $reward): void;
 }

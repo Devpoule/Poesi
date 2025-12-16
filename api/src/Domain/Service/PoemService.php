@@ -5,9 +5,9 @@ namespace App\Domain\Service;
 use App\Domain\Entity\Poem;
 use App\Domain\Enum\MoodColor;
 use App\Domain\Enum\PoemStatus;
-use App\Domain\Exception\AuthorNotFoundException;
-use App\Domain\Exception\CannotDeletePoemWithVotesException;
-use App\Domain\Exception\PoemNotFoundException;
+use App\Domain\Exception\NotFound\AuthorNotFoundException;
+use App\Domain\Exception\CannotDelete\CannotDeletePoemWithVotesException;
+use App\Domain\Exception\NotFound\PoemNotFoundException;
 use App\Domain\Repository\AuthorRepositoryInterface;
 use App\Domain\Repository\PoemRepositoryInterface;
 

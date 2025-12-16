@@ -12,7 +12,14 @@ use App\Domain\Entity\Poem;
 interface FeatherVoteRepositoryInterface extends EntityRepositoryInterface
 {
     /**
-     * Find all votes for a given poem.
+     * Returns all votes.
+     *
+     * @return FeatherVote[]
+     */
+    public function findAll(): array;
+
+    /**
+     * Returns votes for a given poem.
      *
      * @param Poem $poem
      *
@@ -21,34 +28,37 @@ interface FeatherVoteRepositoryInterface extends EntityRepositoryInterface
     public function findByPoem(Poem $poem): array;
 
     /**
-     * Find all votes cast by a given author.
+     * Returns votes cast by a given author.
      *
-     * @param Author $author
-     *
-     * @return FeatherVote[]
-     */
-    public function findByVoter(Author $author): array;
-
-    /**
-     * Find all feather votes.
+     * @param Author $voter
      *
      * @return FeatherVote[]
      */
-    public function findAll(): array;
+    public function findByVoter(Author $voter): array;
 
     /**
-     * Persist the given feather vote.
+     * Returns the vote for (voter, poem) if it exists.
      *
-     * @param FeatherVote $vote
+     * @param Author $voter
+     * @param Poem   $poem
+     *
+     * @return FeatherVote|null
+     */
+    public function findOneByVoterAndPoem(Author $voter, Poem $poem): ?FeatherVote;
+
+    /**
+     * Persist and flush a FeatherVote.
+     *
+     * @param object $vote
      *
      * @return void
      */
     public function save(object $vote): void;
 
     /**
-     * Remove the given feather vote.
+     * Remove and flush a FeatherVote.
      *
-     * @param FeatherVote $vote
+     * @param object $vote
      *
      * @return void
      */

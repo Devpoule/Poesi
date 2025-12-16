@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Domain\Exception;
+namespace App\Domain\Exception\NotFound;
 
 use App\Http\Exception\ApiExceptionInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Thrown when a FeatherVote entity cannot be found.
+ * Thrown when an author cannot be found for a given identifier or criteria.
  */
-class FeatherVoteNotFoundException extends \RuntimeException implements ApiExceptionInterface
+final class AuthorNotFoundException extends \RuntimeException implements ApiExceptionInterface
 {
     private string $errorCode;
     private int $httpStatus;
 
     public function __construct(
-        string $message = 'Feather vote not found.',
-        string $errorCode = 'FEATHER_VOTE_NOT_FOUND',
+        string $message = 'Author not found.',
+        string $errorCode = 'AUTHOR_NOT_FOUND',
         int $httpStatus = Response::HTTP_NOT_FOUND
     ) {
         parent::__construct($message);
 
-        $this->errorCode  = $errorCode;
+        $this->errorCode = $errorCode;
         $this->httpStatus = $httpStatus;
     }
 

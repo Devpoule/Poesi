@@ -8,9 +8,13 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Represents a reward type that can be granted to authors.
+ * Represents a reward that can be earned by authors.
+ *
+ * Rewards are immutable catalog items (code + label),
+ * and are linked to authors via AuthorReward.
  */
 #[ORM\Entity(repositoryClass: RewardRepository::class)]
+#[ORM\Table(name: 'reward')]
 class Reward
 {
     #[ORM\Id]
@@ -18,9 +22,15 @@ class Reward
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100, unique: true)]
+    /**
+     * Stable technical code (used by frontend & business rules).
+     */
+    #[ORM\Column(length: 50, unique: true)]
     private string $code;
 
+    /**
+     * Human-readable label.
+     */
     #[ORM\Column(length: 255)]
     private string $label;
 
@@ -36,7 +46,7 @@ class Reward
     }
 
     /**
-     * Returns the unique identifier of the reward.
+     * Returns the reward identifier.
      */
     public function getId(): ?int
     {
@@ -44,7 +54,7 @@ class Reward
     }
 
     /**
-     * Returns the technical code of the reward.
+     * Returns the reward technical code.
      */
     public function getCode(): string
     {
@@ -52,17 +62,17 @@ class Reward
     }
 
     /**
-     * Sets the technical code of the reward.
+     * Sets the reward technical code.
      */
     public function setCode(string $code): self
     {
-        $this->code = $code;
+        $this->code = strtoupper($code);
 
         return $this;
     }
 
     /**
-     * Returns the label of the reward.
+     * Returns the reward label.
      */
     public function getLabel(): string
     {
@@ -70,7 +80,7 @@ class Reward
     }
 
     /**
-     * Sets the label of the reward.
+     * Sets the reward label.
      */
     public function setLabel(string $label): self
     {
@@ -80,39 +90,12 @@ class Reward
     }
 
     /**
-     * Returns all author-reward associations for this reward.
+     * Returns all author-reward associations.
      *
      * @return Collection<int, AuthorReward>
      */
     public function getAuthorRewards(): Collection
     {
         return $this->authorRewards;
-    }
-
-    /**
-     * Adds an author-reward association for this reward.
-     */
-    public function addAuthorReward(AuthorReward $authorReward): self
-    {
-        if (!$this->authorRewards->contains($authorReward)) {
-            $this->authorRewards->add($authorReward);
-            $authorReward->setReward($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Removes an author-reward association from this reward.
-     */
-    public function removeAuthorReward(AuthorReward $authorReward): self
-    {
-        if ($this->authorRewards->removeElement($authorReward)) {
-            if ($authorReward->getReward() === $this) {
-                $authorReward->setReward(null);
-            }
-        }
-
-        return $this;
     }
 }

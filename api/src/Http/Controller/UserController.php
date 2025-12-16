@@ -73,7 +73,7 @@ class UserController extends AbstractController
      *
      * POST /api/users
      */
-    #[Route('', name: 'create', methods: ['POST'])]
+    #[Route('/add', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         $payload = json_decode($request->getContent(), true);

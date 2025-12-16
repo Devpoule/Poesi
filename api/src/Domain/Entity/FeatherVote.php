@@ -7,9 +7,14 @@ use App\Infrastructure\Repository\FeatherVoteRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Represents a feather vote given by an author to a poem.
+ * Represents a feather vote cast by an author on a poem.
+ *
+ * Recommended rule enforced at service level:
+ * - One vote per (voter, poem). If a new vote is cast again, we update the existing one.
  */
 #[ORM\Entity(repositoryClass: FeatherVoteRepository::class)]
+#[ORM\Table(name: 'feather_vote')]
+#[ORM\UniqueConstraint(name: 'uniq_voter_poem', columns: ['voter_id', 'poem_id'])]
 class FeatherVote
 {
     #[ORM\Id]
@@ -17,13 +22,13 @@ class FeatherVote
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Poem::class, inversedBy: 'featherVotes')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Poem $poem = null;
-
     #[ORM\ManyToOne(targetEntity: Author::class, inversedBy: 'featherVotes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Author $voter = null;
+
+    #[ORM\ManyToOne(targetEntity: Poem::class, inversedBy: 'featherVotes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Poem $poem = null;
 
     #[ORM\Column(enumType: FeatherType::class)]
     private FeatherType $featherType;
@@ -31,14 +36,19 @@ class FeatherVote
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: 'datetime_immutable')]
+    private \DateTimeImmutable $updatedAt;
+
     public function __construct()
     {
-        $this->createdAt   = new \DateTimeImmutable();
+        $now = new \DateTimeImmutable();
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
         $this->featherType = FeatherType::BRONZE;
     }
 
     /**
-     * Returns the unique identifier of the feather vote.
+     * Returns the unique identifier.
      */
     public function getId(): ?int
     {
@@ -46,25 +56,7 @@ class FeatherVote
     }
 
     /**
-     * Returns the poem that received this feather vote.
-     */
-    public function getPoem(): ?Poem
-    {
-        return $this->poem;
-    }
-
-    /**
-     * Sets the poem that received this feather vote.
-     */
-    public function setPoem(?Poem $poem): self
-    {
-        $this->poem = $poem;
-
-        return $this;
-    }
-
-    /**
-     * Returns the voter who cast this feather vote.
+     * Returns the voter (author).
      */
     public function getVoter(): ?Author
     {
@@ -72,7 +64,7 @@ class FeatherVote
     }
 
     /**
-     * Sets the voter who cast this feather vote.
+     * Sets the voter (author).
      */
     public function setVoter(?Author $voter): self
     {
@@ -82,7 +74,25 @@ class FeatherVote
     }
 
     /**
-     * Returns the feather type of this vote.
+     * Returns the voted poem.
+     */
+    public function getPoem(): ?Poem
+    {
+        return $this->poem;
+    }
+
+    /**
+     * Sets the voted poem.
+     */
+    public function setPoem(?Poem $poem): self
+    {
+        $this->poem = $poem;
+
+        return $this;
+    }
+
+    /**
+     * Returns the feather type.
      */
     public function getFeatherType(): FeatherType
     {
@@ -90,20 +100,39 @@ class FeatherVote
     }
 
     /**
-     * Sets the feather type of this vote.
+     * Sets the feather type.
+     *
+     * Updating the feather type updates the updatedAt timestamp.
      */
     public function setFeatherType(FeatherType $featherType): self
     {
         $this->featherType = $featherType;
+        $this->touch();
 
         return $this;
     }
 
     /**
-     * Returns the creation date of this vote.
+     * Returns the creation date.
      */
     public function getCreatedAt(): \DateTimeImmutable
     {
         return $this->createdAt;
+    }
+
+    /**
+     * Returns the last update date.
+     */
+    public function getUpdatedAt(): \DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Updates updatedAt timestamp.
+     */
+    public function touch(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 }

@@ -3,13 +3,13 @@
 namespace App\Domain\Service;
 
 use App\Domain\Entity\Totem;
-use App\Domain\Exception\TotemNotFoundException;
+use App\Domain\Exception\NotFound\TotemNotFoundException;
 use App\Domain\Repository\TotemRepositoryInterface;
 
 /**
  * Domain service responsible for managing Totem catalog.
  */
-class TotemService
+final class TotemService
 {
     public function __construct(
         private TotemRepositoryInterface $totemRepository
@@ -17,27 +17,13 @@ class TotemService
     }
 
     /**
-     * Create a new Totem.
+     * Return all totems.
      *
-     * @param string      $name
-     * @param string|null $description
-     * @param string|null $picture
-     *
-     * @return Totem
+     * @return Totem[]
      */
-    public function createTotem(
-        string $name,
-        ?string $description = null,
-        ?string $picture = null
-    ): Totem {
-        $totem = new Totem();
-        $totem->setName($name);
-        $totem->setDescription($description);
-        $totem->setPicture($picture);
-
-        $this->totemRepository->save($totem);
-
-        return $totem;
+    public function listAll(): array
+    {
+        return $this->totemRepository->findAllOrdered();
     }
 
     /**
@@ -59,17 +45,28 @@ class TotemService
     }
 
     /**
-     * List all totems ordered for display.
+     * Create a new totem.
      *
-     * @return Totem[]
+     * @param string      $name
+     * @param string|null $description
+     * @param string|null $picture
+     *
+     * @return Totem
      */
-    public function listAll(): array
+    public function createTotem(string $name, ?string $description = null, ?string $picture = null): Totem
     {
-        return $this->totemRepository->findAllOrdered();
+        $totem = new Totem();
+        $totem->setName($name);
+        $totem->setDescription($description);
+        $totem->setPicture($picture);
+
+        $this->totemRepository->save($totem);
+
+        return $totem;
     }
 
     /**
-     * Update a Totem.
+     * Update an existing totem.
      * Only non-null parameters are applied.
      *
      * @param int         $totemId

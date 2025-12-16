@@ -5,40 +5,48 @@ namespace App\Http\Mapper;
 use App\Domain\Entity\Totem;
 
 /**
- * Maps Totem domain entities to array structures
- * for JSON API responses.
+ * Maps Totem domain entities to API-friendly arrays.
  */
-class TotemMapper
+final class TotemMapper
 {
     /**
-     * Transform a Totem entity into a flat array representation.
+     * Convert a Totem entity into an array representation for the API.
      *
      * @param Totem $totem
      *
-     * @return array<string, mixed>
+     * @return array{
+     *   id: int|null,
+     *   name: string,
+     *   description: string|null,
+     *   picture: string|null
+     * }
      */
     public function toArray(Totem $totem): array
     {
         return [
-            'id'          => $totem->getId(),
-            'name'        => $totem->getName(),
+            'id' => $totem->getId(),
+            'name' => $totem->getName(),
             'description' => $totem->getDescription(),
-            'picture'     => $totem->getPicture(),
+            'picture' => $totem->getPicture(),
         ];
     }
 
     /**
-     * Transform a collection of Totem entities into an array of arrays.
+     * Convert a list of Totem entities into a list of arrays.
      *
-     * @param iterable<Totem> $totems
+     * @param Totem[] $totems
      *
      * @return array<int, array<string, mixed>>
      */
-    public function toCollection(iterable $totems): array
+    public function toCollection(array $totems): array
     {
         $result = [];
 
         foreach ($totems as $totem) {
+            if (!$totem instanceof Totem) {
+                continue;
+            }
+
             $result[] = $this->toArray($totem);
         }
 

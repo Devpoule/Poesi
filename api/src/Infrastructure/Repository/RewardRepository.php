@@ -20,13 +20,6 @@ class RewardRepository extends ServiceEntityRepository implements RewardReposito
         parent::__construct($registry, Reward::class);
     }
 
-    /**
-     * Retrieve a Reward by id.
-     *
-     * @param int $id
-     *
-     * @return Reward|null
-     */
     public function getById(int $id): ?Reward
     {
         /** @var Reward|null $reward */
@@ -35,11 +28,14 @@ class RewardRepository extends ServiceEntityRepository implements RewardReposito
         return $reward;
     }
 
-    /**
-     * Retrieve all rewards.
-     *
-     * @return Reward[]
-     */
+    public function findOneByCode(string $code): ?Reward
+    {
+        /** @var Reward|null $reward */
+        $reward = $this->findOneBy(['code' => strtoupper($code)]);
+
+        return $reward;
+    }
+
     public function findAll(): array
     {
         /** @var Reward[] $rewards */
@@ -48,28 +44,6 @@ class RewardRepository extends ServiceEntityRepository implements RewardReposito
         return $rewards;
     }
 
-    /**
-     * Find a Reward by technical code.
-     *
-     * @param string $code
-     *
-     * @return Reward|null
-     */
-    public function findOneByCode(string $code): ?Reward
-    {
-        /** @var Reward|null $reward */
-        $reward = $this->findOneBy(['code' => $code]);
-
-        return $reward;
-    }
-
-    /**
-     * Persist and flush the given Reward.
-     *
-     * @param object $reward
-     *
-     * @return void
-     */
     public function save(object $reward): void
     {
         if (!$reward instanceof Reward) {
@@ -81,13 +55,6 @@ class RewardRepository extends ServiceEntityRepository implements RewardReposito
         $em->flush();
     }
 
-    /**
-     * Remove and flush the given Reward.
-     *
-     * @param object $reward
-     *
-     * @return void
-     */
     public function delete(object $reward): void
     {
         if (!$reward instanceof Reward) {

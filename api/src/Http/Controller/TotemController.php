@@ -2,8 +2,13 @@
 
 namespace App\Http\Controller;
 
+use App\Domain\Exception\NotFound\TotemNotFoundException;
 use App\Domain\Service\TotemService;
+use App\Http\Exception\ApiExceptionInterface;
+use App\Http\Exception\ValidationException;
 use App\Http\Mapper\TotemMapper;
+use App\Http\Request\Totem\CreateTotemRequest;
+use App\Http\Request\Totem\UpdateTotemRequest;
 use App\Http\Response\ApiResponseFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
  * HTTP API controller exposing CRUD operations for totems.
  */
 #[Route('/api/totems', name: 'api_totems_')]
-class TotemController extends AbstractController
+final class TotemController extends AbstractController
 {
     public function __construct(
         private readonly TotemService $totemService,
@@ -40,73 +45,81 @@ class TotemController extends AbstractController
     }
 
     /**
-     * Get a single totem by id.
+     * Get totem details by id.
      *
      * GET /api/totems/{id}
      */
     #[Route('/{id<\d+>}', name: 'show', methods: ['GET'])]
     public function show(int $id): JsonResponse
     {
-        $totem = $this->totemService->getTotemOrFail($id);
+        try {
+            $totem = $this->totemService->getTotemOrFail($id);
 
-        return ApiResponseFactory::success(
-            data: $this->totemMapper->toArray($totem),
-            message: 'Totem retrieved.'
-        );
+            return ApiResponseFactory::success(
+                data: $this->totemMapper->toArray($totem),
+                message: 'Totem retrieved.'
+            );
+        } catch (TotemNotFoundException $e) {
+            return ApiResponseFactory::notFound($e->getMessage());
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     /**
      * Create a totem.
      *
-     * Expected JSON body:
-     * {
-     *   "name": "Phoenix",
-     *   "description": "Fire bird",
-     *   "picture": "/images/phoenix.png"
-     * }
-     *
      * POST /api/totems
      */
-    #[Route('', name: 'create', methods: ['POST'])]
+    #[Route('/add', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $payload = json_decode($request->getContent(), true);
+        try {
+            $dto = CreateTotemRequest::fromHttpRequest($request);
 
-        if (!is_array($payload)) {
+            $totem = $this->totemService->createTotem(
+                name: $dto->getName(),
+                description: $dto->getDescription(),
+                picture: $dto->getPicture()
+            );
+
+            return ApiResponseFactory::success(
+                data: $this->totemMapper->toArray($totem),
+                message: 'Totem created successfully.',
+                httpStatus: Response::HTTP_CREATED
+            );
+        } catch (ValidationException $e) {
             return ApiResponseFactory::validationError(
-                message: 'Invalid JSON payload.',
-                errors: ['body' => ['Request body must be valid JSON.']]
+                message: $e->getMessage(),
+                errors: $e->getErrors(),
+                code: $e->getErrorCode()
+            );
+        } catch (ApiExceptionInterface $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: $e->getErrorCode(),
+                type: $e->getType(),
+                errors: null,
+                data: null,
+                httpStatus: $e->getHttpStatus()
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
-
-        $name        = $payload['name'] ?? null;
-        $description = $payload['description'] ?? null;
-        $picture     = $payload['picture'] ?? null;
-
-        $errors = [];
-
-        if ($name === null || trim((string) $name) === '') {
-            $errors['name'][] = 'name is required.';
-        }
-
-        if (!empty($errors)) {
-            return ApiResponseFactory::validationError(
-                message: 'Invalid totem payload.',
-                errors: $errors
-            );
-        }
-
-        $totem = $this->totemService->createTotem(
-            name: (string) $name,
-            description: $description !== null ? (string) $description : null,
-            picture: $picture !== null ? (string) $picture : null
-        );
-
-        return ApiResponseFactory::success(
-            data: $this->totemMapper->toArray($totem),
-            message: 'Totem created successfully.',
-            httpStatus: Response::HTTP_CREATED
-        );
     }
 
     /**
@@ -117,30 +130,47 @@ class TotemController extends AbstractController
     #[Route('/{id<\d+>}', name: 'update', methods: ['PUT'])]
     public function update(int $id, Request $request): JsonResponse
     {
-        $payload = json_decode($request->getContent(), true);
+        try {
+            $dto = UpdateTotemRequest::fromHttpRequest($request);
 
-        if (!is_array($payload)) {
+            $totem = $this->totemService->updateTotem(
+                totemId: $id,
+                name: $dto->getName(),
+                description: $dto->getDescription(),
+                picture: $dto->getPicture()
+            );
+
+            return ApiResponseFactory::success(
+                data: $this->totemMapper->toArray($totem),
+                message: 'Totem updated successfully.'
+            );
+        } catch (ValidationException $e) {
             return ApiResponseFactory::validationError(
-                message: 'Invalid JSON payload.',
-                errors: ['body' => ['Request body must be valid JSON.']]
+                message: $e->getMessage(),
+                errors: $e->getErrors(),
+                code: $e->getErrorCode()
+            );
+        } catch (TotemNotFoundException $e) {
+            return ApiResponseFactory::notFound($e->getMessage());
+        } catch (ApiExceptionInterface $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: $e->getErrorCode(),
+                type: $e->getType(),
+                errors: null,
+                data: null,
+                httpStatus: $e->getHttpStatus()
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
-
-        $name        = $payload['name'] ?? null;
-        $description = $payload['description'] ?? null;
-        $picture     = $payload['picture'] ?? null;
-
-        $totem = $this->totemService->updateTotem(
-            totemId: $id,
-            name: $name !== null ? (string) $name : null,
-            description: $description !== null ? (string) $description : null,
-            picture: $picture !== null ? (string) $picture : null
-        );
-
-        return ApiResponseFactory::success(
-            data: $this->totemMapper->toArray($totem),
-            message: 'Totem updated successfully.'
-        );
     }
 
     /**
@@ -151,11 +181,33 @@ class TotemController extends AbstractController
     #[Route('/{id<\d+>}', name: 'delete', methods: ['DELETE'])]
     public function delete(int $id): JsonResponse
     {
-        $this->totemService->deleteTotem($id);
+        try {
+            $this->totemService->deleteTotem($id);
 
-        return ApiResponseFactory::success(
-            data: null,
-            message: 'Totem deleted successfully.'
-        );
+            return ApiResponseFactory::success(
+                data: null,
+                message: 'Totem deleted successfully.'
+            );
+        } catch (TotemNotFoundException $e) {
+            return ApiResponseFactory::notFound($e->getMessage());
+        } catch (\Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException) {
+            return ApiResponseFactory::error(
+                message: 'Cannot delete totem because it is still referenced by other resources.',
+                code: 'TOTEM_DELETE_CONFLICT',
+                type: 'warning',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_CONFLICT
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

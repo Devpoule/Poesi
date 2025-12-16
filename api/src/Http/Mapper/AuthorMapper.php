@@ -5,47 +5,57 @@ namespace App\Http\Mapper;
 use App\Domain\Entity\Author;
 
 /**
- * Maps Author domain entities to array structures
- * that are safe and convenient for JSON API responses.
+ * Maps Author domain entities to API-friendly arrays.
  */
-class AuthorMapper
+final class AuthorMapper
 {
     /**
-     * Transform an Author entity into a flat array representation.
+     * Convert an Author entity into an array representation for the API.
      *
-     * @param Author $author
-     *
-     * @return array<string, mixed>
+     * @return array{
+     *   id: int|null,
+     *   pseudo: string,
+     *   email: string,
+     *   moodColor: string|null,
+     *   createdAt: string,
+     *   totem: array{id:int|null,name:string}|null
+     * }
      */
     public function toArray(Author $author): array
     {
+        $moodColor = $author->getMoodColor();
+
         $totem = $author->getTotem();
 
         return [
-            'id'        => $author->getId(),
-            'pseudo'    => $author->getPseudo(),
-            'email'     => $author->getEmail(),
-            'moodColor' => $author->getMoodColor()->value,
-            'totem'     => $totem !== null ? [
-                'id'   => $totem->getId(),
+            'id' => $author->getId(),
+            'pseudo' => $author->getPseudo(),
+            'email' => $author->getEmail(),
+            'moodColor' => $moodColor !== null ? $moodColor->value : null,
+            'createdAt' => $author->getCreatedAt()->format(\DateTimeInterface::ATOM),
+            'totem' => $totem !== null ? [
+                'id' => $totem->getId(),
                 'name' => $totem->getName(),
             ] : null,
-            'createdAt' => $author->getCreatedAt()->format(\DATE_ATOM),
         ];
     }
 
     /**
-     * Transform a collection of Author entities into an array of arrays.
+     * Convert a list of Author entities into a list of arrays.
      *
-     * @param iterable<Author> $authors
+     * @param Author[] $authors
      *
      * @return array<int, array<string, mixed>>
      */
-    public function toCollection(iterable $authors): array
+    public function toCollection(array $authors): array
     {
         $result = [];
 
         foreach ($authors as $author) {
+            if (!$author instanceof Author) {
+                continue;
+            }
+
             $result[] = $this->toArray($author);
         }
 

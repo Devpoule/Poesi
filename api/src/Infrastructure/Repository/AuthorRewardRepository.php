@@ -4,6 +4,7 @@ namespace App\Infrastructure\Repository;
 
 use App\Domain\Entity\Author;
 use App\Domain\Entity\AuthorReward;
+use App\Domain\Entity\Reward;
 use App\Domain\Repository\AuthorRewardRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,7 +15,7 @@ use InvalidArgumentException;
  *
  * @extends ServiceEntityRepository<AuthorReward>
  */
-class AuthorRewardRepository extends ServiceEntityRepository implements AuthorRewardRepositoryInterface
+final class AuthorRewardRepository extends ServiceEntityRepository implements AuthorRewardRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -22,7 +23,7 @@ class AuthorRewardRepository extends ServiceEntityRepository implements AuthorRe
     }
 
     /**
-     * Retrieve an AuthorReward by id.
+     * Retrieve an AuthorReward by its id.
      *
      * @param int $id
      *
@@ -37,38 +38,34 @@ class AuthorRewardRepository extends ServiceEntityRepository implements AuthorRe
     }
 
     /**
-     * Retrieve all author rewards.
-     *
-     * @return AuthorReward[]
-     */
-    public function findAll(): array
-    {
-        /** @var AuthorReward[] $authorRewards */
-        $authorRewards = parent::findAll();
-
-        return $authorRewards;
-    }
-
-    /**
-     * Find all rewards assigned to a given author.
-     *
      * @param Author $author
      *
      * @return AuthorReward[]
      */
     public function findByAuthor(Author $author): array
     {
-        /** @var AuthorReward[] $authorRewards */
-        $authorRewards = $this->findBy(
-            ['author' => $author],
-            ['earnedAt' => 'DESC']
-        );
+        /** @var AuthorReward[] $rows */
+        $rows = $this->findBy(['author' => $author], ['createdAt' => 'DESC']);
 
-        return $authorRewards;
+        return $rows;
     }
 
     /**
-     * Persist and flush the given AuthorReward.
+     * @param Author $author
+     * @param Reward $reward
+     *
+     * @return AuthorReward|null
+     */
+    public function findOneByAuthorAndReward(Author $author, Reward $reward): ?AuthorReward
+    {
+        /** @var AuthorReward|null $row */
+        $row = $this->findOneBy(['author' => $author, 'reward' => $reward]);
+
+        return $row;
+    }
+
+    /**
+     * Persist and flush an AuthorReward.
      *
      * @param object $authorReward
      *
@@ -86,7 +83,7 @@ class AuthorRewardRepository extends ServiceEntityRepository implements AuthorRe
     }
 
     /**
-     * Remove and flush the given AuthorReward.
+     * Remove and flush an AuthorReward.
      *
      * @param object $authorReward
      *

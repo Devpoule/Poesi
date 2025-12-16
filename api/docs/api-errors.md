@@ -21,9 +21,9 @@ Domain exceptions describe business situations and must remain HTTP-agnostic.
 They are usually lightweight (sometimes empty) and only exist as types.
 
 Examples:
-- PoemNotFoundException
-- CannotDeletePoemWithVotesException
-- AuthorNotFoundException
+- NotFound\PoemNotFoundException
+- CannotDelete\CannotDeletePoemWithVotesException
+- NotFound\AuthorNotFoundException
 
 Domain exceptions are thrown by Domain Services.
 
