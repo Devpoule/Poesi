@@ -30,6 +30,11 @@ final class LoreCatalog
      */
     private array $symbols = [];
 
+    /**
+     * @var array<string, array<string, mixed>>
+     */
+    private array $relics = [];
+
     public function __construct(string $projectDir)
     {
         $basePath = rtrim($projectDir, DIRECTORY_SEPARATOR) . '/resources/lore';
@@ -47,6 +52,11 @@ final class LoreCatalog
         $this->symbols = $this->indexByKey(
             $this->readJson($basePath . '/symbols.initial.json'),
             'type'
+        );
+
+        $this->relics = $this->indexByKey(
+            $this->readJson($basePath . '/relics.initial.json'),
+            'key'
         );
     }
 
@@ -133,6 +143,41 @@ final class LoreCatalog
     public function getSymbols(): array
     {
         return array_values($this->symbols);
+    }
+
+    #################
+    ###  Relics   ###
+    #################
+
+    /**
+     * Get lore data for a given relic key.
+     *
+     * @return array{key:string,label:string,description:string,picture:string,rarity:string}
+     */
+    public function getRelic(string $key): array
+    {
+        return $this->relics[$key]
+            ?? throw new \LogicException(sprintf('Unknown relic key: %s', $key));
+    }
+
+    /**
+     * Get all relics lore (indexed by key).
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function getAllRelics(): array
+    {
+        return $this->relics;
+    }
+
+    /**
+     * Get relics lore as a list (not indexed).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function getRelics(): array
+    {
+        return array_values($this->relics);
     }
 
     #################

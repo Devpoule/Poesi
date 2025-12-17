@@ -29,6 +29,7 @@ final class LoreController extends AbstractController
                 'moods'    => $this->loreCatalog->getAllMoods(),
                 'feathers' => $this->loreCatalog->getAllFeathers(),
                 'symbols'  => $this->loreCatalog->getAllSymbols(),
+                'relics'   => $this->loreCatalog->getAllRelics(),
             ],
             message: null,
             code: 'LORE_OK'

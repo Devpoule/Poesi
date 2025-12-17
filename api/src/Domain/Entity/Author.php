@@ -53,6 +53,14 @@ class Author
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: AuthorReward::class)]
     private Collection $authorRewards;
 
+    /**
+     * Relics are rare, non-votable rewards granted to the author (milestones, editorial picks, etc.).
+     *
+     * @var Collection<int, AuthorRelic>
+     */
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: AuthorRelic::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $relics;
+
     public function __construct()
     {
         $this->createdAt     = new \DateTimeImmutable();
@@ -60,6 +68,7 @@ class Author
         $this->poems         = new ArrayCollection();
         $this->featherVotes  = new ArrayCollection();
         $this->authorRewards = new ArrayCollection();
+        $this->relics        = new ArrayCollection();
     }
 
     /**
@@ -255,6 +264,43 @@ class Author
         if ($this->authorRewards->removeElement($authorReward)) {
             if ($authorReward->getAuthor() === $this) {
                 $authorReward->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns relics owned by the author.
+     *
+     * @return Collection<int, AuthorRelic>
+     */
+    public function getRelics(): Collection
+    {
+        return $this->relics;
+    }
+
+    /**
+     * Grants a relic to the author.
+     */
+    public function addRelic(AuthorRelic $relic): self
+    {
+        if (!$this->relics->contains($relic)) {
+            $this->relics->add($relic);
+            $relic->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a relic from the author.
+     */
+    public function removeRelic(AuthorRelic $relic): self
+    {
+        if ($this->relics->removeElement($relic)) {
+            if ($relic->getAuthor() === $this) {
+                $relic->setAuthor(null);
             }
         }
 
