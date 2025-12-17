@@ -4,6 +4,7 @@ namespace App\Domain\Entity;
 
 use App\Domain\Enum\MoodColor;
 use App\Domain\Enum\PoemStatus;
+use App\Domain\Enum\SymbolType;
 use App\Infrastructure\Repository\PoemRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -29,6 +30,9 @@ class Poem
 
     #[ORM\Column(enumType: MoodColor::class)]
     private MoodColor $moodColor;
+
+    #[ORM\Column(enumType: SymbolType::class, nullable: true)]
+    private ?SymbolType $symbolType = null;
 
     #[ORM\Column(length: 255)]
     private string $title;
@@ -113,6 +117,24 @@ class Poem
     public function setMoodColor(MoodColor $moodColor): self
     {
         $this->moodColor = $moodColor;
+
+        return $this;
+    }
+
+    /**
+     * Returns the current visual symbol of the poem (may evolve).
+     */
+    public function getSymbolType(): ?SymbolType
+    {
+        return $this->symbolType;
+    }
+
+    /**
+     * Sets the current visual symbol of the poem (may evolve).
+     */
+    public function setSymbolType(?SymbolType $symbolType): self
+    {
+        $this->symbolType = $symbolType;
 
         return $this;
     }

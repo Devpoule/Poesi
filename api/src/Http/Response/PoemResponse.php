@@ -4,10 +4,18 @@ namespace App\Http\Response;
 
 use App\Domain\Entity\Poem;
 use App\Domain\Entity\FeatherVote;
+use App\Domain\Enum\FeatherType;
+use App\Domain\Enum\SymbolType;
+use App\Domain\Lore\LoreCatalog;
 
 final class PoemResponse
 {
     private const DEFAULT_TOTEM_ID = 1;
+
+    public function __construct(
+        private readonly LoreCatalog $loreCatalog,
+    ) {
+    }
 
     /**
      * @return array{
@@ -16,11 +24,20 @@ final class PoemResponse
      *   content:string,
      *   status:string,
      *   moodColor:string|null,
+     *   mood:array{label:string,description:string,icon:string}|null,
+     *   symbolType:string|null,
+     *   symbol:array{label:string,description:string,picture:string}|null,
      *   createdAt:string,
      *   publishedAt:string|null,
      *   author:array{id:int|null,pseudo:string|null,totemId:int|null}|null,
      *   publish:array{canPublish:bool,reason:string|null},
-     *   stats:array{votesTotal:int,votesBronze:int,votesSilver:int,votesGold:int}
+     *   featherVotes:array{votesTotal:int,votesBronze:int,votesSilver:int,votesGold:int},
+     *   stats:array{votesTotal:int,votesBronze:int,votesSilver:int,votesGold:int},
+     *   feathers:array{
+     *     bronze:array{label:string,description:string,icon:string},
+     *     silver:array{label:string,description:string,icon:string},
+     *     gold:array{label:string,description:string,icon:string}
+     *   }
      * }
      */
     public function item(Poem $poem): array
@@ -30,12 +47,23 @@ final class PoemResponse
 
         $canPublish = $authorTotemId !== null && $authorTotemId !== self::DEFAULT_TOTEM_ID;
 
+        $moodColor = $poem->getMoodColor();
+        $symbolType = $poem->getSymbolType();
+
+        $featherVotes = $this->computeFeatherVotesStats($poem);
+
         return [
             'id'          => $poem->getId(),
             'title'       => $poem->getTitle(),
             'content'     => $poem->getContent(),
             'status'      => $poem->getStatus()->value,
-            'moodColor'   => $poem->getMoodColor()?->value,
+
+            'moodColor'   => $moodColor?->value,
+            'mood'        => $moodColor !== null ? $this->loreCatalog->getMood($moodColor) : null,
+
+            'symbolType'  => $symbolType?->value,
+            'symbol'      => $symbolType !== null ? $this->loreCatalog->getSymbol($symbolType) : null,
+
             'createdAt'   => $poem->getCreatedAt()->format(\DateTimeInterface::ATOM),
             'publishedAt' => $poem->getPublishedAt()?->format(\DateTimeInterface::ATOM),
 
@@ -50,7 +78,14 @@ final class PoemResponse
                 'reason'     => $canPublish ? null : 'Choose a totem before publishing.',
             ],
 
-            'stats' => $this->computeVotesStats($poem),
+            'featherVotes' => $featherVotes,
+            'stats'        => $featherVotes, // legacy alias (remove later)
+
+            'feathers' => [
+                'bronze' => $this->loreCatalog->getFeather(FeatherType::BRONZE),
+                'silver' => $this->loreCatalog->getFeather(FeatherType::SILVER),
+                'gold'   => $this->loreCatalog->getFeather(FeatherType::GOLD),
+            ],
         ];
     }
 
@@ -73,40 +108,37 @@ final class PoemResponse
     /**
      * @return array{votesTotal:int,votesBronze:int,votesSilver:int,votesGold:int}
      */
-    private function computeVotesStats(Poem $poem): array
+    private function computeFeatherVotesStats(Poem $poem): array
     {
-        $bronze = 0;
-        $silver = 0;
-        $gold   = 0;
+        $counts = [
+            FeatherType::BRONZE->value => 0,
+            FeatherType::SILVER->value => 0,
+            FeatherType::GOLD->value   => 0,
+        ];
 
         foreach ($poem->getFeatherVotes() as $vote) {
             if (!$vote instanceof FeatherVote) {
                 continue;
             }
 
-            $type = $vote->getFeatherType()?->value;
-
-            if ($type === 'bronze') {
-                $bronze++;
+            $type = $vote->getFeatherType();
+            if ($type === null) {
                 continue;
             }
 
-            if ($type === 'silver') {
-                $silver++;
+            // If any unexpected value appears, fail safely by ignoring it.
+            if (!array_key_exists($type->value, $counts)) {
                 continue;
             }
 
-            if ($type === 'gold') {
-                $gold++;
-                continue;
-            }
+            $counts[$type->value]++;
         }
 
         return [
-            'votesTotal'  => $bronze + $silver + $gold,
-            'votesBronze' => $bronze,
-            'votesSilver' => $silver,
-            'votesGold'   => $gold,
+            'votesTotal'  => $counts['bronze'] + $counts['silver'] + $counts['gold'],
+            'votesBronze' => $counts['bronze'],
+            'votesSilver' => $counts['silver'],
+            'votesGold'   => $counts['gold'],
         ];
     }
 }

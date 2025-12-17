@@ -38,3 +38,10 @@ services:
     App\Infrastructure\EventListener\ApiExceptionSubscriber:
         tags:
             - { name: kernel.event_subscriber }
+    
+    App\Domain\Lore\LoreCatalog:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    App\Http\Response\PoemResponse: ~
+    App\Http\Controller\LoreController: ~
