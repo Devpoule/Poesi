@@ -4,8 +4,8 @@ namespace App\Domain\Service;
 
 use App\Domain\Entity\Author;
 use App\Domain\Enum\MoodColor;
-use App\Domain\Exception\NotFound\AuthorNotFoundException;
 use App\Domain\Exception\CannotDelete\CannotDeleteAuthorException;
+use App\Domain\Exception\NotFound\AuthorNotFoundException;
 use App\Domain\Exception\NotFound\TotemNotFoundException;
 use App\Domain\Repository\AuthorRepositoryInterface;
 use App\Domain\Repository\TotemRepositoryInterface;
@@ -15,6 +15,8 @@ use App\Domain\Repository\TotemRepositoryInterface;
  */
 final class AuthorService
 {
+    private const DEFAULT_TOTEM_ID = 1;
+
     public function __construct(
         private AuthorRepositoryInterface $authorRepository,
         private TotemRepositoryInterface $totemRepository,
@@ -22,27 +24,61 @@ final class AuthorService
     }
 
     /**
-     * Create a new Author with the given pseudo, email and totem.
+     * Create a new Author with the given pseudo and email.
      *
-     * Totem is required because Author::totem is non-nullable in Doctrine mapping.
+     * Totem is assigned by default to DEFAULT_TOTEM_ID ("Oeuf").
+     * Optionally, you may assign a random totem excluding the default one.
      *
-     * @param string         $pseudo
-     * @param string         $email
-     * @param int            $totemId
-     * @param MoodColor|null $moodColor
-     *
+     * @param string $pseudo
+     * @param string $email
+     * @param mixed $totemId
+     * @param mixed $moodColor
+     * @param bool $randomTotem
+     * @throws TotemNotFoundException
      * @return Author
      */
     public function createAuthor(
         string $pseudo,
         string $email,
-        int $totemId,
-        ?MoodColor $moodColor = null
+        ?int $totemId = null,
+        ?MoodColor $moodColor = null,
+        bool $randomTotem = false
     ): Author {
-        $totem = $this->totemRepository->getById($totemId);
+        $totem = null;
+
+        if ($totemId !== null) {
+            $totem = $this->totemRepository->getById($totemId);
+            if ($totem === null) {
+                throw new TotemNotFoundException('Totem not found for id ' . $totemId . '.');
+            }
+        }
+
+        if ($totem === null && $randomTotem === true) {
+            $all = $this->totemRepository->findAllOrdered();
+
+            $candidates = [];
+            foreach ($all as $candidate) {
+                if ($candidate->getId() !== self::DEFAULT_TOTEM_ID) {
+                    $candidates[] = $candidate;
+                }
+            }
+
+            if ($candidates === []) {
+                $totem = $this->totemRepository->getById(self::DEFAULT_TOTEM_ID);
+            } else {
+                $totem = $candidates[random_int(0, \count($candidates) - 1)];
+            }
+
+            if ($totem === null) {
+                throw new TotemNotFoundException('Default Egg totem not found (id ' . self::DEFAULT_TOTEM_ID . ').');
+            }
+        }
 
         if ($totem === null) {
-            throw new TotemNotFoundException('Totem not found for id ' . $totemId . '.');
+            $totem = $this->totemRepository->getById(self::DEFAULT_TOTEM_ID);
+            if ($totem === null) {
+                throw new TotemNotFoundException('Default Egg totem not found (id ' . self::DEFAULT_TOTEM_ID . ').');
+            }
         }
 
         $author = new Author();
@@ -59,13 +95,6 @@ final class AuthorService
         return $author;
     }
 
-    /**
-     * Retrieve an Author by id or throw an exception when it does not exist.
-     *
-     * @param int $authorId
-     *
-     * @return Author
-     */
     public function getAuthorOrFail(int $authorId): Author
     {
         $author = $this->authorRepository->getById($authorId);
@@ -78,8 +107,6 @@ final class AuthorService
     }
 
     /**
-     * Return all authors.
-     *
      * @return Author[]
      */
     public function listAll(): array
@@ -87,17 +114,6 @@ final class AuthorService
         return $this->authorRepository->findAll();
     }
 
-    /**
-     * Update the main properties of an author.
-     * Only non-null parameters will be updated.
-     *
-     * @param int            $authorId
-     * @param string|null    $pseudo
-     * @param MoodColor|null $moodColor
-     * @param int|null       $totemId
-     *
-     * @return Author
-     */
     public function updateAuthor(
         int $authorId,
         ?string $pseudo = null,
@@ -129,21 +145,10 @@ final class AuthorService
         return $author;
     }
 
-    /**
-     * Delete an author by id.
-     *
-     * We explicitly prevent deletion when relations exist to avoid
-     * database foreign key violations and keep a clean API contract.
-     *
-     * @param int $authorId
-     *
-     * @return void
-     */
     public function deleteAuthor(int $authorId): void
     {
         $author = $this->getAuthorOrFail($authorId);
 
-        // These checks keep behavior stable across DB engines.
         if ($author->getPoems()->count() > 0) {
             throw new CannotDeleteAuthorException('Cannot delete author: poems exist.');
         }

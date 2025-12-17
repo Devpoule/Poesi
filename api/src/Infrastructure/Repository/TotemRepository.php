@@ -13,20 +13,13 @@ use InvalidArgumentException;
  *
  * @extends ServiceEntityRepository<Totem>
  */
-class TotemRepository extends ServiceEntityRepository implements TotemRepositoryInterface
+final class TotemRepository extends ServiceEntityRepository implements TotemRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Totem::class);
     }
 
-    /**
-     * Retrieve a Totem by id.
-     *
-     * @param int $id
-     *
-     * @return Totem|null
-     */
     public function getById(int $id): ?Totem
     {
         /** @var Totem|null $totem */
@@ -35,11 +28,6 @@ class TotemRepository extends ServiceEntityRepository implements TotemRepository
         return $totem;
     }
 
-    /**
-     * Retrieve all totems.
-     *
-     * @return Totem[]
-     */
     public function findAll(): array
     {
         /** @var Totem[] $totems */
@@ -48,11 +36,6 @@ class TotemRepository extends ServiceEntityRepository implements TotemRepository
         return $totems;
     }
 
-    /**
-     * Retrieve all totems ordered by name ascending.
-     *
-     * @return Totem[]
-     */
     public function findAllOrdered(): array
     {
         /** @var Totem[] $totems */
@@ -61,13 +44,20 @@ class TotemRepository extends ServiceEntityRepository implements TotemRepository
         return $totems;
     }
 
-    /**
-     * Persist and flush the given Totem.
-     *
-     * @param object $totem
-     *
-     * @return void
-     */
+    public function getRandomExcludingId(int $excludedId): ?Totem
+    {
+        /** @var Totem|null $totem */
+        $totem = $this->createQueryBuilder('t')
+            ->andWhere('t.id != :excludedId')
+            ->setParameter('excludedId', $excludedId)
+            ->orderBy('RAND()')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $totem;
+    }
+
     public function save(object $totem): void
     {
         if (!$totem instanceof Totem) {
@@ -79,13 +69,6 @@ class TotemRepository extends ServiceEntityRepository implements TotemRepository
         $em->flush();
     }
 
-    /**
-     * Remove and flush the given Totem.
-     *
-     * @param object $totem
-     *
-     * @return void
-     */
     public function delete(object $totem): void
     {
         if (!$totem instanceof Totem) {

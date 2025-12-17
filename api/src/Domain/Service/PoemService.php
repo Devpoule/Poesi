@@ -7,6 +7,7 @@ use App\Domain\Enum\MoodColor;
 use App\Domain\Enum\PoemStatus;
 use App\Domain\Exception\NotFound\AuthorNotFoundException;
 use App\Domain\Exception\CannotDelete\CannotDeletePoemWithVotesException;
+use App\Domain\Exception\CannotPublish\CannotPublishWithoutTotemException;
 use App\Domain\Exception\NotFound\PoemNotFoundException;
 use App\Domain\Repository\AuthorRepositoryInterface;
 use App\Domain\Repository\PoemRepositoryInterface;
@@ -66,6 +67,11 @@ class PoemService
     public function publish(int $poemId): Poem
     {
         $poem = $this->getPoemOrFail($poemId);
+
+        if ($poem->getAuthor()->getTotem() === null) {
+            throw new CannotPublishWithoutTotemException();
+        }
+
 
         $poem->setStatus(PoemStatus::PUBLISHED);
         $poem->setPublishedAt(new \DateTimeImmutable());

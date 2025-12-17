@@ -4,6 +4,7 @@ namespace App\Domain\Service;
 
 use App\Domain\Entity\AuthorReward;
 use App\Domain\Exception\NotFound\AuthorNotFoundException;
+use App\Domain\Exception\NotFound\AuthorRewardNotFoundException;
 use App\Domain\Exception\NotFound\RewardNotFoundException;
 use App\Domain\Repository\AuthorRepositoryInterface;
 use App\Domain\Repository\AuthorRewardRepositoryInterface;
@@ -91,7 +92,7 @@ final class AuthorRewardService
         $authorReward = $this->authorRewardRepository->getById($authorRewardId);
 
         if ($authorReward === null) {
-            throw new \RuntimeException('AuthorReward not found for id ' . $authorRewardId . '.');
+            throw new AuthorRewardNotFoundException('AuthorReward not found for id ' . $authorRewardId . '.');
         }
 
         return $authorReward;

@@ -5,6 +5,7 @@ namespace App\Domain\Service;
 use App\Domain\Entity\FeatherVote;
 use App\Domain\Enum\FeatherType;
 use App\Domain\Exception\NotFound\AuthorNotFoundException;
+use App\Domain\Exception\NotFound\FeatherVoteNotFoundException;
 use App\Domain\Exception\NotFound\PoemNotFoundException;
 use App\Domain\Repository\AuthorRepositoryInterface;
 use App\Domain\Repository\FeatherVoteRepositoryInterface;
@@ -48,7 +49,7 @@ final class FeatherVoteService
         $vote = $this->featherVoteRepository->getById($voteId);
 
         if ($vote === null) {
-            throw new \RuntimeException('FeatherVote not found for id ' . $voteId . '.');
+            throw new FeatherVoteNotFoundException('FeatherVote not found for id ' . $voteId . '.');
         }
 
         return $vote;

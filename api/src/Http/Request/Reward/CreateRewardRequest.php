@@ -3,10 +3,12 @@
 namespace App\Http\Request\Reward;
 
 use App\Http\Exception\ValidationException;
+use App\Http\Request\JsonRequestDecoder;
+use App\Http\Request\RequestPayload;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Validates payload for creating a Reward.
+ * Parses and validates payload for creating a Reward.
  */
 final class CreateRewardRequest
 {
@@ -15,39 +17,42 @@ final class CreateRewardRequest
 
     private function __construct(string $code, string $label)
     {
-        $this->code  = $code;
+        $this->code = $code;
         $this->label = $label;
     }
 
+    /**
+     * Expected JSON:
+     * {
+     *   "code": "FIRST_POEM",
+     *   "label": "First poem published"
+     * }
+     *
+     * @throws ValidationException
+     */
     public static function fromHttpRequest(Request $request): self
     {
-        $payload = json_decode($request->getContent(), true);
+        $payload = JsonRequestDecoder::decodeObjectOrFail($request);
+        $errors = [];
 
-        if (!is_array($payload)) {
+        $code = RequestPayload::getTrimmedString($payload, 'code');
+        if ($code === null) {
+            $errors['code'][] = 'Code is required.';
+        }
+
+        $label = RequestPayload::getTrimmedString($payload, 'label');
+        if ($label === null) {
+            $errors['label'][] = 'Label is required.';
+        }
+
+        if ($errors !== []) {
             throw ValidationException::fromErrors(
-                'Invalid JSON payload.',
-                ['body' => ['Request body must be valid JSON.']]
+                message: 'Invalid reward payload.',
+                errors: $errors
             );
         }
 
-        $errors = [];
-
-        $code  = $payload['code']  ?? null;
-        $label = $payload['label'] ?? null;
-
-        if ($code === null || trim((string) $code) === '') {
-            $errors['code'][] = 'code is required.';
-        }
-
-        if ($label === null || trim((string) $label) === '') {
-            $errors['label'][] = 'label is required.';
-        }
-
-        if (!empty($errors)) {
-            throw ValidationException::fromErrors('Invalid reward payload.', $errors);
-        }
-
-        return new self((string) $code, (string) $label);
+        return new self($code, $label);
     }
 
     public function getCode(): string

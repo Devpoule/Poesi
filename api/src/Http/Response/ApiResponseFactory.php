@@ -58,13 +58,13 @@ class ApiResponseFactory
         ?array $errors = null,
         string $code = 'INVALID_PAYLOAD'
     ): JsonResponse {
-        return self::error(
+        return ApiResponseFactory::error(
             message: $message,
             code: $code,
             type: 'validation_error',
             errors: $errors,
             data: null,
-            httpStatus: Response::HTTP_BAD_REQUEST
+            httpStatus: Response::HTTP_UNPROCESSABLE_ENTITY
         );
     }
 
@@ -72,7 +72,7 @@ class ApiResponseFactory
         string $message,
         string $code = 'RESOURCE_NOT_FOUND'
     ): JsonResponse {
-        return self::error(
+        return ApiResponseFactory::error(
             message: $message,
             code: $code,
             type: 'error',

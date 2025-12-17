@@ -3,10 +3,14 @@
 namespace App\Http\Request\Reward;
 
 use App\Http\Exception\ValidationException;
+use App\Http\Request\JsonRequestDecoder;
+use App\Http\Request\RequestPayload;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Validates payload for updating a Reward.
+ * Parses and validates payload for updating a Reward.
+ *
+ * All fields are optional, but at least one must be provided.
  */
 final class UpdateRewardRequest
 {
@@ -15,39 +19,40 @@ final class UpdateRewardRequest
 
     private function __construct(?string $code, ?string $label)
     {
-        $this->code  = $code;
+        $this->code = $code;
         $this->label = $label;
     }
 
+    /**
+     * Expected JSON (at least one key):
+     * {
+     *   "code": "NEW_CODE",
+     *   "label": "New label"
+     * }
+     *
+     * @throws ValidationException
+     */
     public static function fromHttpRequest(Request $request): self
     {
-        $payload = json_decode($request->getContent(), true);
-
-        if (!is_array($payload)) {
-            throw ValidationException::fromErrors(
-                'Invalid JSON payload.',
-                ['body' => ['Request body must be valid JSON.']]
-            );
-        }
-
+        $payload = JsonRequestDecoder::decodeObjectOrFail($request);
         $errors = [];
         $hasAny = false;
 
         $code = null;
-        if (array_key_exists('code', $payload)) {
+        if (\array_key_exists('code', $payload)) {
             $hasAny = true;
-            $code = trim((string) $payload['code']);
-            if ($code === '') {
-                $errors['code'][] = 'code cannot be empty.';
+            $code = RequestPayload::getTrimmedString($payload, 'code');
+            if ($code === null) {
+                $errors['code'][] = 'code cannot be empty when provided.';
             }
         }
 
         $label = null;
-        if (array_key_exists('label', $payload)) {
+        if (\array_key_exists('label', $payload)) {
             $hasAny = true;
-            $label = trim((string) $payload['label']);
-            if ($label === '') {
-                $errors['label'][] = 'label cannot be empty.';
+            $label = RequestPayload::getTrimmedString($payload, 'label');
+            if ($label === null) {
+                $errors['label'][] = 'label cannot be empty when provided.';
             }
         }
 
@@ -55,8 +60,11 @@ final class UpdateRewardRequest
             $errors['payload'][] = 'At least one field must be provided.';
         }
 
-        if (!empty($errors)) {
-            throw ValidationException::fromErrors('Invalid reward payload.', $errors);
+        if ($errors !== []) {
+            throw ValidationException::fromErrors(
+                message: 'Invalid reward payload.',
+                errors: $errors
+            );
         }
 
         return new self($code, $label);

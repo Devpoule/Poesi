@@ -3,13 +3,14 @@
 namespace App\Domain\Service;
 
 use App\Domain\Entity\User;
+use App\Domain\Exception\Conflict\EmailAlreadyUsedException;
 use App\Domain\Exception\NotFound\UserNotFoundException;
 use App\Domain\Repository\UserRepositoryInterface;
 
 /**
  * Domain service responsible for basic User lifecycle.
  */
-class UserService
+final class UserService
 {
     public function __construct(
         private UserRepositoryInterface $userRepository
@@ -17,16 +18,17 @@ class UserService
     }
 
     /**
-     * Create a new user with the given email, hashed password and roles.
-     *
      * @param string   $email
      * @param string   $hashedPassword
      * @param string[] $roles
-     *
-     * @return User
      */
     public function createUser(string $email, string $hashedPassword, array $roles = ['ROLE_USER']): User
     {
+        $existing = $this->userRepository->findOneByEmail($email);
+        if ($existing !== null) {
+            throw new EmailAlreadyUsedException($email);
+        }
+
         $user = new User();
         $user->setEmail($email);
         $user->setPassword($hashedPassword);
@@ -37,25 +39,11 @@ class UserService
         return $user;
     }
 
-    /**
-     * Find a user by email.
-     *
-     * @param string $email
-     *
-     * @return User|null
-     */
     public function findByEmail(string $email): ?User
     {
         return $this->userRepository->findOneByEmail($email);
     }
 
-    /**
-     * Retrieve a user by id or throw if not found.
-     *
-     * @param int $userId
-     *
-     * @return User
-     */
     public function getUserOrFail(int $userId): User
     {
         $user = $this->userRepository->getById($userId);
@@ -68,8 +56,6 @@ class UserService
     }
 
     /**
-     * List all users.
-     *
      * @return User[]
      */
     public function listAll(): array
@@ -78,15 +64,7 @@ class UserService
     }
 
     /**
-     * Update user properties.
-     * Only non-null parameters are applied.
-     *
-     * @param int         $userId
-     * @param string|null $email
-     * @param string|null $hashedPassword
      * @param string[]|null $roles
-     *
-     * @return User
      */
     public function updateUser(
         int $userId,
@@ -97,6 +75,11 @@ class UserService
         $user = $this->getUserOrFail($userId);
 
         if ($email !== null) {
+            $existing = $this->userRepository->findOneByEmail($email);
+            if ($existing !== null && $existing->getId() !== $user->getId()) {
+                throw new EmailAlreadyUsedException($email);
+            }
+
             $user->setEmail($email);
         }
 
@@ -113,13 +96,6 @@ class UserService
         return $user;
     }
 
-    /**
-     * Delete a user by id.
-     *
-     * @param int $userId
-     *
-     * @return void
-     */
     public function deleteUser(int $userId): void
     {
         $user = $this->getUserOrFail($userId);

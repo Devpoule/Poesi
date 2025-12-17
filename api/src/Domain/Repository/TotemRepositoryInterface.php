@@ -24,11 +24,14 @@ interface TotemRepositoryInterface extends EntityRepositoryInterface
     public function findAll(): array;
 
     /**
+     * Return a random totem excluding a given id.
+     */
+    public function getRandomExcludingId(int $excludedId): ?Totem;
+
+    /**
      * Persist the given totem.
      *
      * @param Totem $totem
-     *
-     * @return void
      */
     public function save(object $totem): void;
 
@@ -36,8 +39,6 @@ interface TotemRepositoryInterface extends EntityRepositoryInterface
      * Remove the given totem.
      *
      * @param Totem $totem
-     *
-     * @return void
      */
     public function delete(object $totem): void;
 }

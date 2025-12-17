@@ -46,7 +46,7 @@ final class UpdateAuthorRequest
 
         $totemId = null;
         if (array_key_exists('totemId', $payload)) {
-            $totemId = self::normalizeInt($payload['totemId'], 'totemId', $errors);
+            $totemId = UpdateAuthorRequest::normalizeInt($payload['totemId'], 'totemId', $errors);
 
             if ($totemId !== null && $totemId <= 0) {
                 $errors['totemId'][] = 'Totem id must be greater than 0.';
