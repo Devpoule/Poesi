@@ -75,4 +75,36 @@ final class AuthorResponse
 
         return $result;
     }
+
+    /**
+     * @param iterable<Author> $authors
+     *
+     * @return list<array{
+     *   id:int|null,
+     *   pseudo:string|null,
+     *   relics:list<array{
+     *     key:string,
+     *     label:string,
+     *     description:string,
+     *     picture:string,
+     *     rarity:string,
+     *     grantedAt:string,
+     *     reason:string|null
+     *   }>
+     * }>
+     */
+    public function collection(iterable $authors): array
+    {
+        $result = [];
+
+        foreach ($authors as $author) {
+            if (!$author instanceof Author) {
+                continue;
+            }
+
+            $result[] = $this->item($author);
+        }
+
+        return $result;
+    }
 }
