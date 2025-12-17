@@ -1,18 +1,14 @@
 <?php
 
-namespace App\Domain\Exception;
+namespace App\Domain\Exception\CannotPublish;
 
 /**
- * Exception thrown when trying to publish a poem without an associated totem.
- * 
- * 400 Bad Request
- * References:
- * https://www.rfc-editor.org/rfc/rfc9110#name-400-bad-request
+ * Thrown when a poem cannot be published due to constraints.
  */
-final class CannotPublishPoemException extends DomainException
+final class CannotPublishPoemException extends CannotPublishException
 {
-    public function __construct(string $message = 'Poem cannot be published until a totem is chosen.')
+    public function __construct(string $message = 'Cannot publish poem.')
     {
-        parent::__construct($message, 'POEM_PUBLISH_TOTEM_REQUIRED');
+        parent::__construct($message, 'POEM_PUBLISH_CONFLICT');
     }
 }

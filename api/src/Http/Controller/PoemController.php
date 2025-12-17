@@ -2,6 +2,9 @@
 
 namespace App\Http\Controller;
 
+use App\Domain\Exception\CannotDelete\CannotDeletePoemWithVotesException;
+use App\Domain\Exception\CannotPublish\CannotPublishPoemException;
+use App\Domain\Exception\NotFound\PoemNotFoundException;
 use App\Domain\Service\PoemService;
 use App\Http\Request\Poem\CreatePoemRequest;
 use App\Http\Request\Poem\UpdatePoemRequest;
@@ -25,79 +28,173 @@ final class PoemController extends AbstractController
     #[Route('', name: 'list', methods: ['GET'])]
     public function list(): JsonResponse
     {
-        return ApiResponseFactory::success(
-            data: $this->poemResponse->collection($this->poemService->listAll()),
-            message: 'Poems list retrieved.'
-        );
+        try {
+            return ApiResponseFactory::success(
+                data: $this->poemResponse->collection($this->poemService->listAll()),
+                message: 'Poems list retrieved.'
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     #[Route('/{id<\d+>}', name: 'show', methods: ['GET'])]
     public function show(int $id): JsonResponse
     {
-        $poem = $this->poemService->getPoemOrFail($id);
+        try {
+            $poem = $this->poemService->getPoemOrFail($id);
 
-        return ApiResponseFactory::success(
-            data: $this->poemResponse->item($poem),
-            message: 'Poem retrieved.'
-        );
+            return ApiResponseFactory::success(
+                data: $this->poemResponse->item($poem),
+                message: 'Poem retrieved.'
+            );
+        } catch (PoemNotFoundException $e) {
+            return ApiResponseFactory::notFound($e->getMessage());
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
-        $dto = CreatePoemRequest::fromHttpRequest($request);
+        try {
+            $dto = CreatePoemRequest::fromHttpRequest($request);
 
-        $poem = $this->poemService->createDraft(
-            authorId: $dto->getAuthorId(),
-            title: $dto->getTitle(),
-            content: $dto->getContent(),
-            moodColor: $dto->getMoodColor()
-        );
+            $poem = $this->poemService->createDraft(
+                authorId: $dto->getAuthorId(),
+                title: $dto->getTitle(),
+                content: $dto->getContent(),
+                moodColor: $dto->getMoodColor()
+            );
 
-        return ApiResponseFactory::success(
-            data: $this->poemResponse->item($poem),
-            message: 'Poem created successfully.',
-            httpStatus: Response::HTTP_CREATED
-        );
+            return ApiResponseFactory::success(
+                data: $this->poemResponse->item($poem),
+                message: 'Poem created successfully.',
+                httpStatus: Response::HTTP_CREATED
+            );
+        } catch (\Throwable $e) {
+            // NB: si CreatePoemRequest lève ValidationException,
+            // tu peux ajouter un catch dédié pour retourner un 422 propre.
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: 'REQUEST_FAILED',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     #[Route('/{id<\d+>}', name: 'update', methods: ['PUT'])]
     public function update(int $id, Request $request): JsonResponse
     {
-        $dto = UpdatePoemRequest::fromHttpRequest($request);
+        try {
+            $dto = UpdatePoemRequest::fromHttpRequest($request);
 
-        $poem = $this->poemService->updatePoem(
-            poemId: $id,
-            title: $dto->getTitle(),
-            content: $dto->getContent(),
-            moodColor: $dto->getMoodColor()
-        );
+            $poem = $this->poemService->updatePoem(
+                poemId: $id,
+                title: $dto->getTitle(),
+                content: $dto->getContent(),
+                moodColor: $dto->getMoodColor()
+            );
 
-        return ApiResponseFactory::success(
-            data: $this->poemResponse->item($poem),
-            message: 'Poem updated successfully.'
-        );
+            return ApiResponseFactory::success(
+                data: $this->poemResponse->item($poem),
+                message: 'Poem updated successfully.'
+            );
+        } catch (PoemNotFoundException $e) {
+            return ApiResponseFactory::notFound($e->getMessage());
+        } catch (\Throwable $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: 'REQUEST_FAILED',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_BAD_REQUEST
+            );
+        }
     }
 
     #[Route('/{id<\d+>}/publish', name: 'publish', methods: ['POST'])]
     public function publish(int $id): JsonResponse
     {
-        $poem = $this->poemService->publish($id);
+        try {
+            $poem = $this->poemService->publish($id);
 
-        return ApiResponseFactory::success(
-            data: $this->poemResponse->item($poem),
-            message: 'Poem published successfully.'
-        );
+            return ApiResponseFactory::success(
+                data: $this->poemResponse->item($poem),
+                message: 'Poem published successfully.'
+            );
+        } catch (PoemNotFoundException $e) {
+            return ApiResponseFactory::notFound($e->getMessage());
+        } catch (CannotPublishPoemException $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: $e->getErrorCode(),
+                type: 'warning',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_CONFLICT
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     #[Route('/{id<\d+>}', name: 'delete', methods: ['DELETE'])]
     public function delete(int $id): JsonResponse
     {
-        $this->poemService->deletePoem($id);
+        try {
+            $this->poemService->deletePoem($id);
 
-        return ApiResponseFactory::success(
-            data: null,
-            message: 'Poem deleted successfully.'
-        );
+            return ApiResponseFactory::success(
+                data: null,
+                message: 'Poem deleted successfully.'
+            );
+        } catch (PoemNotFoundException $e) {
+            return ApiResponseFactory::notFound($e->getMessage());
+        } catch (CannotDeletePoemWithVotesException $e) {
+            return ApiResponseFactory::error(
+                message: $e->getMessage(),
+                code: $e->getErrorCode(),
+                type: 'warning',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_CONFLICT
+            );
+        } catch (\Throwable) {
+            return ApiResponseFactory::error(
+                message: 'Unexpected server error.',
+                code: 'UNEXPECTED_ERROR',
+                type: 'error',
+                errors: null,
+                data: null,
+                httpStatus: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

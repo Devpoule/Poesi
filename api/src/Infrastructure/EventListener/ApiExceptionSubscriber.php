@@ -3,7 +3,7 @@
 namespace App\Infrastructure\EventListener;
 
 use App\Domain\Exception\CannotDelete\CannotDeleteException;
-use App\Domain\Exception\CannotPublishPoemException;
+use App\Domain\Exception\CannotPublish\CannotPublishPoemException as CannotPublishCannotPublishPoemException;
 use App\Domain\Exception\Conflict\ConflictException;
 use App\Domain\Exception\DomainException;
 use App\Domain\Exception\NotFound\NotFoundException;
@@ -80,7 +80,7 @@ final class ApiExceptionSubscriber implements EventSubscriberInterface
                 $throwable instanceof NotFoundException => Response::HTTP_NOT_FOUND,
                 $throwable instanceof CannotDeleteException => Response::HTTP_CONFLICT,
                 $throwable instanceof ConflictException => Response::HTTP_CONFLICT,
-                $throwable instanceof CannotPublishPoemException => Response::HTTP_CONFLICT,
+                $throwable instanceof CannotPublishCannotPublishPoemException => Response::HTTP_CONFLICT,
                 default => Response::HTTP_BAD_REQUEST,
             };
 

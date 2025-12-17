@@ -3,8 +3,12 @@
 namespace App\Domain\Exception\CannotDelete;
 
 /**
- * Thrown when trying to delete a poem that is still referenced by feather votes.
+ * Thrown when a poem cannot be deleted due to constraints.
  */
-class CannotDeletePoemWithVotesException extends \RuntimeException
+final class CannotDeletePoemWithVotesException extends CannotDeleteException
 {
+    public function __construct(string $message = 'Cannot delete poem: votes exist.')
+    {
+        parent::__construct($message, 'POEM_DELETE_CONFLICT');
+    }
 }

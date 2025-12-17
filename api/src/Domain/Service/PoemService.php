@@ -7,7 +7,7 @@ use App\Domain\Enum\MoodColor;
 use App\Domain\Enum\PoemStatus;
 use App\Domain\Exception\NotFound\AuthorNotFoundException;
 use App\Domain\Exception\CannotDelete\CannotDeletePoemWithVotesException;
-use App\Domain\Exception\CannotPublish\CannotPublishWithoutTotemException;
+use App\Domain\Exception\CannotPublish\CannotPublishPoemException;
 use App\Domain\Exception\NotFound\PoemNotFoundException;
 use App\Domain\Repository\AuthorRepositoryInterface;
 use App\Domain\Repository\PoemRepositoryInterface;
@@ -17,6 +17,8 @@ use App\Domain\Repository\PoemRepositoryInterface;
  */
 class PoemService
 {
+    private const DEFAULT_TOTEM_ID = 1;
+
     public function __construct(
         private PoemRepositoryInterface $poemRepository,
         private AuthorRepositoryInterface $authorRepository,
@@ -68,10 +70,14 @@ class PoemService
     {
         $poem = $this->getPoemOrFail($poemId);
 
-        if ($poem->getAuthor()->getTotem() === null) {
-            throw new CannotPublishWithoutTotemException();
-        }
+        $author = $poem->getAuthor();
+        $authorTotemId = $author?->getTotem()?->getId();
 
+        if ($authorTotemId === null || $authorTotemId === self::DEFAULT_TOTEM_ID) {
+            throw new CannotPublishPoemException(
+                'Cannot publish poem: author must choose a totem before publishing.'
+            );
+        }
 
         $poem->setStatus(PoemStatus::PUBLISHED);
         $poem->setPublishedAt(new \DateTimeImmutable());
