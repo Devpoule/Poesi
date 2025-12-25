@@ -22,7 +22,7 @@ class AuthorReward
     #[ORM\JoinColumn(nullable: false)]
     private ?Author $author = null;
 
-    #[ORM\ManyToOne(targetEntity: Reward::class)]
+    #[ORM\ManyToOne(targetEntity: Reward::class, inversedBy: 'authorRewards')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Reward $reward = null;
 

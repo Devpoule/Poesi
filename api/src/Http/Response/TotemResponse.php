@@ -18,6 +18,7 @@ final class TotemResponse
     {
         return [
             'id'          => $totem->getId(),
+            'key'         => $totem->getKey(),
             'name'        => $totem->getName(),
             'description' => $totem->getDescription(),
             'picture'     => $totem->getPicture(),

@@ -1,270 +1,267 @@
+# POESI — Cahier des Charges
+
+## 1. Présentation générale
+
+POESI est une application poétique **sobre, symbolique et non compétitive**, dédiée à l’écriture et à la perception sensible des textes.
+
+Elle ne vise ni la performance, ni la mise en concurrence des auteurs.  
+Elle privilégie :
+- la **résonance** plutôt que l’évaluation,
+- la **perception** plutôt que le jugement,
+- la **lenteur** plutôt que la viralité.
+
+L’expérience repose sur :
+- un **éditeur poétique immersif**,
+- des **référentiels symboliques canoniques** (totems, moods, plumes, symboles, reliques),
+- une **révélation progressive** de la perception collective (selon les cas),
+- une **esthétique de l’envol**, élégante et silencieuse.
 
 ---
 
-# **📘 Application Poétique — Cahier des Charges Complet**
+## 2. Principes fondateurs
 
-## 1. **Présentation Générale**
+- Pas de score.
+- Pas de classement.
+- Pas de “meilleur auteur”.
+- Pas de gamification agressive.
 
-L’application poétique est un espace d’écriture immersive et prestigieuse, accessible à tous âges mais conçue avec une direction artistique raffinée.  
-Le cœur du concept repose sur :
+À la place :
+- des **symboles**,
+- des **indices sensibles**,
+- une **lecture active et respectueuse**.
 
-- un **éditeur poétique chromatique**,
-    
-- la **symbolique des oiseaux** comme totems personnels,
-    
-- des **animations de l’envol** lors des moments d’inspiration intense (états de grâce),
-    
-- une **expérience émotionnelle minimaliste et élégante**, sans imagerie enfantine.
-    
-
-L’objectif : **offrir un environnement inspirant où la création poétique devient un voyage émotionnel et visuel.**
+Le texte n’est jamais noté.  
+Il est **perçu**.
 
 ---
 
-## 2. **Modules Fonctionnels**
+## 3. Référentiels canoniques (Lore)
 
-### 2.1. **Identité de l’Auteur**
+Tous les éléments symboliques reposent sur un **canon versionné**, stocké dans des fichiers JSON immuables.
 
-- Choix d’un oiseau totem (liste restreinte et prestigieuse).
-    
-- Animation d’**éclosion de l’œuf** (naissance symbolique).
-    
-- Animation de **frappe de la pièce** comme sceau identitaire (sans personnage).
-    
-- Création du profil minimal : pseudo, oiseau, sceau automatique.
-    
+### 3.1 Référentiels existants
 
-**Objectifs UX :** émerveillement, initiation, simplicité.
+- **Totems** — posture d’écriture  
+- **Moods** — tonalité choisie ou perçue  
+- **Feathers (Plumes)** — marqueurs de résonance  
+- **Symbols** — figures de l’envol  
+- **Relics** — marqueurs rares et non compétitifs  
 
----
-
-### 2.2. **Système Chromatique des Émotions**
-
-Chaque couleur représente un état émotionnel et influence :
-
-- l’ambiance visuelle de l’éditeur,
-    
-- les micro-animations,
-    
-- la tonalité perçue du texte.
-    
-
-Nuancier : Rouge, Orange, Jaune, Vert, Bleu, Indigo, Violet, Blanc, Noir, Gris.
+Chaque référentiel :
+- possède sa **table dédiée**
+- est synchronisé via une **commande CLI**
+- peut être ajusté par évolution de JSON (fixtures++)
 
 ---
 
-### 2.3. **Éditeur Poétique**
+## 4. Identité de l’Auteur
 
-Fonction centralisatrice :
+### 4.1 Totem
 
-- Écriture en plein écran.
-    
-- Sélecteur d’émotions (couleurs).
-    
-- Mini-analyse stylistique (détection de rimes, musicalité, répétitions).
-    
-- Déclenchement d’un **état de grâce** → animations d’envol (ailes, cyclone, météore, fusée) + apparition subtile de l’oiseau totem.
-    
-- Sauvegarde automatique.
-    
+- Chaque auteur choisit un **totem principal**.
+- Le totem représente une **posture d’écriture**, pas une identité figée.
+- Le totem est visible mais **non hiérarchique**.
 
-**Exigence :** une interface épurée, élégante, jamais intrusive.
+### 4.2 État initial
 
----
+- Totem par défaut : **l’Œuf**
+- Il symbolise l’attente, la potentialité, l’entrée dans l’écriture.
 
-### 2.4. **Galerie et Lecture**
-
-- Liste des poèmes sauvegardés.
-    
-- Visualisation avec animations douces.
-    
-- Export image / texte.
-    
-- Partage optionnel (réseaux sociaux ou export local).
-    
+Aucune animation obligatoire à ce stade :  
+l’UX reste **légère et respectueuse**.
 
 ---
 
-### 2.5. **Onboarding**
+## 5. Système des Moods (ambiguïté volontaire / perception)
 
-Étapes :
+Un texte possède un **mood** (tonalité).
 
-1. Choix d’un oiseau (sans surcharger).
-    
-2. Animation d’éclosion → symbole d’éveil créatif.
-    
-3. Animation de la pièce frappée → création du sceau.
-    
-4. Arrivée dans l’éditeur.
-    
+### 5.1 Règle principale
 
-Ton visuel : **prestige, silence, lumière, émergence.**
+Le mood peut être :
 
----
+1) **Défini par l’auteur** (choix explicite)  
+ou  
+2) **Déduit par les lecteurs** si l’auteur laisse le mood à **Neutre**  
+(option par défaut)
 
-## 3. **Conception UX/UI**
+### 5.2 Déduction par les lecteurs (si mood = Neutre)
 
-### 3.1. Moodboard
+- Le texte commence avec un mood **non révélé / indéterminé**
+- Les lecteurs perçoivent le texte via une **interaction UX indirecte**  
+  (questions, ressentis, gestes simples)
+- Les interactions contribuent à révéler progressivement un **mood dominant**
 
-- Éléments : lumière diffuse, lignes fines, symboles d’envol, palettes douces.
-    
-- Références : calligraphie moderne, design d’application de méditation premium.
-    
+### 5.3 Moods canoniques
 
-### 3.2. Palette Chromatique
-
-Pour chaque couleur → définir :
-
-- teinte dominante
-    
-- variante claire
-    
-- micro-anim
-    
-- lien émotionnel
-    
-
-### 3.3. Composants UI
-
-- Zone de texte immersive
-    
-- Toolbar minimaliste
-    
-- Indicateurs d’état de grâce
-    
-- Carte de poème (galerie)
-    
+Rouge, Orange, Jaune, Vert, Bleu, Indigo, Violet, Blanc, Noir, Gris, **Neutre**.
 
 ---
 
-## 4. **Architecture Technique**
+## 6. Plumes (Feathers)
 
-### 4.1. Technologies
+Les plumes ne sont pas des récompenses quantitatives.  
+Elles signalent une **résonance**, pas une qualité.
 
-À choisir selon ambition :
+### 6.1 Canon initial
 
-- Web App PWA (React/Vue + animations Lottie/WebGL)
-    
-- Mobile natif ultérieurement
-    
+- **Bronze** — premiers échos  
+- **Argent** — circulation du texte  
+- **Or** — impact durable  
 
-### 4.2. Modules backend
+### 6.2 Règle de révélation
 
-- Profil utilisateur
-    
-- Stockage des poèmes
-    
-- Analyse stylistique simple
-    
-- Historique des émotions
-    
+- Les plumes d’un texte peuvent être **cachées** tant que le lecteur n’a pas interagi
+- Une fois l’interaction faite, la plume (ou le niveau) peut être révélée
 
-### 4.3. Base de données
-
-Tables :
-
-- `user` (pseudo, oiseau, sceau)
-    
-- `poem` (contenu, couleur dominante, date)
-    
-- `stats` (optionnel)
-    
+*(La mécanique exacte de calcul ou d’attribution peut évoluer, mais l’intention reste : perception plutôt que compétition.)*
 
 ---
 
-## 5. **Direction Artistique**
+## 7. Symboles
 
-### 5.1. Oiseaux (totems)
+Les symboles représentent des **formes universelles de l’envol** :
 
-Chaque oiseau doit être :
+- Ailes  
+- Tourbillon  
+- Météore  
+- Horizon  
+- Halo  
 
-- identifiable par sa silhouette,
-    
-- stylisé avec élégance,
-    
-- associé à une qualité poétique.
-    
+Ils peuvent apparaître :
+- lors de la lecture,
+- lors de la révélation d’un mood,
+- lors de la révélation d’une plume,
+- lors d’événements rares.
+
+Ils sont **visuels**, jamais explicatifs.
+
+---
+
+## 8. Reliques
+
+Les reliques sont :
+- rares,
+- non compétitives,
+- attribuées à des **moments symboliques**.
 
 Exemples :
+- renaissance après silence,
+- constance sur la durée,
+- élévation exceptionnelle.
 
-- Aigrette — pureté
-    
-- Hirondelle — élan
-    
-- Faucon — précision
-    
-- Colombe — paix intérieure
-    
-
-### 5.2. Animations d’Éclat
-
-- Éclosion : fissure lumineuse puis surgissement doux.
-    
-- Frappe de pièce : flash, impact, apparition du motif.
-    
-- État de grâce : ailes / cyclone / météore / fusée (choix selon oiseau).
-    
+Une relique **ne se chasse pas**.  
+Elle survient.
 
 ---
 
-## 6. **État de Grâce**
+## 9. Éditeur Poétique
 
-Déclenché si :
+### 9.1 Fonctionnalités
 
-- répétitions harmoniques
-    
-- rimes récurrentes
-    
-- rythme équilibré
-    
-- cohérence chromatique
-    
+- Écriture plein écran
+- Interface silencieuse
+- Sauvegarde automatique
+- Aucun compteur intrusif
 
-Effets :
+### 9.2 Gestion du mood dans l’éditeur
 
-- Montée de lumière
-    
-- Apparition du symbole d’envol
-    
-- L’oiseau totem se dessine brièvement
-    
-- Sceau qui pulse légèrement
-    
+- Par défaut, le mood est **Neutre**
+- L’auteur peut :
+  - garder Neutre (mood déduit ensuite par les lecteurs)
+  - sélectionner un mood explicitement (mood fixé par l’auteur)
+
+### 9.3 Philosophie
+
+- Pas d’analyse en temps réel intrusive.
+- Pas de “score stylistique”.
+- L’écriture reste **libre**, sans feedback normatif.
+
+Les mécaniques avancées (rythme, répétition, musicalité) pourront être explorées plus tard, de façon non prescriptive.
 
 ---
 
-## 7. **Feuille de Route (8 Sprints)**
+## 10. Lecture & Galerie
 
-_(résumé pour Obsidian)_
+- Galerie personnelle des textes
+- Lecture épurée
+- Révélation progressive (mood / plumes) selon les cas
+- Export texte / image
+- Partage optionnel, jamais obligatoire
 
-### **Sprint 1 – Fondations**
+---
 
-Oiseaux, couleurs, onboarding, moodboard, stack.
+## 11. Architecture technique
 
-### **Sprint 2 – UX/UI**
+### 11.1 Backend
 
-Maquettes, storyboards, sceau.
+- Symfony
+- Architecture hexagonale légère
+- API-first (JSON only)
 
-### **Sprint 3 – Identité Auteur**
+### 11.2 Couches
 
-Éclosion, sceau, profil.
+- **Domain** — règles, lore, invariants  
+- **Http** — controllers, requests, responses  
+- **Infrastructure** — Doctrine, DB, listeners  
+- **Command** — sync lore, maintenance  
+- **Support** — utilitaires génériques  
 
-### **Sprint 4 – Éditeur Poétique**
+### 11.3 Référentiels
 
-Écriture, couleurs, analyses simples.
+Chaque référentiel possède :
+- CRUD API (admin / interne)
+- Commande `app:lore:sync-*`
+- Table dédiée
+- Documentation lore associée
 
-### **Sprint 5 – États de Grâce**
+---
 
-Symboles, logique d’activation.
+## 12. Base de données
 
-### **Sprint 6 – Galerie**
+Tables principales :
+- `author`
+- `feather`
+- `mood`
+- `poem`
+- `relic`
+- `symbol`
+- `totem`
+- `user`
 
-Listes, export.
+Tables relationnelles possibles :
+- `author_relic`
+- `author_reward`
+- `feather_vote`
 
-### **Sprint 7 – Artistique**
+---
 
-Textes narratifs, ajustements.
+## 13. Feuille de route
 
-### **Sprint 8 – Tests & Optimisation**
+### Phase 1 — Fondations
+- Lore canonique
+- Référentiels DB
+- Sync commands
+- Architecture API
 
-Finalisation, Beta.
+### Phase 2 — Lecture & Perception
+- Lecture silencieuse
+- Gestes de perception
+- Révélation mood / plume quand applicable
+
+### Phase 3 — Écriture
+- Éditeur minimal
+- Sauvegarde
+- Galerie personnelle
+
+### Phase 4 — Symbolique avancée
+- Symboles d’envol
+- Reliques
+- Événements rares
+
+### Phase 5 — Raffinement
+- UX
+- lenteur
+- cohérence esthétique
+
+---

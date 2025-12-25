@@ -1,4 +1,4 @@
-# POESI — Lore (Canon fondateur)
+# POESI
 
 POESI est une application où les textes ne sont pas simplement publiés : **ils prennent leur envol**.  
 Le lore sert uniquement à donner une **cohérence symbolique** aux éléments visibles (totems, moods, symboles, plumes), sans surcharge narrative.

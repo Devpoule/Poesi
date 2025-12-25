@@ -36,6 +36,14 @@ final class TotemRepository extends ServiceEntityRepository implements TotemRepo
         return $totems;
     }
 
+    public function getByKey(string $key): ?Totem
+    {
+        /** @var Totem|null $totem */
+        $totem = $this->findOneBy(['key' => $key]);
+
+        return $totem;
+    }
+
     public function findAllOrdered(): array
     {
         /** @var Totem[] $totems */
@@ -46,16 +54,17 @@ final class TotemRepository extends ServiceEntityRepository implements TotemRepo
 
     public function getRandomExcludingId(int $excludedId): ?Totem
     {
-        /** @var Totem|null $totem */
-        $totem = $this->createQueryBuilder('t')
+        $totems = $this->createQueryBuilder('t')
             ->andWhere('t.id != :excludedId')
             ->setParameter('excludedId', $excludedId)
-            ->orderBy('RAND()')
-            ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
 
-        return $totem;
+        if ($totems === []) {
+            return null;
+        }
+
+        return $totems[array_rand($totems)];
     }
 
     public function save(object $totem): void

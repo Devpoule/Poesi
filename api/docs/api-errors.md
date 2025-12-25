@@ -5,14 +5,13 @@ This project uses a single, consistent JSON error format for all endpoints.
 ## 1. Response format
 
 All API responses follow the same structure:
-
-- `status` (bool): success or failure
-- `type` (string): UI feedback type (success, error, validation_error, conflict, warning, etc.)
-- `code` (string): stable technical code for frontend (mobile + web)
-- `message` (string|null): human-readable message
-- `data` (mixed|null): payload on success, optional on error
-- `errors` (array|null): field errors for validation, or details for debugging (optional)
-- `meta` (array|null): pagination or extra info
+   - `status` (bool): success or failure
+   - `type` (string): UI feedback type (success, error, validation_error, conflict, warning, etc.)
+   - `code` (string): stable technical code for frontend (mobile + web)
+   - `message` (string|null): human-readable message
+   - `data` (mixed|null): payload on success, optional on error
+   - `errors` (array|null): field errors for validation, or details for debugging (optional)
+   - `meta` (array|null): pagination or extra info
 
 ---
 
@@ -23,17 +22,23 @@ All API responses follow the same structure:
 Domain exceptions describe business situations and must remain HTTP-agnostic.  
 They are usually lightweight (sometimes empty) and only exist as types.
 
-Examples:
-- `NotFound\PoemNotFoundException`
-- `CannotDelete\CannotDeletePoemWithVotesException`
-- `NotFound\AuthorNotFoundException`
-
 Domain exceptions are thrown by **Domain Services**.
 
 They do not know:
-- HTTP status codes
-- JSON structure
-- UI feedback types
+   - HTTP status codes
+   - JSON structure
+   - UI feedback types
+
+Typical families:
+   - NotFound\*NotFoundException
+   - Conflict\*Exception
+   - CannotDelete\*Exception
+   - CannotPublish\*Exception
+
+Examples:
+   - `NotFound\PoemNotFoundException`
+   - `CannotDelete\CannotDeletePoemWithVotesException`
+   - `Conflict\PoemKeyAlreadyExistsException`
 
 ---
 
@@ -41,40 +46,54 @@ They do not know:
 
 API exceptions describe HTTP-facing problems.  
 They implement `ApiExceptionInterface` and carry:
-
-- error code
-- HTTP status
-- UI feedback type
-- optional safe message
-- optional error details
+   - error code
+   - HTTP status
+   - UI feedback type
+   - optional safe message
+   - optional error details
 
 Examples:
-- `ValidationException`
-- `UnauthorizedApiException`
-- `ForbiddenApiException`
-- `RateLimitedApiException`
+   - `ValidationException`
+   - `UnauthorizedApiException`
+   - `ForbiddenApiException`
+   - `RateLimitedApiException`
 
 These are typically thrown by:
-- Request validation layer
-- Security / authentication layer
-- API infrastructure
+   - Request validation layer
+   - Security / authentication layer
+   - API infrastructure
 
 ---
 
 ## 3. Single exit point: `ApiExceptionSubscriber`
 
-`ApiExceptionSubscriber` converts exceptions to `JsonResponse`:
+ApiExceptionSubscriber converts all exceptions to a JsonResponse:
 
-1) If the exception implements `ApiExceptionInterface`  
-   → build JSON directly from it
+### Priority order
 
-2) If the exception is a known domain exception  
-   → map it to an API error response
+#### 1.ValidationException
+→ returns validation_error (HTTP 422)
 
-3) Otherwise  
-   → return `INTERNAL_ERROR` (500) and log the exception
+#### 2.ApiExceptionInterface
+→ returns the exception-defined httpStatus, code, type
 
-Controllers should **not** contain generic try/catch blocks.
+#### 3.DomainException
+→ mapped by family:
+   - NotFoundException → 404
+   - ConflictException → 409
+   - CannotDeleteException → 409
+   - CannotPublish* → 409
+   - default → 400
+
+#### Important: in the current implementation, HTTP 409 responses use type = warning.
+
+#### 4.ForeignKeyConstraintViolationException
+→ generic 409 DELETE_CONFLICT (type warning)
+
+#### 5.Fallback
+→ 500 INTERNAL_ERROR
+
+Controllers should not contain generic try/catch blocks.
 
 ---
 
@@ -84,7 +103,8 @@ Controllers should **not** contain generic try/catch blocks.
 
 1) Create a domain exception in `App\Domain\Exception`
 2) Throw it from a Domain Service
-3) Map it in `ApiExceptionSubscriber` to:
+3) Ensure it provides a stable error code (getErrorCode()), or map it in the subscriber if needed
+4) Suscriber returns:
    - HTTP status
    - stable error code
    - UI feedback type
@@ -94,28 +114,33 @@ Controllers should **not** contain generic try/catch blocks.
 1) Validate request in a Request object (`CreateXRequest`)
 2) Throw `ValidationException` with field => message errors
 3) Subscriber returns:
-   - HTTP 400
+   - HTTP 422
    - `type = validation_error`
+   - `errors` contains field-level messages
 
 ---
 
 ## 5. Recommended HTTP statuses
 
-- 400 BAD_REQUEST: payload malformed or invalid
-- 401 UNAUTHORIZED: not authenticated
-- 403 FORBIDDEN: authenticated but not allowed
-- 404 NOT_FOUND: resource does not exist
-- 409 CONFLICT: domain rule violation
-- 422 UNPROCESSABLE_ENTITY (optional): advanced validation
-- 429 TOO_MANY_REQUESTS: rate limiting
-- 500 INTERNAL_SERVER_ERROR: unexpected error
+   - 400 BAD_REQUEST: payload malformed or invalid
+   - 401 UNAUTHORIZED: not authenticated
+   - 403 FORBIDDEN: authenticated but not allowed
+   - 404 NOT_FOUND: resource does not exist
+   - 409 CONFLICT: domain rule violation
+   - 422 UNPROCESSABLE_ENTITY (optional): advanced validation
+   - 429 TOO_MANY_REQUESTS: rate limiting
+   - 500 INTERNAL_SERVER_ERROR: unexpected error
 
 ---
 
 ## 6. Logging strategy
 
-- Domain exceptions: `info` or `notice`
-- Validation errors: no logging (or `debug`)
-- Unexpected errors: `error` with exception class and message
+Logging is centralized in ApiExceptionSubscriber:
+   - Validation exceptions: `warning` with `validation_errors`
+   - Domain exceptions: `info` with `domain_code`
+   - API exceptions: `warning` with `api_code` + `http_status`
+   - Unexpected errors: `error` with stack trace
 
 Sensitive data must never appear in API responses.
+
+---

@@ -3,11 +3,23 @@
 ## Overview
 Application source code structured by responsibility:
 
-- **Domain/**: business model and rules
-- **Http/**: API delivery layer (controllers, input, output)
-- **Infrastructure/**: technical implementations (DB, mail, framework wiring)
-- **Support/**: shared generic helpers
+- **Domain/**  
+  Business model and rules (framework-agnostic)
+
+- **Http/**  
+  API delivery layer (controllers, input, output)
+
+- **Infrastructure/**  
+  Technical implementations (DB, mail, framework wiring)
+
+- **Command/**  
+  CLI commands (sync, maintenance, batch operations)
+
+- **Support/**  
+  Shared generic helpers
 
 ## Rule of thumb
-Business rules go inward (Domain). Technical details stay outward (Infrastructure).
-Http is only a delivery mechanism.
+Business rules go inward (**Domain**).  
+Technical details stay outward (**Infrastructure**).  
+Http is only a delivery mechanism.  
+Commands orchestrate outside HTTP.

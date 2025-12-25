@@ -1,60 +1,60 @@
 [
   {
-    "color": "red",
+    "key": "red",
     "label": "Rouge",
     "description": "Un texte intense, brûlant, chargé.",
     "icon": "/public/images/moods/red.png"
   },
   {
-    "color": "orange",
+    "key": "orange",
     "label": "Orange",
     "description": "Un texte vivant, stimulant, en mouvement.",
     "icon": "/public/images/moods/orange.png"
   },
   {
-    "color": "yellow",
+    "key": "yellow",
     "label": "Jaune",
     "description": "Un texte lumineux, clair, ouvert.",
     "icon": "/public/images/moods/yellow.png"
   },
   {
-    "color": "green",
+    "key": "green",
     "label": "Vert",
     "description": "Un texte apaisant, stable, respirant.",
     "icon": "/public/images/moods/green.png"
   },
   {
-    "color": "blue",
+    "key": "blue",
     "label": "Bleu",
     "description": "Un texte calme, posé, maîtrisé.",
     "icon": "/public/images/moods/blue.png"
   },
   {
-    "color": "indigo",
+    "key": "indigo",
     "label": "Indigo",
     "description": "Un texte intérieur, nocturne, lucide.",
     "icon": "/public/images/moods/indigo.png"
   },
   {
-    "color": "violet",
+    "key": "violet",
     "label": "Violet",
     "description": "Un texte rêveur, artistique, profond.",
     "icon": "/public/images/moods/violet.png"
   },
   {
-    "color": "black",
+    "key": "black",
     "label": "Noir",
     "description": "Un texte grave, dense, sombre avec tenue.",
     "icon": "/public/images/moods/black.png"
   },
   {
-    "color": "white",
+    "key": "white",
     "label": "Blanc",
     "description": "Un texte silencieux, minimal, suspendu.",
     "icon": "/public/images/moods/white.png"
   },
   {
-    "color": "grey",
+    "key": "grey",
     "label": "Gris",
     "description": "Un texte neutre, en attente de perception.",
     "icon": "/public/images/moods/grey.png"

@@ -184,7 +184,11 @@ final class LoreCatalog
     ### Internals ###
     #################
 
-    /**
+    /***
+     *
+     * @param string $path
+     * @throws \RuntimeException
+     * 
      * @return list<array<string, mixed>>
      */
     private function readJson(string $path): array
@@ -211,8 +215,9 @@ final class LoreCatalog
 
     /**
      * @param list<array<string, mixed>> $rows
-     *
-     * @return array<string, array<string, mixed>>
+     * @param string $key
+     * @throws \RuntimeException
+     * @return array
      */
     private function indexByKey(array $rows, string $key): array
     {

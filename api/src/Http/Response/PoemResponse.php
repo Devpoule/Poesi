@@ -18,27 +18,9 @@ final class PoemResponse
     }
 
     /**
-     * @return array{
-     *   id:int|null,
-     *   title:string,
-     *   content:string,
-     *   status:string,
-     *   moodColor:string|null,
-     *   mood:array{label:string,description:string,icon:string}|null,
-     *   symbolType:string|null,
-     *   symbol:array{label:string,description:string,picture:string}|null,
-     *   createdAt:string,
-     *   publishedAt:string|null,
-     *   author:array{id:int|null,pseudo:string|null,totemId:int|null}|null,
-     *   publish:array{canPublish:bool,reason:string|null},
-     *   featherVotes:array{votesTotal:int,votesBronze:int,votesSilver:int,votesGold:int},
-     *   stats:array{votesTotal:int,votesBronze:int,votesSilver:int,votesGold:int},
-     *   feathers:array{
-     *     bronze:array{label:string,description:string,icon:string},
-     *     silver:array{label:string,description:string,icon:string},
-     *     gold:array{label:string,description:string,icon:string}
-     *   }
-     * }
+     * @param Poem $poem
+     * 
+     * @return array{author: array{id: int|null, pseudo: string, totemId: int|null|null, content: string, createdAt: string, featherVotes: array{votesBronze: int, votesGold: int, votesSilver: int, votesTotal: int}, feathers: array, id: int|null, mood: array{description: string, icon: string, label: string}|null, moodColor: string|null, publish: array{canPublish: bool, reason: string|null}, publishedAt: string|null, stats: array{votesBronze: int, votesGold: int, votesSilver: int, votesTotal: int}, status: string, symbol: array{description: string, label: string, picture: string}|null, symbolType: string|null, title: string}}
      */
     public function item(Poem $poem): array
     {

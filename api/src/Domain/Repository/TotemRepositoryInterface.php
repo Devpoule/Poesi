@@ -24,6 +24,11 @@ interface TotemRepositoryInterface extends EntityRepositoryInterface
     public function findAll(): array;
 
     /**
+     * Retrieve a totem by its unique key.
+     */
+    public function getByKey(string $key): ?Totem;
+
+    /**
      * Return a random totem excluding a given id.
      */
     public function getRandomExcludingId(int $excludedId): ?Totem;

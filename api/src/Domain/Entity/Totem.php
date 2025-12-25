@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Represents a bird totem that can be chosen by authors.
  */
 #[ORM\Entity(repositoryClass: TotemRepository::class)]
+#[ORM\Table(name: 'totem')]
 class Totem
 {
     #[ORM\Id]
@@ -18,7 +19,10 @@ class Totem
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 120)]
+    #[ORM\Column(name: 'totem_key', length: 100, unique: true, nullable: false)]
+    private string $key;
+
+    #[ORM\Column(length: 120, nullable: false)]
     private string $name;
 
     #[ORM\Column(type: 'text', nullable: true)]
@@ -44,6 +48,24 @@ class Totem
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * Returns the unique key of the totem.
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    /**
+     * Sets the unique key of the totem.
+     */
+    public function setKey(string $key): self
+    {
+        $this->key = $key;
+
+        return $this;
     }
 
     /**
