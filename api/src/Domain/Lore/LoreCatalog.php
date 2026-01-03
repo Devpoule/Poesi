@@ -41,17 +41,17 @@ final class LoreCatalog
 
         $this->moods = $this->indexByKey(
             $this->readJson($basePath . '/moods.initial.json'),
-            'color'
+            'key'
         );
 
         $this->feathers = $this->indexByKey(
             $this->readJson($basePath . '/feathers.initial.json'),
-            'type'
+            'key'
         );
 
         $this->symbols = $this->indexByKey(
             $this->readJson($basePath . '/symbols.initial.json'),
-            'type'
+            'key'
         );
 
         $this->relics = $this->indexByKey(
