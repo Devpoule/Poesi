@@ -35,9 +35,7 @@ const poemCardShadowStyle = Platform.select({
 }) as any;
 
 export const styles = StyleSheet.create({
-  page: {
-    width: '100%',
-  },
+  page: {},
   heroWrapper: {
     marginBottom: spacing.md,
   },
