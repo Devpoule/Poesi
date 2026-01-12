@@ -1,5 +1,5 @@
 import { Platform, StyleSheet } from 'react-native';
-import { colors, spacing, typography } from '../../../support/theme/tokens';
+import { colors, spacing, typography, layout } from '../../../support/theme/tokens';
 
 const moodShadowLightStyle = Platform.select({
   web: {},
@@ -64,8 +64,8 @@ export const styles = StyleSheet.create({
     width: '100%',
     ...Platform.select({
       web: {
-        width: '60%',
-        maxWidth: 1200,
+        width: layout.contentWidth,
+        maxWidth: layout.maxWidth,
         alignSelf: 'center',
       },
       default: {},

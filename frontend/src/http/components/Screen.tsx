@@ -8,7 +8,7 @@ import {
   ViewStyle,
   Platform,
 } from 'react-native';
-import { colors, spacing } from '../../support/theme/tokens';
+import { colors, spacing, layout } from '../../support/theme/tokens';
 
 type ScreenProps = {
   children: React.ReactNode;
@@ -101,12 +101,12 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.lg,
     ...Platform.select({
-      web: {
-        width: '60%',
-        maxWidth: 1200,
-        alignSelf: 'center',
-        paddingTop: 96,
-      },
+        web: {
+          width: layout.contentWidth,
+          maxWidth: layout.maxWidth,
+          alignSelf: 'center',
+          paddingTop: 96,
+        },
       default: {
         width: '100%',
       },

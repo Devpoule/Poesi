@@ -42,3 +42,12 @@ export const typography = {
   caption: 13,
   small: 12,
 };
+
+export const layout = {
+  // percentage of the viewport to leave as side margins on web
+  sidePercent: '20%',
+  // width of the content area on web (complementary to sidePercent)
+  contentWidth: '60%',
+  // maximum width in px for large screens
+  maxWidth: 1200,
+};

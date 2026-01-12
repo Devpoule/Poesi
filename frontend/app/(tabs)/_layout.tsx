@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Platform } from 'react-native';
 import { TabItem } from '../../src/http/components/TabItem';
-import { colors, spacing } from '../../src/support/theme/tokens';
+import { colors, spacing, layout } from '../../src/support/theme/tokens';
 
 export default function TabsLayout() {
   return (
@@ -18,8 +18,8 @@ export default function TabsLayout() {
           paddingBottom: spacing.xs,
           overflow: 'visible',
           position: Platform.select({ web: 'fixed', default: 'absolute' }) as any,
-          left: Platform.OS === 'web' ? '20%' : spacing.md,
-          right: Platform.OS === 'web' ? '20%' : spacing.md,
+          left: Platform.OS === 'web' ? layout.sidePercent : spacing.md,
+          right: Platform.OS === 'web' ? layout.sidePercent : spacing.md,
           top: Platform.OS === 'web' ? 14 : undefined,
           bottom: Platform.OS === 'web' ? undefined : 14,
           borderRadius: 24,
