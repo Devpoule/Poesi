@@ -1,20 +1,20 @@
 import { Platform } from 'react-native';
 
 export const colors = {
-  background: '#F6F1EA',
-  surface: '#FFFFFF',
-  surfaceMuted: '#F1E8DD',
-  surfaceElevated: '#FBF7F1',
-  textPrimary: '#2B221B',
-  textSecondary: '#5A4F46',
-  textMuted: '#8A8077',
-  accent: '#C9A87A',
-  accentStrong: '#8F5C2B',
-  accent: '#B07A47',
-  accentSoft: '#EAD7BF',
-  border: '#E6DDD2',
-  danger: '#B74B47',
-  success: '#3E6C5A',
+  // Dark, modern palette inspired by Discord's interface
+  background: '#0F1115', // page background
+  surface: '#2F3136', // cards / surfaces
+  surfaceMuted: '#232428',
+  surfaceElevated: '#36393F',
+  textPrimary: '#E6E6E6',
+  textSecondary: '#B9BBBE',
+  textMuted: '#8E9297',
+  accent: '#5865F2', // primary accent (Discord purple)
+  accentStrong: '#4752C4',
+  accentSoft: 'rgba(88,101,242,0.10)',
+  border: '#202225',
+  danger: '#F04747',
+  success: '#57F287',
 };
 
 export const spacing = {
@@ -26,39 +26,25 @@ export const spacing = {
   xxl: 40,
 };
 
-const baseFont =
-  Platform.select({
-    ios: 'Baskerville',
-    android: 'serif',
-    web: '"Baskerville", "Georgia", "Times New Roman", serif',
-    default: 'Georgia',
-  }) ?? 'Georgia';
-
-// UI and heading font stacks. Keep serif for headings, sans-serif for UI/body.
+// Use a clean sans stack for a modern, app-like UI (Inter / system fallbacks)
 const headingFont =
   Platform.select({
-    ios: 'Baskerville',
-    android: 'serif',
-    web: '"Baskerville", "Georgia", "Times New Roman", serif',
-    default: 'Georgia',
-  }) ?? 'Georgia';
-
-const uiFont =
-  Platform.select({
-    ios: 'System',
+    ios: 'Inter',
     android: 'sans-serif',
     web: '"Inter", -apple-system, system-ui, Roboto, "Helvetica Neue", Arial, sans-serif',
     default: 'System',
   }) ?? 'System';
+
+const uiFont = headingFont;
 
 export const typography = {
   // body / UI font
   fontFamily: uiFont,
   // heading font (serif) used for titles
   headingFont,
-  display: 32,
-  title: 26,
-  body: 16,
+  display: 30,
+  title: 22,
+  body: 15,
   caption: 13,
   small: 12,
 };

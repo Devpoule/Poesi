@@ -39,7 +39,7 @@ export function Button({
   const isPrimary = variant === 'primary';
   const bg = backgroundColor ?? (isPrimary ? colors.accent : colors.surface);
   const hoverBg = hoverBackgroundColor ?? (isPrimary ? colors.accentStrong : colors.surfaceElevated);
-  const txt = textColor ?? (isPrimary ? colors.textPrimary : colors.textSecondary);
+  const txt = textColor ?? (isPrimary ? '#FFFFFF' : colors.textSecondary);
 
   return (
     <Pressable
@@ -66,12 +66,13 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   primary: {
     borderColor: 'transparent',
     ...shadowStyle,
+    ...Platform.select({ web: { transition: 'transform 180ms, box-shadow 180ms' } as any, default: {} }),
   },
   secondary: {
     backgroundColor: colors.surface,

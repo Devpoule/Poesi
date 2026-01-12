@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
     opacity: 0.75,
-    backgroundColor: colors.accentSoft,
+    backgroundColor: colors.surfaceElevated,
     pointerEvents: 'none',
   },
   orbTop: {
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     width: 220,
     height: 220,
     borderRadius: 110,
-    backgroundColor: colors.accentSoft,
+    backgroundColor: colors.accent,
     top: -90,
     right: -60,
     opacity: 0.6,

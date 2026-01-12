@@ -40,7 +40,7 @@ export const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   heroCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceElevated,
     borderRadius: 24,
     padding: spacing.lg,
     borderWidth: 1,
@@ -77,7 +77,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     width: 200,
     height: 2,
-    backgroundColor: colors.accent,
+    backgroundColor: colors.accentStrong,
     opacity: 0.35,
     top: 70,
     left: -40,
@@ -108,7 +108,7 @@ export const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   heroBadge: {
-    backgroundColor: colors.surfaceElevated,
+    backgroundColor: colors.surface,
     borderRadius: 999,
     borderWidth: 1,
     borderColor: colors.border,
@@ -134,7 +134,7 @@ export const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: typography.caption,
     fontFamily: typography.fontFamily,
-    color: colors.textPrimary,
+    color: '#FFFFFF',
   },
   secondaryButton: {
     marginTop: spacing.sm,

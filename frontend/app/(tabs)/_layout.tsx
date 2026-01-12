@@ -10,8 +10,8 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          backgroundColor: colors.surfaceElevated,
+          borderTopColor: 'transparent',
           height: Platform.select({ web: 64, default: 72 }) as number,
           paddingHorizontal: spacing.lg,
           paddingTop: spacing.xs,
@@ -25,13 +25,13 @@ export default function TabsLayout() {
           borderRadius: 24,
           zIndex: Platform.select({ web: 1000, default: undefined }) as any,
           ...Platform.select({
-            web: { boxShadow: '0px 8px 20px rgba(0,0,0,0.06)' } as any,
+            web: { boxShadow: '0px 12px 30px rgba(0,0,0,0.25)' } as any,
             default: {
               shadowColor: '#000',
-              shadowOpacity: 0.08,
+              shadowOpacity: 0.18,
               shadowRadius: 18,
               shadowOffset: { width: 0, height: 10 },
-              elevation: 6,
+              elevation: 8,
             },
           }),
         },
