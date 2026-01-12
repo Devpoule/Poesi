@@ -85,7 +85,7 @@ export const styles = StyleSheet.create({
   },
   heroKicker: {
     fontSize: typography.caption,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textMuted,
     textTransform: 'uppercase',
     letterSpacing: 2,
@@ -93,13 +93,13 @@ export const styles = StyleSheet.create({
   heroTitle: {
     marginTop: spacing.xs,
     fontSize: typography.display,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textPrimary,
   },
   heroSubtitle: {
     marginTop: spacing.xs,
     fontSize: typography.body,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textSecondary,
   },
   heroBadges: {
@@ -185,7 +185,7 @@ export const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: typography.title,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textPrimary,
   },
   sectionHint: {

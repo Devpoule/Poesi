@@ -34,8 +34,28 @@ const baseFont =
     default: 'Georgia',
   }) ?? 'Georgia';
 
+// UI and heading font stacks. Keep serif for headings, sans-serif for UI/body.
+const headingFont =
+  Platform.select({
+    ios: 'Baskerville',
+    android: 'serif',
+    web: '"Baskerville", "Georgia", "Times New Roman", serif',
+    default: 'Georgia',
+  }) ?? 'Georgia';
+
+const uiFont =
+  Platform.select({
+    ios: 'System',
+    android: 'sans-serif',
+    web: '"Inter", -apple-system, system-ui, Roboto, "Helvetica Neue", Arial, sans-serif',
+    default: 'System',
+  }) ?? 'System';
+
 export const typography = {
-  fontFamily: baseFont,
+  // body / UI font
+  fontFamily: uiFont,
+  // heading font (serif) used for titles
+  headingFont,
   display: 32,
   title: 26,
   body: 16,
