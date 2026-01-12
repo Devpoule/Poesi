@@ -1,9 +1,19 @@
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 import { TabItem } from '../../src/http/components/TabItem';
-import { colors, spacing, layout } from '../../src/support/theme/tokens';
+import { spacing, layout, ThemeProvider, useTheme } from '../../src/support/theme/tokens';
 
 export default function TabsLayout() {
+  return (
+    <ThemeProvider>
+      <InnerTabs />
+    </ThemeProvider>
+  );
+}
+
+function InnerTabs() {
+  const { theme, toggle, mode } = useTheme();
+  const colors = theme.colors;
   return (
     <Tabs
       screenOptions={{
@@ -74,3 +84,14 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
+
+// floating toggle placed above tabs on web
+function ThemeToggle() {
+  const { toggle, mode } = useTheme();
+  return (
+    <View style={{ position: 'fixed', right: 24, top: 18, zIndex: 2000 }}>
+      <Pressable onPress={toggle} style={{ padding: 8, borderRadius: 8, backgroundColor: 'transparent' }}>
+        <Text style={{ color: mode === 'dark' ? '#FFF' : '#111' }}>{mode === 'dark' ? '☾' : '☀︎'}</Text>
+      </Pressable>
+    </View>
+  );
