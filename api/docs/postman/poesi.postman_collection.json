@@ -1,0 +1,960 @@
+{
+  "info": {
+    "name": "POESI API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "7228290b-17aa-47e7-91b0-e3aa2c34d41d",
+    "description": "POESI API collection"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Admin login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/login_check",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/login_check",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "User 2 login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/login_check",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_2_email}}\",\n  \"password\": \"{{user_2_password}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/token/refresh",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"<paste_refresh_token_here>\"\n}"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users (admin)",
+          "description": "Admin listing: minimal user data for back-office usage.",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/users?page=1&limit=50&sort=createdAt&direction=DESC"
+          },
+          "response": [
+            {
+              "name": "Example - Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"type\": \"success\",\n  \"code\": \"SUCCESS\",\n  \"message\": \"Users list retrieved.\",\n  \"data\": [\n    {\n      \"id\": 1,\n      \"email\": \"admin@test.local\",\n      \"pseudo\": \"Admin\",\n      \"roles\": [\"ROLE_ADMIN\", \"ROLE_USER\"],\n      \"createdAt\": \"2026-01-01T10:00:00+00:00\",\n      \"lockedAt\": null,\n      \"failedLoginAttempts\": 0\n    }\n  ],\n  \"errors\": null,\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 50,\n      \"total\": 1,\n      \"pages\": 1,\n      \"sort\": \"createdAt\",\n      \"direction\": \"DESC\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "List User Options (admin)",
+          "description": "Lightweight list for selectors (id + label).",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/users/options?page=1&limit=100&sort=id&direction=ASC"
+          },
+          "response": [
+            {
+              "name": "Example - Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"type\": \"success\",\n  \"code\": \"SUCCESS\",\n  \"message\": \"User options retrieved.\",\n  \"data\": [\n    {\n      \"id\": 2,\n      \"label\": \"Writer\"\n    },\n    {\n      \"id\": 3,\n      \"label\": \"user_2@test.local\"\n    }\n  ],\n  \"errors\": null,\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 100,\n      \"total\": 2,\n      \"pages\": 1,\n      \"sort\": \"id\",\n      \"direction\": \"ASC\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Users Public (public)",
+          "description": "Public profiles list (no auth).",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/users/public?page=1&limit=50&sort=id&direction=ASC"
+          },
+          "response": [
+            {
+              "name": "Example - Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"type\": \"success\",\n  \"code\": \"SUCCESS\",\n  \"message\": \"Public users list retrieved.\",\n  \"data\": [\n    {\n      \"id\": 2,\n      \"pseudo\": \"Writer\",\n      \"moodColor\": \"blue\",\n      \"totemId\": 1\n    }\n  ],\n  \"errors\": null,\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 50,\n      \"total\": 1,\n      \"pages\": 1,\n      \"sort\": \"id\",\n      \"direction\": \"ASC\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Show User (owner/admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/users/{{user_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Create User (public)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/users",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{user_email}}\",\n  \"password\": \"{{user_password}}\",\n  \"roles\": [\"ROLE_USER\", \"ROLE_WRITER\"],\n  \"pseudo\": \"Writer\",\n  \"moodColor\": \"blue\",\n  \"totemKey\": \"egg\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User (owner/admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/users/{{user_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pseudo\": \"Writer Updated\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User (owner/admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/users/{{user_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lore (public list)",
+      "item": [
+        {
+          "name": "Get Lore Catalog",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/lore"
+          },
+          "response": []
+        },
+        {
+          "name": "List Feathers",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/feathers?page=1&limit=100&sort=label&direction=ASC"
+          },
+          "response": []
+        },
+        {
+          "name": "List Moods",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/moods?page=1&limit=100&sort=label&direction=ASC"
+          },
+          "response": []
+        },
+        {
+          "name": "List Symbols",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/symbols?page=1&limit=100&sort=label&direction=ASC"
+          },
+          "response": []
+        },
+        {
+          "name": "List Relics",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/relics?page=1&limit=100&sort=rarity&direction=DESC"
+          },
+          "response": []
+        },
+        {
+          "name": "List Totems",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/totems?page=1&limit=100&sort=name&direction=ASC"
+          },
+          "response": []
+        },
+        {
+          "name": "List Rewards",
+          "description": "Paginated list of rewards.",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/rewards?page=1&limit=100&sort=id&direction=ASC"
+          },
+          "response": [
+            {
+              "name": "Example - Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"type\": \"success\",\n  \"code\": \"SUCCESS\",\n  \"message\": \"Rewards list retrieved.\",\n  \"data\": [\n    {\"id\": 1, \"code\": \"FIRST_POEM\", \"label\": \"First poem\"}\n  ],\n  \"errors\": null,\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 100,\n      \"total\": 1,\n      \"pages\": 1,\n      \"sort\": \"id\",\n      \"direction\": \"ASC\"\n    }\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lore (admin CRUD)",
+      "item": [
+        {
+          "name": "Create Feather",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/feathers",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"featherKey\": \"test_feather\",\n  \"label\": \"Test Feather\",\n  \"description\": \"Test feather\",\n  \"icon\": \"\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Feather",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/feathers/{{feather_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Feather",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/feathers/{{feather_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Test Feather Updated\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Feather",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/feathers/{{feather_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Mood",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/moods",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"moodKey\": \"test_mood\",\n  \"label\": \"Test Mood\",\n  \"description\": \"Test mood\",\n  \"icon\": \"\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Mood",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/moods/{{mood_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Mood",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/moods/{{mood_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Test Mood Updated\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Mood",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/moods/{{mood_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Symbol",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/symbols",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"symbolKey\": \"test_symbol\",\n  \"label\": \"Test Symbol\",\n  \"description\": \"Test symbol\",\n  \"picture\": \"\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Symbol",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/symbols/{{symbol_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Symbol",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/symbols/{{symbol_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Test Symbol Updated\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Symbol",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/symbols/{{symbol_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Relic",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/relics",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"relicKey\": \"test_relic\",\n  \"label\": \"Test Relic\",\n  \"description\": \"Test relic\",\n  \"picture\": \"\",\n  \"rarity\": \"common\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Relic",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/relics/{{relic_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Relic",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/relics/{{relic_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Test Relic Updated\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Relic",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/relics/{{relic_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Totem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/totems",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"totemKey\": \"test_totem\",\n  \"name\": \"Test Totem\",\n  \"description\": \"Test totem\",\n  \"picture\": \"\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Totem",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/totems/{{totem_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Totem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/totems/{{totem_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Totem Updated\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Totem",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/totems/{{totem_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rewards (admin CRUD)",
+      "item": [
+        {
+          "name": "Create Reward",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rewards",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TEST_REWARD\",\n  \"label\": \"Test Reward\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Reward",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/rewards/{{reward_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Reward",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/rewards/{{reward_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Test Reward Updated\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Reward",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/rewards/{{reward_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Poems",
+      "item": [
+        {
+          "name": "List Poems",
+          "description": "Paginated list with summary fields (no full content).",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/poems?page=1&limit=20&sort=createdAt&direction=DESC"
+          },
+          "response": [
+            {
+              "name": "Example - Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"type\": \"success\",\n  \"code\": \"SUCCESS\",\n  \"message\": \"Poems list retrieved.\",\n  \"data\": [\n    {\n      \"id\": 12,\n      \"title\": \"Midnight Ink\",\n      \"status\": \"published\",\n      \"moodColor\": \"blue\",\n      \"symbolType\": \"owl\",\n      \"createdAt\": \"2026-01-01T10:00:00+00:00\",\n      \"publishedAt\": \"2026-01-02T10:00:00+00:00\",\n      \"user\": {\n        \"id\": 2,\n        \"pseudo\": \"Writer\",\n        \"totemId\": 1\n      }\n    }\n  ],\n  \"errors\": null,\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 20,\n      \"total\": 1,\n      \"pages\": 1,\n      \"sort\": \"createdAt\",\n      \"direction\": \"DESC\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Poems (full)",
+          "description": "Paginated list with full payload (includes content and vote stats).",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/poems/full?page=1&limit=20&sort=createdAt&direction=DESC"
+          },
+          "response": [
+            {
+              "name": "Example - Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"type\": \"success\",\n  \"code\": \"SUCCESS\",\n  \"message\": \"Poems list retrieved.\",\n  \"data\": [\n    {\n      \"id\": 12,\n      \"title\": \"Midnight Ink\",\n      \"content\": \"Full poem content...\",\n      \"status\": \"published\",\n      \"moodColor\": \"blue\",\n      \"mood\": {\"label\": \"Blue\", \"description\": \"Calm\", \"icon\": \"\"},\n      \"symbolType\": \"owl\",\n      \"symbol\": {\"label\": \"Owl\", \"description\": \"Wise\", \"picture\": \"\"},\n      \"createdAt\": \"2026-01-01T10:00:00+00:00\",\n      \"publishedAt\": \"2026-01-02T10:00:00+00:00\",\n      \"user\": {\"id\": 2, \"pseudo\": \"Writer\", \"totemId\": 1},\n      \"publish\": {\"canPublish\": true, \"reason\": null},\n      \"featherVotes\": {\"votesTotal\": 3, \"votesBronze\": 2, \"votesSilver\": 1, \"votesGold\": 0},\n      \"stats\": {\"votesTotal\": 3, \"votesBronze\": 2, \"votesSilver\": 1, \"votesGold\": 0},\n      \"feathers\": {\n        \"bronze\": {\"label\": \"Bronze\", \"description\": \"\", \"icon\": \"\"},\n        \"silver\": {\"label\": \"Silver\", \"description\": \"\", \"icon\": \"\"},\n        \"gold\": {\"label\": \"Gold\", \"description\": \"\", \"icon\": \"\"}\n      }\n    }\n  ],\n  \"errors\": null,\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 20,\n      \"total\": 1,\n      \"pages\": 1,\n      \"sort\": \"createdAt\",\n      \"direction\": \"DESC\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Poem (writer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/poems",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Poem 1\",\n  \"content\": \"First draft\",\n  \"moodColor\": \"blue\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Poem",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/poems/{{poem_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Poem (writer)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/poems/{{poem_id}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Poem 1 Updated\",\n  \"content\": \"Updated draft\",\n  \"moodColor\": \"blue\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Poem (writer)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/poems/{{poem_id}}/publish"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Poem (writer)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/poems/{{poem_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Feather Votes",
+      "item": [
+        {
+          "name": "List Votes (admin)",
+          "description": "Paginated list with voter + poem summaries.",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/feather-votes?page=1&limit=50&sort=updatedAt&direction=DESC"
+          },
+          "response": [
+            {
+              "name": "Example - Success",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"status\": true,\n  \"type\": \"success\",\n  \"code\": \"SUCCESS\",\n  \"message\": \"Feather votes list retrieved.\",\n  \"data\": [\n    {\n      \"id\": 4,\n      \"featherType\": \"gold\",\n      \"createdAt\": \"2026-01-03T10:00:00+00:00\",\n      \"updatedAt\": \"2026-01-03T10:05:00+00:00\",\n      \"voter\": {\"id\": 2, \"pseudo\": \"Writer\", \"state\": \"known\"},\n      \"poem\": {\"id\": 12, \"title\": \"Midnight Ink\", \"state\": \"known\"}\n    }\n  ],\n  \"errors\": null,\n  \"meta\": {\n    \"pagination\": {\n      \"page\": 1,\n      \"limit\": 50,\n      \"total\": 1,\n      \"pages\": 1,\n      \"sort\": \"updatedAt\",\n      \"direction\": \"DESC\"\n    }\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create Vote (user)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/feather-votes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"poemId\": \"{{poem_id_other}}\",\n  \"featherType\": \"bronze\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Vote",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/feather-votes/{{vote_id}}"
+          },
+          "response": []
+        },
+        {
+          "name": "List Votes For Poem",
+          "description": "Paginated list for a specific poem.",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/feather-votes/poem/{{poem_id_other}}?page=1&limit=50&sort=updatedAt&direction=DESC"
+          },
+          "response": []
+        },
+        {
+          "name": "List Votes For User",
+          "description": "Paginated list for a specific user.",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/feather-votes/user/{{user_id}}?page=1&limit=50&sort=updatedAt&direction=DESC"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Vote",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/feather-votes/{{vote_id}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Rewards",
+      "item": [
+        {
+          "name": "Assign Reward (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/users/{{user_id}}/rewards",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rewardId\": \"{{reward_id}}\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List User Rewards (owner/admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/users/{{user_id}}/rewards"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User Reward (owner/admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user_token}}"
+              }
+            ],
+            "url": "{{base_url}}/api/user-rewards/{{user_reward_id}}"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "auth": {
+    "type": "noauth"
+  }
+}

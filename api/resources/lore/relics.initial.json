@@ -1,0 +1,38 @@
+// relics.initial.json
+[
+  {
+    "key": "phoenix_feather",
+    "label": "Plume de Phénix",
+    "description": "Récompense de renaissance : revenir écrire et raviver l’écho après le silence.",
+    "picture": "/public/images/relics/phoenix_feather.svg",
+    "rarity": "legendary"
+  },
+  {
+    "key": "dragon_scale",
+    "label": "Écaille de Dragon",
+    "description": "Récompense d’endurance : une constance remarquable et une puissance affirmée sur la durée.",
+    "picture": "/public/images/relics/dragon_scale.svg",
+    "rarity": "epic"
+  },
+  {
+    "key": "pegasus_wings",
+    "label": "Ailes de Pégase",
+    "description": "Récompense d’élévation : une inspiration rare qui fait s’élever la poésie au-delà du commun.",
+    "picture": "/public/images/relics/pegasus_wings.svg",
+    "rarity": "legendary"
+  },
+  {
+    "key": "unicorn_horn",
+    "label": "Corne de Licorne",
+    "description": "Récompense de pureté : une écriture sincère, juste, dénuée d’artifice.",
+    "picture": "/public/images/relics/unicorn_horn.svg",
+    "rarity": "epic"
+  },
+  {
+    "key": "lycan_claw",
+    "label": "Griffe de Lycan",
+    "description": "Récompense de transformation : une écriture qui révèle une part plus instinctive et laisse une marque indélébile.",
+    "picture": "/public/images/relics/lycan_claw.svg",
+    "rarity": "legendary"
+  }
+]

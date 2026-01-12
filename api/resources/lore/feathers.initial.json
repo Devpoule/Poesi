@@ -1,0 +1,21 @@
+// feathers.initial.json
+[
+  {
+    "key": "bronze",
+    "label": "Plume de Bronze",
+    "description": "Le texte a trouvé ses premiers lecteurs.",
+    "icon": "/public/images/feathers/bronze.svg"
+  },
+  {
+    "key": "silver",
+    "label": "Plume d’Argent",
+    "description": "Le texte résonne et circule.",
+    "icon": "/public/images/feathers/silver.svg"
+  },
+  {
+    "key": "gold",
+    "label": "Plume d’Or",
+    "description": "Le texte marque durablement.",
+    "icon": "/public/images/feathers/gold.svg"
+  }
+]

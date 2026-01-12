@@ -1,0 +1,46 @@
+// totems.initial.json
+[
+
+  {
+    "key": "egg",
+    "name": "Oeuf",
+    "description": "En attendant d'éclore...",
+    "picture": "/public/images/totems/oeuf.svg"
+  },
+  {
+    "key": "sparrow",
+    "name": "Moineau",
+    "description": "Le Moineau écrit comme on parle à voix basse. Il ne cherche pas l’effet, il cherche la justesse. Ses textes semblent simples — et pourtant, ils touchent juste.",
+    "picture": "/public/images/totems/moineau.svg"
+  },
+  {
+    "key": "owl",
+    "name": "Chouette",
+    "description": "La Chouette écrit dans la pénombre. Elle observe, analyse, démonte les mécanismes humains. Ses textes sont calmes, parfois dérangeants, toujours précis.",
+    "picture": "/public/images/totems/chouette.svg"
+  },
+  {
+    "key": "falcon",
+    "name": "Faucon",
+    "description": "Le Faucon ne s’étale pas. Il attend le moment exact pour frapper par une phrase nette. Son écriture est tendue, volontaire, précise.",
+    "picture": "/public/images/totems/faucon.svg"
+  },
+  {
+    "key": "crow",
+    "name": "Corbeau",
+    "description": "Le Corbeau ne fuit pas le sombre. Il l’explore, le nomme, le traverse. Ses textes parlent de perte, de silence, de fracture — mais avec dignité.",
+    "picture": "/public/images/totems/corbeau.svg"
+  },
+  {
+    "key": "parrot",
+    "name": "Perroquet",
+    "description": "Le Perroquet écrit avec le rythme. Ses textes chantent, répètent, jouent avec les sons. Il assume la musicalité, parfois jusqu’à l’excès.",
+    "picture": "/public/images/totems/perroquet.svg"
+  },
+  {
+    "key": "swan",
+    "name": "Cygne",
+    "description": "Le Cygne cherche l’harmonie. Ses textes sont construits, fluides, équilibrés. Rien ne dépasse — tout glisse.",
+    "picture": "/public/images/totems/cygne.svg"
+  }
+]

@@ -1,0 +1,33 @@
+// symbols.initial.json
+[
+  {
+    "key": "wings",
+    "label": "Ailes",
+    "description": "Le texte s’élève naturellement. Il trouve son souffle et avance avec légèreté.",
+    "picture": "/public/images/symbols/wings.svg"
+  }, 
+  {
+    "key": "meteor_shard",
+    "label": "Fragment de Météore",
+    "description": "L’impact est bref mais net. Peu de mots suffisent à laisser une trace durable.",
+    "picture": "/public/images/symbols/meteor_shard.svg"
+  },
+  {
+    "key": "vortex",
+    "label": "Tourbillon",
+    "description": "L’émotion attire et entraîne. Le texte capte, retient et revient en spirale.",
+    "picture": "/public/images/symbols/vortex.svg"
+  },
+  {
+    "key": "horizon",
+    "label": "Horizon",
+    "description": "Le texte s’inscrit dans la durée. Il ouvre plus qu’il ne conclut, et accompagne le lecteur.",
+    "picture": "/public/images/symbols/horizon.svg"
+  },
+  {
+    "key": "halo",
+    "label": "Halo",
+    "description": "La clarté prime. Le texte éclaire sans forcer, avec simplicité et justesse.",
+    "picture": "/public/images/symbols/halo.svg"
+  }
+]

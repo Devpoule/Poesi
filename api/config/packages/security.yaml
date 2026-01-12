@@ -1,0 +1,81 @@
+security:
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        App\Domain\Entity\User: 'auto'
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Domain\Entity\User
+                property: email
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        login:
+            pattern: ^/api/login
+            stateless: true
+            provider: app_user_provider
+            user_checker: App\Http\Security\UserChecker
+            login_throttling:
+                max_attempts: 5
+                interval: '1 minute'
+            json_login:
+                check_path: /api/login_check
+                username_path: email
+                password_path: password
+                success_handler: App\Http\Security\JwtLoginSuccessHandler
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: app_user_provider
+            user_checker: App\Http\Security\UserChecker
+            jwt: ~
+
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#the-firewall
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users, roles: PUBLIC_ACCESS, methods: [POST] }
+        - { path: ^/api/users/options$, roles: ROLE_ADMIN, methods: [GET] }
+        - { path: ^/api/users/public$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/users/\d+$, roles: ROLE_USER, methods: [GET, PUT, DELETE] }
+        - { path: ^/api/users$, roles: ROLE_ADMIN, methods: [GET] }
+        - { path: ^/api/user-rewards/\d+$, roles: ROLE_USER, methods: [DELETE] }
+        - { path: ^/api/users/\d+/rewards$, roles: ROLE_ADMIN, methods: [POST] }
+        - { path: ^/api/users/\d+/rewards$, roles: ROLE_USER, methods: [GET] }
+        - { path: ^/api/totems, roles: ROLE_ADMIN, methods: [POST, PUT, DELETE] }
+        - { path: ^/api/rewards, roles: ROLE_ADMIN, methods: [POST, PUT, DELETE] }
+        - { path: ^/api/moods, roles: ROLE_ADMIN, methods: [POST, PUT, DELETE] }
+        - { path: ^/api/symbols, roles: ROLE_ADMIN, methods: [POST, PUT, DELETE] }
+        - { path: ^/api/relics, roles: ROLE_ADMIN, methods: [POST, PUT, DELETE] }
+        - { path: ^/api/feathers, roles: ROLE_ADMIN, methods: [POST, PUT, DELETE] }
+        - { path: ^/api/poems/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/poems$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/poems/\d+/publish$, roles: ROLE_WRITER, methods: [POST] }
+        - { path: ^/api/poems/\d+$, roles: ROLE_WRITER, methods: [PUT, DELETE] }
+        - { path: ^/api/poems$, roles: ROLE_WRITER, methods: [POST] }
+        - { path: ^/api, roles: ROLE_USER }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

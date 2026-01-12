@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Plume (outline)">
+  <path
+    d="M46.8 9.6c-7.7 1.3-15.6 9.3-21.7 18.1c-5.4 7.8-8.9 16.2-9.8 21.8c-.4 2.6.3 4.5 1.9 5.2c1.8.8 4.5.1 7.7-2c6.4-4.1 13.6-12 18.6-20.4c6.1-10.3 8.5-20 5.6-23.5c-.7-.9-1.7-1.3-2.3-1.2z"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M44.8 12.9c-6 2.9-12.4 10.3-17.5 18.1c-5 7.6-8.5 15.6-10.1 21.1"
+    fill="none"
+    stroke="currentColor"
+    stroke-opacity="0.7"
+    stroke-width="1.6"
+    stroke-linecap="round"
+  />
+  <path
+    d="M17.2 55.1c2.7-.3 5.4-1.6 8-3.6"
+    fill="none"
+    stroke="currentColor"
+    stroke-opacity="0.85"
+    stroke-width="1.8"
+    stroke-linecap="round"
+  />
+</svg>

@@ -1,0 +1,26 @@
+[
+  {
+    "email": "admin@test.local",
+    "password": "admin",
+    "roles": ["ROLE_ADMIN","ROLE_WRITER"],
+    "pseudo": "Admin",
+    "moodColor": "blue",
+    "totemKey": "egg"
+  },
+  {
+    "email": "user_1@test.local",
+    "password": "user",
+    "roles": ["ROLE_USER", "ROLE_WRITER"],
+    "pseudo": "User 1",
+    "moodColor": "red",
+    "totemKey": "egg"
+  },
+  {
+    "email": "user_2@test.local",
+    "password": "user",
+    "roles": ["ROLE_USER", "ROLE_WRITER"],
+    "pseudo": "User 2",
+    "moodColor": "yellow",
+    "totemKey": "egg"
+  }
+]

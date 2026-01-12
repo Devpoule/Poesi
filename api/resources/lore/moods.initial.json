@@ -1,0 +1,69 @@
+// moods.initial.json
+[
+  {
+    "key": "red",
+    "label": "Rouge",
+    "description": "Un texte intense, brûlant, chargé.",
+    "icon": "/public/images/moods/red.svg"
+  },
+  {
+    "key": "orange",
+    "label": "Orange",
+    "description": "Un texte vivant, stimulant, en mouvement.",
+    "icon": "/public/images/moods/orange.svg"
+  },
+  {
+    "key": "yellow",
+    "label": "Jaune",
+    "description": "Un texte lumineux, clair, ouvert.",
+    "icon": "/public/images/moods/yellow.svg"
+  },
+  {
+    "key": "green",
+    "label": "Vert",
+    "description": "Un texte apaisant, stable, respirant.",
+    "icon": "/public/images/moods/green.svg"
+  },
+  {
+    "key": "blue",
+    "label": "Bleu",
+    "description": "Un texte calme, posé, maîtrisé.",
+    "icon": "/public/images/moods/blue.svg"
+  },
+  {
+    "key": "indigo",
+    "label": "Indigo",
+    "description": "Un texte intérieur, nocturne, lucide.",
+    "icon": "/public/images/moods/indigo.svg"
+  },
+  {
+    "key": "violet",
+    "label": "Violet",
+    "description": "Un texte rêveur, artistique, profond.",
+    "icon": "/public/images/moods/violet.svg"
+  },
+  {
+    "key": "black",
+    "label": "Noir",
+    "description": "Un texte grave, dense, sombre avec tenue.",
+    "icon": "/public/images/moods/black.svg"
+  },
+  {
+    "key": "white",
+    "label": "Blanc",
+    "description": "Un texte silencieux, minimal, suspendu.",
+    "icon": "/public/images/moods/white.svg"
+  },
+  {
+    "key": "grey",
+    "label": "Gris",
+    "description": "Un texte neutre, en attente de perception.",
+    "icon": "/public/images/moods/grey.svg"
+  },
+  {
+    "key": "neutral",
+    "label": "Neutre",
+    "description": "Un texte dont le mood est défini par les lecteurs.",
+    "icon": "/public/images/moods/neutral.svg"
+  }
+]

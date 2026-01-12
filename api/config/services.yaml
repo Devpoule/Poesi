@@ -1,0 +1,49 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            string $projectDir: '%kernel.project_dir%'
+                   
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Domain\Repository\UserRewardRepositoryInterface:
+        alias: App\Infrastructure\Repository\UserRewardRepository
+    App\Domain\Repository\RefreshTokenRepositoryInterface:
+        alias: App\Infrastructure\Repository\RefreshTokenRepository
+    App\Domain\Repository\FeatherVoteRepositoryInterface:
+        alias: App\Infrastructure\Repository\FeatherVoteRepository
+    App\Domain\Repository\PoemRepositoryInterface:
+        alias: App\Infrastructure\Repository\PoemRepository
+    App\Domain\Repository\RewardRepositoryInterface:
+        alias: App\Infrastructure\Repository\RewardRepository
+    App\Domain\Repository\TotemRepositoryInterface:
+        alias: App\Infrastructure\Repository\TotemRepository
+    App\Domain\Repository\UserRepositoryInterface:
+        alias: App\Infrastructure\Repository\UserRepository
+
+    App\Infrastructure\EventListener\ApiExceptionSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+    
+    App\Domain\Lore\LoreCatalog:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    App\Http\Response\PoemResponse: ~
+    App\Http\Controller\LoreController: ~

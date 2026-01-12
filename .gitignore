@@ -1,0 +1,79 @@
+### symfony/framework-bundle ###
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/vendor/
+/var/
+/var/cache/
+/var/log/
+/var/sessions/
+/.idea/
+/.vscode
+.history/
+### symfony/framework-bundle ###
+
+### env ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/.env.test
+/.env.dev
+/.env.dev.local
+### env ###
+
+### composer ###
+composer.phar
+composer.lock
+/composer.local.json
+### composer ###
+
+### Node / Frontend ###
+/node_modules/
+frontend/node_modules/
+/dist/
+/build/
+/public/build/
+/public/assets/
+/yarn-error.log
+npm-debug.log
+pnpm-lock.yaml
+yarn.lock
+yarn-error.log
+### Node / Frontend ###
+
+### symfony/phpunit-bridge ###
+.phpunit.result.cache
+/phpunit.xml
+### symfony/phpunit-bridge ###
+
+### phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+### phpunit/phpunit ###
+
+### liip/imagine-bundle ###
+/public/media/cache/
+### liip/imagine-bundle ###
+
+### python ###
+/Python/__pycache__/
+### python ###
+
+### Logs / Exécutables ###
+*.log
+*.cache
+### Logs / Exécutables ###
+
+### Tests
+/coverage/
+### Tests
+
+### Mobile ###
+.expo/
+.expo-shared/
+android/
+ios/
+### Mobile ###
+
+### Misc ###
+/tmp/
+### Misc ###
