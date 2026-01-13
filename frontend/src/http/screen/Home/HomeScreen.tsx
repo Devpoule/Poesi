@@ -4,39 +4,48 @@ import { useAuth } from '../../../bootstrap/AuthProvider';
 import { Screen } from '../../components/Screen';
 import { HomeHero } from './components/HomeHero';
 import { HomeHighlights } from './components/HomeHighlights';
-import { HomeMoodSection } from './components/HomeMoodSection';
-import { HomePortal } from './components/HomePortal';
-import { HomeRecentPoems } from './components/HomeRecentPoems';
+import { HomeJourney } from './components/HomeJourney';
+import { HomeLoreSection } from './components/HomeLoreSection';
 import { HomeRitual } from './components/HomeRitual';
-import { HomeSymbolSection } from './components/HomeSymbolSection';
 import { useHomeRevealAnimation } from './hooks/useHomeRevealAnimation';
-import { useRecentPoems } from './hooks/useRecentPoems';
 import { useStyles } from './styles';
 
 /**
- * Home screen combining categories and recent poems.
+ * Home screen combining entry points and lore guidance.
  */
 export default function HomeScreen() {
   const styles = useStyles();
   const router = useRouter();
   const { tokens } = useAuth();
-  const { items, isLoading, error, reload } = useRecentPoems();
-  const { reveals, revealStyle } = useHomeRevealAnimation(7);
+  const { reveals, revealStyle } = useHomeRevealAnimation(5);
 
   const handleExplore = () => {
     router.push('/(tabs)/poems');
+  };
+
+  const handleGuide = () => {
+    router.push('/(tabs)/guide');
+  };
+
+  const handleLore = (route: string) => {
+    router.push(route);
   };
 
   const handleWrite = () => {
     router.push(tokens ? '/(tabs)/write' : '/(auth)/login');
   };
 
-  const writeLabel = tokens ? 'Écrire un texte' : 'Se connecter';
+  const writeLabel = tokens ? 'Ecrire un texte' : 'Se connecter';
 
   return (
     <Screen scroll contentStyle={styles.page}>
       <Animated.View style={revealStyle(reveals[0])}>
-        <HomeHero onExplore={handleExplore} onWrite={handleWrite} writeLabel={writeLabel} />
+        <HomeHero
+          onExplore={handleExplore}
+          onWrite={handleWrite}
+          onGuide={handleGuide}
+          writeLabel={writeLabel}
+        />
       </Animated.View>
 
       <Animated.View style={revealStyle(reveals[1])}>
@@ -44,30 +53,15 @@ export default function HomeScreen() {
       </Animated.View>
 
       <Animated.View style={revealStyle(reveals[2])}>
-        <HomeRitual />
+        <HomeJourney />
       </Animated.View>
 
       <Animated.View style={revealStyle(reveals[3])}>
-        <HomeMoodSection />
+        <HomeLoreSection onNavigate={(item) => handleLore(item.route)} />
       </Animated.View>
 
       <Animated.View style={revealStyle(reveals[4])}>
-        <HomeSymbolSection />
-      </Animated.View>
-
-      <Animated.View style={revealStyle(reveals[5])}>
-        <HomeRecentPoems
-          items={items}
-          isLoading={isLoading}
-          error={error}
-          onReload={reload}
-          onWrite={handleWrite}
-          onViewAll={handleExplore}
-        />
-      </Animated.View>
-
-      <Animated.View style={revealStyle(reveals[6])}>
-        <HomePortal writeLabel={writeLabel} onWrite={handleWrite} />
+        <HomeRitual />
       </Animated.View>
     </Screen>
   );

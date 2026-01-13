@@ -12,7 +12,7 @@ export function HomeRitual() {
     <View style={styles.section}>
       <HomeSectionHeader
         title="Rituel du jour"
-        hint="Une question douce pour lancer l'écriture."
+        hint="Une question douce pour lancer l'ecriture."
       />
       <View style={styles.ritualCard}>
         <Text style={styles.ritualPrompt}>{ritualPrompt}</Text>

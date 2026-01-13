@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Redirect, Stack, useSegments } from 'expo-router';
-import { LogBox, StyleSheet, Text, View } from 'react-native';
+import { LogBox, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { AuthProvider, useAuth } from '../src/bootstrap/AuthProvider';
 import { ThemeColors, ThemeProvider, spacing, typography, useTheme } from '../src/support/theme/tokens';
 
@@ -23,7 +23,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const segments = useSegments() as string[];
   const inAuthGroup = segments[0] === '(auth)';
-  const publicTabs = new Set(['home', 'poems', 'feed', 'write']);
+  const publicTabs = new Set(['home', 'poems', 'feed', 'write', 'guide']);
   const isPublicTab =
     segments[0] === '(tabs)' && publicTabs.has(segments[1] ?? '');
 
@@ -50,15 +50,21 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <AuthProvider>
-      <AuthGate>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </AuthGate>
+        <AuthGate>
+          <ThemedStatusBar />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="(auth)" />
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+        </AuthGate>
       </AuthProvider>
     </ThemeProvider>
   );
+}
+
+function ThemedStatusBar() {
+  const { mode } = useTheme();
+  return <StatusBar barStyle={mode === 'dark' ? 'light-content' : 'dark-content'} />;
 }
 
 function createStyles(colors: ThemeColors) {

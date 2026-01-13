@@ -7,13 +7,13 @@ export type HighlightItem = {
 export const highlightItems: HighlightItem[] = [
   {
     key: 'resonance',
-    title: 'Résonance',
-    description: "Ici, un texte vit par ses échos, jamais par un score.",
+    title: 'Resonance',
+    description: 'Ici, un texte vit par ses echos, jamais par un score.',
   },
   {
     key: 'lenteur',
     title: 'Lenteur',
-    description: "Une cadence calme pour écrire sans pression.",
+    description: 'Une cadence calme pour ecrire sans pression.',
   },
   {
     key: 'rituels',

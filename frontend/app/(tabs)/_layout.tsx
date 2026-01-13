@@ -47,7 +47,7 @@ function InnerTabs() {
         },
         tabBarItemStyle: Platform.select({
           web: { marginHorizontal: spacing.xs / 2 } as any,
-          default: { marginHorizontal: spacing.lg },
+          default: { marginHorizontal: spacing.sm },
         }),
         tabBarHideOnKeyboard: true,
       }}
@@ -75,6 +75,13 @@ function InnerTabs() {
         }}
       />
       <Tabs.Screen
+        name="guide"
+        options={{
+          title: 'Guide',
+          tabBarIcon: ({ focused }) => <TabItem variant="guide" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profil',
@@ -87,8 +94,9 @@ function InnerTabs() {
 
 // floating toggle placed above tabs on web
 function ThemeToggle() {
-  const { toggle, mode } = useTheme();
-  const label = mode === 'dark' ? 'Light' : 'Dark';
+  const { toggle, mode, theme } = useTheme();
+  const label = mode === 'dark' ? 'Clair' : 'Sombre';
+  const isDark = mode === 'dark';
   return (
     <View
       style={
@@ -98,8 +106,90 @@ function ThemeToggle() {
         }) as any
       }
     >
-      <Pressable onPress={toggle} style={{ padding: 8, borderRadius: 8, backgroundColor: 'transparent' }}>
-        <Text style={{ color: mode === 'dark' ? '#FFF' : '#111' }}>{label}</Text>
+      <Pressable
+        onPress={toggle}
+        style={{
+          paddingVertical: 6,
+          paddingHorizontal: 10,
+          borderRadius: 999,
+          backgroundColor: isDark ? theme.colors.surfaceElevated : theme.colors.surface,
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        <View
+          style={{
+            width: 16,
+            height: 16,
+            borderRadius: 8,
+            backgroundColor: isDark ? theme.colors.textPrimary : theme.colors.textPrimary,
+            marginRight: 6,
+          }}
+        >
+          {isDark ? (
+            <View
+              style={{
+                position: 'absolute',
+                width: 10,
+                height: 10,
+                borderRadius: 5,
+                backgroundColor: theme.colors.background,
+                right: -1,
+                top: 3,
+              }}
+            />
+          ) : (
+            <>
+              <View
+                style={{
+                  position: 'absolute',
+                  width: 2,
+                  height: 6,
+                  backgroundColor: theme.colors.textPrimary,
+                  left: 7,
+                  top: -4,
+                  borderRadius: 2,
+                }}
+              />
+              <View
+                style={{
+                  position: 'absolute',
+                  width: 2,
+                  height: 6,
+                  backgroundColor: theme.colors.textPrimary,
+                  left: 7,
+                  bottom: -4,
+                  borderRadius: 2,
+                }}
+              />
+              <View
+                style={{
+                  position: 'absolute',
+                  width: 6,
+                  height: 2,
+                  backgroundColor: theme.colors.textPrimary,
+                  right: -4,
+                  top: 7,
+                  borderRadius: 2,
+                }}
+              />
+              <View
+                style={{
+                  position: 'absolute',
+                  width: 6,
+                  height: 2,
+                  backgroundColor: theme.colors.textPrimary,
+                  left: -4,
+                  top: 7,
+                  borderRadius: 2,
+                }}
+              />
+            </>
+          )}
+        </View>
+        <Text style={{ color: theme.colors.textPrimary }}>{label}</Text>
       </Pressable>
     </View>
   );

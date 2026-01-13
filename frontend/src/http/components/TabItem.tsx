@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Platform, StyleSheet, Text, View } from 'react-native';
 import { ThemeColors, spacing, typography, useTheme } from '../../support/theme/tokens';
 
-type TabVariant = 'home' | 'poems' | 'write' | 'profile';
+type TabVariant = 'home' | 'poems' | 'write' | 'guide' | 'profile';
 
 type TabTheme = {
   label: string;
@@ -42,6 +42,7 @@ function buildTabThemes(colors: ThemeColors): Record<TabVariant, TabTheme> {
     home: { label: 'Accueil', ...palette },
     poems: { label: 'Poemes', ...palette },
     write: { label: 'Ecrire', ...palette },
+    guide: { label: 'Guide', ...palette },
     profile: { label: 'Profil', ...palette },
   };
 }
@@ -72,6 +73,16 @@ function Sigil({ variant, color, styles }: SigilProps) {
       <View style={styles.sigil}>
         <View style={[styles.penBody, { backgroundColor: color }]} />
         <View style={[styles.penTip, { backgroundColor: color }]} />
+      </View>
+    );
+  }
+
+  if (variant === 'guide') {
+    return (
+      <View style={styles.sigil}>
+        <View style={[styles.guidePage, { borderColor: color }]} />
+        <View style={[styles.guideLine, { backgroundColor: color }]} />
+        <View style={[styles.guideLine, styles.guideLineShort, { backgroundColor: color }]} />
       </View>
     );
   }
@@ -258,6 +269,27 @@ function createStyles(colors: ThemeColors) {
       right: 2,
       borderRadius: 1,
       transform: [{ rotate: '45deg' }],
+    },
+    guidePage: {
+      position: 'absolute',
+      width: 14,
+      height: 16,
+      borderWidth: 1,
+      borderRadius: 2,
+      top: 2,
+      left: 3,
+    },
+    guideLine: {
+      position: 'absolute',
+      width: 8,
+      height: 2,
+      top: 6,
+      left: 6,
+      borderRadius: 2,
+    },
+    guideLineShort: {
+      top: 10,
+      width: 6,
     },
     profileRing: {
       position: 'absolute',

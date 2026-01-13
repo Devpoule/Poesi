@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../../bootstrap/AuthProvider';
 import { Screen } from '../../components/Screen';
 import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
@@ -10,6 +11,7 @@ export default function ProfileScreen() {
   const { theme } = useTheme();
   const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const { logout, tokens } = useAuth();
+  const router = useRouter();
   const reveals = useRef([
     new Animated.Value(0),
     new Animated.Value(0),
@@ -42,7 +44,7 @@ export default function ProfileScreen() {
     ],
   });
 
-  const sessionLabel = tokens ? 'Connecte' : 'Deconnecte';
+  const sessionLabel = tokens ? 'Connecte' : 'Invite';
 
   return (
     <Screen scroll>
@@ -59,9 +61,7 @@ export default function ProfileScreen() {
             <Text style={styles.badgeText}>Par defaut</Text>
           </View>
         </View>
-        <Text style={styles.hint}>
-          Le totem incarne la posture d'ecriture du moment.
-        </Text>
+        <Text style={styles.hint}>Le totem incarne la posture d'ecriture du moment.</Text>
       </Animated.View>
 
       <Animated.View style={[styles.card, revealStyle(reveals[2])]}>
@@ -86,13 +86,25 @@ export default function ProfileScreen() {
         <Text style={styles.sectionTitle}>Session</Text>
         <Text style={styles.value}>{sessionLabel}</Text>
         {tokens?.refreshTokenExpiresAt ? (
-          <Text style={styles.hint}>
-            Expiration refresh: {tokens.refreshTokenExpiresAt}
-          </Text>
+          <Text style={styles.hint}>Expiration refresh: {tokens.refreshTokenExpiresAt}</Text>
         ) : null}
-        <Pressable style={styles.logoutButton} onPress={logout}>
-          <Text style={styles.logoutText}>Se deconnecter</Text>
-        </Pressable>
+        {tokens ? (
+          <Pressable style={styles.logoutButton} onPress={logout}>
+            <Text style={styles.logoutText}>Se deconnecter</Text>
+          </Pressable>
+        ) : (
+          <View style={styles.sessionActions}>
+            <Pressable style={styles.primaryButton} onPress={() => router.push('/(auth)/login')}>
+              <Text style={styles.primaryButtonText}>Se connecter</Text>
+            </Pressable>
+            <Pressable
+              style={styles.secondaryButton}
+              onPress={() => router.push('/(auth)/register')}
+            >
+              <Text style={styles.secondaryButtonText}>S'inscrire</Text>
+            </Pressable>
+          </View>
+        )}
       </Animated.View>
     </Screen>
   );
@@ -105,7 +117,7 @@ function createStyles(colors: ThemeColors) {
     },
     title: {
       fontSize: typography.display,
-      fontFamily: typography.fontFamily,
+      fontFamily: typography.headingFont,
       color: colors.textPrimary,
     },
     subtitle: {
@@ -124,7 +136,7 @@ function createStyles(colors: ThemeColors) {
     },
     sectionTitle: {
       fontSize: typography.body,
-      fontFamily: typography.fontFamily,
+      fontFamily: typography.headingFont,
       color: colors.textPrimary,
       marginBottom: spacing.sm,
     },
@@ -186,6 +198,34 @@ function createStyles(colors: ThemeColors) {
       fontSize: typography.caption,
       fontFamily: typography.fontFamily,
       color: colors.textPrimary,
+    },
+    sessionActions: {
+      marginTop: spacing.md,
+    },
+    primaryButton: {
+      backgroundColor: colors.accent,
+      paddingVertical: spacing.sm,
+      borderRadius: 999,
+      alignItems: 'center',
+    },
+    primaryButtonText: {
+      fontSize: typography.caption,
+      fontFamily: typography.fontFamily,
+      color: colors.textPrimary,
+    },
+    secondaryButton: {
+      marginTop: spacing.sm,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: spacing.sm,
+      borderRadius: 999,
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+    },
+    secondaryButtonText: {
+      fontSize: typography.caption,
+      fontFamily: typography.fontFamily,
+      color: colors.textSecondary,
     },
   });
 }

@@ -97,7 +97,7 @@ function createStyles(colors: ThemeColors) {
   heroTitle: {
     marginTop: spacing.xs,
     fontSize: typography.display,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textPrimary,
   },
   heroSubtitle: {
@@ -127,6 +127,9 @@ function createStyles(colors: ThemeColors) {
     color: colors.textSecondary,
   },
   heroActions: {
+    marginTop: spacing.sm,
+  },
+  heroButton: {
     marginTop: spacing.sm,
   },
   primaryButton: {
@@ -172,7 +175,7 @@ function createStyles(colors: ThemeColors) {
   },
   highlightTitle: {
     fontSize: typography.body,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
@@ -180,6 +183,39 @@ function createStyles(colors: ThemeColors) {
     fontSize: typography.caption,
     fontFamily: typography.fontFamily,
     color: colors.textMuted,
+  },
+  journeyRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  journeyCard: {
+    flexGrow: 1,
+    minWidth: 160,
+    backgroundColor: colors.surface,
+    borderRadius: 18,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginRight: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  journeyIndex: {
+    fontSize: typography.small,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
+    letterSpacing: 1,
+    marginBottom: spacing.xs,
+  },
+  journeyTitle: {
+    fontSize: typography.body,
+    fontFamily: typography.headingFont,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  journeyText: {
+    fontSize: typography.caption,
+    fontFamily: typography.fontFamily,
+    color: colors.textSecondary,
   },
   section: {
     marginBottom: spacing.lg,
@@ -189,7 +225,7 @@ function createStyles(colors: ThemeColors) {
   },
   sectionTitle: {
     fontSize: typography.title,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textPrimary,
   },
   sectionHint: {
@@ -206,6 +242,50 @@ function createStyles(colors: ThemeColors) {
     fontSize: typography.caption,
     fontFamily: typography.fontFamily,
     color: colors.textSecondary,
+  },
+  loreGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  loreCard: {
+    width: '47%',
+    backgroundColor: colors.surface,
+    borderRadius: 18,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginRight: spacing.sm,
+    marginBottom: spacing.sm,
+  },
+  loreTag: {
+    alignSelf: 'flex-start',
+    paddingVertical: 2,
+    paddingHorizontal: spacing.sm,
+    borderRadius: 999,
+    backgroundColor: colors.surfaceMuted,
+    marginBottom: spacing.sm,
+  },
+  loreTagText: {
+    fontSize: typography.small,
+    fontFamily: typography.fontFamily,
+    color: colors.textMuted,
+  },
+  loreTitle: {
+    fontSize: typography.body,
+    fontFamily: typography.headingFont,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  loreText: {
+    fontSize: typography.caption,
+    fontFamily: typography.fontFamily,
+    color: colors.textSecondary,
+  },
+  loreButton: {
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    alignSelf: 'flex-start',
   },
   ritualCard: {
     backgroundColor: colors.surfaceMuted,
@@ -500,7 +580,7 @@ function createStyles(colors: ThemeColors) {
   },
   portalTitle: {
     fontSize: typography.title,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textPrimary,
   },
   portalText: {
