@@ -1,11 +1,12 @@
 import { Text, View } from 'react-native';
 import { highlightItems } from '../utils/highlights';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 
 /**
  * Renders the trio of value highlights under the hero.
  */
 export function HomeHighlights() {
+  const styles = useStyles();
   return (
     <View style={styles.highlightRow}>
       {highlightItems.map((item) => (

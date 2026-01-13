@@ -17,16 +17,26 @@ function normalizeHeaders(headers?: HeadersInit): Record<string, string> {
 }
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const method = init?.method?.toUpperCase() ?? 'GET';
+  const pathname = path.split('?')[0] ?? path;
+  const isPublicGet =
+    method === 'GET' &&
+    (pathname === '/api/poems' ||
+      pathname === '/api/poems/full' ||
+      pathname.startsWith('/api/feather-votes/poem/'));
   const tokens = await sessionStorage.getTokens();
-  const authHeader = tokens?.token ? { Authorization: `Bearer ${tokens.token}` } : {};
+  const authHeader: Record<string, string> = tokens?.token
+    ? { Authorization: `Bearer ${tokens.token}` }
+    : {};
   const initHeaders = normalizeHeaders(init?.headers);
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(isPublicGet ? {} : authHeader),
+    ...initHeaders,
+  };
 
   const response = await fetch(`${config.baseUrl}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeader,
-      ...initHeaders,
-    },
+    headers,
     ...init,
   });
 

@@ -1,7 +1,7 @@
 import { TextInput } from 'react-native';
-import { colors } from '../../../../support/theme/tokens';
+import { useTheme } from '../../../../support/theme/tokens';
 import { useWriteFocus } from '../hooks/useWriteFocus';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 
 type WriteFieldsProps = {
   title: string;
@@ -27,6 +27,8 @@ export function WriteFields({
   onTitleChange,
   onBodyChange,
 }: WriteFieldsProps) {
+  const styles = useStyles();
+  const { theme } = useTheme();
   const {
     isTitleFocused,
     isBodyFocused,
@@ -44,8 +46,8 @@ export function WriteFields({
         onFocus={handleTitleFocus}
         onBlur={handleTitleBlur}
         selectionColor={focusBorderColor}
-        placeholder="Un nom pour ton poème"
-        placeholderTextColor={colors.textMuted}
+        placeholder="Un nom pour ton poeme"
+        placeholderTextColor={theme.colors.textMuted}
         style={[
           styles.input,
           {
@@ -60,8 +62,8 @@ export function WriteFields({
         onFocus={handleBodyFocus}
         onBlur={handleBodyBlur}
         selectionColor={focusBorderColor}
-        placeholder="écrire ici, en douceur."
-        placeholderTextColor={colors.textMuted}
+        placeholder="Ecrire ici, en douceur."
+        placeholderTextColor={theme.colors.textMuted}
         style={[
           styles.textArea,
           { backgroundColor: editorFieldBackground, color: moodTextColor },

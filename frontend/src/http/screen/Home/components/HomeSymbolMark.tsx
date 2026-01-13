@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import type { SymbolVariant } from '../utils/symbols';
 
 type HomeSymbolMarkProps = {
@@ -11,6 +11,7 @@ type HomeSymbolMarkProps = {
  * Renders a tiny symbol mark used in the categories grid.
  */
 export function HomeSymbolMark({ variant, color }: HomeSymbolMarkProps) {
+  const styles = useStyles();
   if (variant === 'wings') {
     return <View style={[styles.symbolWings, { borderColor: color }]} />;
   }

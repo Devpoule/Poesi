@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { SaveIndicator } from './SaveIndicator';
 
 type WriteHeaderProps = {
@@ -18,6 +18,7 @@ export function WriteHeader({
   isDraftActive,
   onDraftToggle,
 }: WriteHeaderProps) {
+  const styles = useStyles();
   return (
     <View style={styles.header}>
       <View style={styles.headerRow}>

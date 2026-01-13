@@ -1,5 +1,5 @@
 import { Platform, Pressable, Text, View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { Button } from '../../../components/Button';
 import { heroBadges } from '../utils/highlights';
 
@@ -13,6 +13,7 @@ type HomeHeroProps = {
  * Hero card with core brand messaging and entry actions.
  */
 export function HomeHero({ onExplore, onWrite, writeLabel }: HomeHeroProps) {
+  const styles = useStyles();
   return (
     <View style={styles.heroWrapper}>
       <View style={styles.heroCard}>

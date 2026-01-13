@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Platform, Pressable, View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { isDarkColor, mixColor, toRgba } from '../utils/color';
 
 type MoodBadgeProps = {
@@ -14,6 +14,7 @@ type MoodBadgeProps = {
  * Displays a selectable mood chip with depth styling.
  */
 export function MoodBadge({ label, color, active, onPress }: MoodBadgeProps) {
+  const styles = useStyles();
   const [isHovered, setIsHovered] = useState(false);
   const darkShade = isDarkColor(color);
   const lightShadow = mixColor(color, '#FFFFFF', darkShade ? 0.35 : 0.6);

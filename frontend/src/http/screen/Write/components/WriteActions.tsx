@@ -1,5 +1,5 @@
 import { Platform, Pressable, Text, View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { Button } from '../../../components/Button';
 
 type WriteActionsProps = {
@@ -18,6 +18,7 @@ export function WriteActions({
   primaryTextColor,
   onSave,
 }: WriteActionsProps) {
+  const styles = useStyles();
   return (
     <View style={styles.actionRow}>
       {Platform.OS === 'web' ? (
@@ -35,23 +36,29 @@ export function WriteActions({
       ) : (
         <>
           <Pressable
-            style={({ hovered }) => [
-              styles.secondaryButton,
-              hovered && styles.secondaryButtonHover,
-              hovered && styles.buttonHover,
-            ]}
+            style={(state) => {
+              const hovered = (state as { hovered?: boolean }).hovered;
+              return [
+                styles.secondaryButton,
+                hovered && styles.secondaryButtonHover,
+                hovered && styles.buttonHover,
+              ];
+            }}
             onPress={onSave}
           >
             <Text style={styles.secondaryButtonText}>Sauver</Text>
           </Pressable>
           <Pressable
-            style={({ hovered }) => [
-              styles.primaryButton,
-              { backgroundColor: primaryColor },
-              hovered && styles.primaryButtonHover,
-              hovered && { backgroundColor: primaryHoverColor },
-              hovered && styles.buttonHover,
-            ]}
+            style={(state) => {
+              const hovered = (state as { hovered?: boolean }).hovered;
+              return [
+                styles.primaryButton,
+                { backgroundColor: primaryColor },
+                hovered && styles.primaryButtonHover,
+                hovered && { backgroundColor: primaryHoverColor },
+                hovered && styles.buttonHover,
+              ];
+            }}
             onPress={onSave}
           >
             <Text style={[styles.primaryButtonText, { color: primaryTextColor }]}>Publier plus tard</Text>

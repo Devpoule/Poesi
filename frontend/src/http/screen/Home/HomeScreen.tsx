@@ -11,12 +11,13 @@ import { HomeRitual } from './components/HomeRitual';
 import { HomeSymbolSection } from './components/HomeSymbolSection';
 import { useHomeRevealAnimation } from './hooks/useHomeRevealAnimation';
 import { useRecentPoems } from './hooks/useRecentPoems';
-import { styles } from './styles';
+import { useStyles } from './styles';
 
 /**
  * Home screen combining categories and recent poems.
  */
 export default function HomeScreen() {
+  const styles = useStyles();
   const router = useRouter();
   const { tokens } = useAuth();
   const { items, isLoading, error, reload } = useRecentPoems();

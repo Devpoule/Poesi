@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 
 type HomeSectionHeaderProps = {
   title: string;
@@ -17,6 +17,7 @@ export function HomeSectionHeader({
   actionLabel,
   onAction,
 }: HomeSectionHeaderProps) {
+  const styles = useStyles();
   return (
     <View style={styles.sectionHeader}>
       <Text style={styles.sectionTitle}>{title}</Text>

@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import { Platform, StyleSheet } from 'react-native';
-import { colors, spacing, typography, layout } from '../../../support/theme/tokens';
+import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
 
 const moodShadowLightStyle = Platform.select({
   web: {},
@@ -38,7 +39,7 @@ const hoverTransitionStyle = Platform.select({
     transitionTimingFunction: 'ease-in-out',
   } as any,
   default: {} as any,
-});
+}) as any;
 
 const fieldTransitionStyle = Platform.select({
   web: {
@@ -47,7 +48,7 @@ const fieldTransitionStyle = Platform.select({
     transitionTimingFunction: 'ease-in-out',
   } as any,
   default: {} as any,
-});
+}) as any;
 
 const fieldWebStyle = Platform.select({
   web: {
@@ -57,19 +58,12 @@ const fieldWebStyle = Platform.select({
     boxShadow: 'none',
   } as any,
   default: {} as any,
-});
+}) as any;
 
-export const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   page: {
     width: '100%',
-    ...Platform.select({
-      web: {
-        width: layout.contentWidth,
-        maxWidth: layout.maxWidth,
-        alignSelf: 'center',
-      },
-      default: {},
-    }),
   },
   header: {
     marginBottom: spacing.md,
@@ -402,4 +396,10 @@ export const styles = StyleSheet.create({
     fontFamily: typography.fontFamily,
     color: colors.textSecondary,
   },
-});
+  });
+}
+
+export function useStyles() {
+  const { theme } = useTheme();
+  return useMemo(() => createStyles(theme.colors), [theme.colors]);
+}

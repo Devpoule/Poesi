@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 
 type WriteBackdropProps = {
   backdropStrong: string;
@@ -15,6 +15,7 @@ export function WriteBackdrop({
   backdropSoft,
   backdropRing,
 }: WriteBackdropProps) {
+  const styles = useStyles();
   return (
     <View style={styles.moodBackdrop}>
       <View style={[styles.moodVeil, { backgroundColor: backdropStrong }]} />

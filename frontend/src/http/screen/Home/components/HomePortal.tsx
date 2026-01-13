@@ -1,5 +1,5 @@
 import { Platform, Pressable, Text, View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { Button } from '../../../components/Button';
 
 type HomePortalProps = {
@@ -11,6 +11,7 @@ type HomePortalProps = {
  * Closing call-to-action panel for the home page.
  */
 export function HomePortal({ writeLabel, onWrite }: HomePortalProps) {
+  const styles = useStyles();
   return (
     <View style={styles.portalCard}>
       <Text style={styles.portalTitle}>Entrer dans le refuge</Text>

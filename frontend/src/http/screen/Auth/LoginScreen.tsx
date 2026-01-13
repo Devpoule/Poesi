@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
   Platform,
@@ -10,12 +10,14 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '../../components/Screen';
-import { colors, spacing, typography } from '../../../support/theme/tokens';
+import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
 import { useLoginViewModel } from './LoginViewModel';
 
 const useNativeDriver = Platform.OS !== 'web';
 
 export default function LoginScreen() {
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const router = useRouter();
   const { email, password, isSubmitting, error, setEmail, setPassword, submit } =
     useLoginViewModel();
@@ -51,7 +53,7 @@ export default function LoginScreen() {
       <Animated.View style={[styles.header, revealStyle(reveals[0])]}>
         <Text style={styles.kicker}>Poesi</Text>
         <Text style={styles.title}>Connexion</Text>
-        <Text style={styles.subtitle}>Accède à ton espace poétique.</Text>
+        <Text style={styles.subtitle}>Accede a ton espace poetique.</Text>
       </Animated.View>
 
       <Animated.View style={[styles.card, revealStyle(reveals[1])]}>
@@ -64,7 +66,7 @@ export default function LoginScreen() {
           autoCorrect={false}
           keyboardType="email-address"
           placeholder="ton@email.fr"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={theme.colors.textMuted}
         />
         <Text style={styles.label}>Mot de passe</Text>
         <TextInput
@@ -73,7 +75,7 @@ export default function LoginScreen() {
           onChangeText={setPassword}
           secureTextEntry
           placeholder="********"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={theme.colors.textMuted}
         />
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Pressable
@@ -85,9 +87,7 @@ export default function LoginScreen() {
             {isSubmitting ? 'Connexion...' : 'Se connecter'}
           </Text>
         </Pressable>
-        <Text style={styles.helper}>
-          Besoin d'un accès ? Contacte le cercle Poesi.
-        </Text>
+        <Text style={styles.helper}>Besoin d'un acces ? Contacte le cercle Poesi.</Text>
         <Pressable style={styles.link} onPress={() => router.push('/(auth)/register')}>
           <Text style={styles.linkText}>Pas encore de compte ? S'inscrire</Text>
         </Pressable>
@@ -96,7 +96,8 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   content: {
     justifyContent: 'center',
   },
@@ -180,4 +181,5 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily,
     color: colors.textSecondary,
   },
-});
+  });
+}

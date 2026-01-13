@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import type { Poem } from '../../../../domain/poem/model/Poem';
 import { normalizeMoodKey, moodOptions } from '../../../../support/theme/moods';
-import { colors } from '../../../../support/theme/tokens';
+import { useTheme } from '../../../../support/theme/tokens';
 import { HomeFilterChip } from './HomeFilterChip';
 import { HomePoemCard } from './HomePoemCard';
 import { HomeSectionHeader } from './HomeSectionHeader';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 
 type HomeRecentPoemsProps = {
   items: Poem[];
@@ -35,6 +35,8 @@ export function HomeRecentPoems({
   onWrite,
   onViewAll,
 }: HomeRecentPoemsProps) {
+  const { theme } = useTheme();
+  const styles = useStyles();
   const [selectedMood, setSelectedMood] = useState('all');
 
   const filteredItems = useMemo(() => {
@@ -68,7 +70,7 @@ export function HomeRecentPoems({
 
       {isLoading ? (
         <View style={styles.centered}>
-          <ActivityIndicator color={colors.textSecondary} />
+          <ActivityIndicator color={theme.colors.textSecondary} />
           <Text style={styles.loadingText}>Chargement...</Text>
         </View>
       ) : null}

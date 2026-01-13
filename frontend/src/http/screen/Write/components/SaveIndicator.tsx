@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
-import { colors } from '../../../../support/theme/tokens';
-import { styles } from '../styles';
+import { useTheme } from '../../../../support/theme/tokens';
+import { useStyles } from '../styles';
 
 type SaveIndicatorProps = {
   label: string;
@@ -14,8 +14,10 @@ type SaveIndicatorProps = {
  * Shows the draft state toggle with a tooltip on hover.
  */
 export function SaveIndicator({ label, color, active, onToggle }: SaveIndicatorProps) {
+  const styles = useStyles();
+  const { theme } = useTheme();
   const [open, setOpen] = useState(false);
-  const iconColor = active ? color : colors.textMuted;
+  const iconColor = active ? color : theme.colors.textMuted;
 
   return (
     <View style={styles.saveIndicator}>

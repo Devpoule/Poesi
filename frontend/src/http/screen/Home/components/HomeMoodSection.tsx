@@ -1,12 +1,13 @@
 import { Text, View } from 'react-native';
 import { moodOptions } from '../../../../support/theme/moods';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { HomeSectionHeader } from './HomeSectionHeader';
 
 /**
  * Displays the mood category pills.
  */
 export function HomeMoodSection() {
+  const styles = useStyles();
   return (
     <View style={styles.section}>
       <HomeSectionHeader

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { moodOptions } from '../../../../support/theme/moods';
-import { colors } from '../../../../support/theme/tokens';
+import { useTheme } from '../../../../support/theme/tokens';
 import { getMoodLore } from '../utils/moodLore';
 import { isDarkColor, mixColor, withAlpha } from '../utils/color';
 
@@ -25,6 +25,8 @@ export type WriteMoodTheme = {
  * Builds mood-driven colors and copy for the write experience.
  */
 export function useWriteMoodTheme(moodKey: string): WriteMoodTheme {
+  const { theme } = useTheme();
+  const colors = theme.colors;
   return useMemo(() => {
     const activeMood =
       moodOptions.find((option) => option.key === moodKey) ?? moodOptions[0];
@@ -70,5 +72,5 @@ export function useWriteMoodTheme(moodKey: string): WriteMoodTheme {
       moodTextColor,
       moodDescription,
     };
-  }, [moodKey]);
+  }, [colors, moodKey]);
 }

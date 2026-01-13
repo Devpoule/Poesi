@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { Platform, StyleSheet, Text, View, Animated } from 'react-native';
-import { colors, spacing, typography } from '../../support/theme/tokens';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Animated, Platform, StyleSheet, Text, View } from 'react-native';
+import { ThemeColors, spacing, typography, useTheme } from '../../support/theme/tokens';
 
 type TabVariant = 'home' | 'poems' | 'write' | 'profile';
 
@@ -10,28 +10,15 @@ type TabTheme = {
   background: string;
 };
 
-const tabPalette = {
-  color: colors.accentStrong,
-  background: colors.accentSoft,
+type TabItemProps = {
+  variant: TabVariant;
+  focused: boolean;
 };
 
-const tabThemes: Record<TabVariant, TabTheme> = {
-  home: {
-    label: 'Accueil',
-    ...tabPalette,
-  },
-  poems: {
-    label: 'Poèmes',
-    ...tabPalette,
-  },
-  write: {
-    label: 'Écriture',
-    ...tabPalette,
-  },
-  profile: {
-    label: 'Profil',
-    ...tabPalette,
-  },
+type SigilProps = {
+  variant: TabVariant;
+  color: string;
+  styles: ReturnType<typeof createStyles>;
 };
 
 const tabShadowStyle = Platform.select({
@@ -44,18 +31,22 @@ const tabShadowStyle = Platform.select({
     elevation: 3,
   },
 }) as any;
+const useNativeDriver = Platform.OS !== 'web';
 
-type TabItemProps = {
-  variant: TabVariant;
-  focused: boolean;
-};
+function buildTabThemes(colors: ThemeColors): Record<TabVariant, TabTheme> {
+  const palette = {
+    color: colors.accentStrong,
+    background: colors.accentSoft,
+  };
+  return {
+    home: { label: 'Accueil', ...palette },
+    poems: { label: 'Poemes', ...palette },
+    write: { label: 'Ecrire', ...palette },
+    profile: { label: 'Profil', ...palette },
+  };
+}
 
-type SigilProps = {
-  variant: TabVariant;
-  color: string;
-};
-
-function Sigil({ variant, color }: SigilProps) {
+function Sigil({ variant, color, styles }: SigilProps) {
   if (variant === 'home') {
     return (
       <View style={styles.sigil}>
@@ -94,13 +85,16 @@ function Sigil({ variant, color }: SigilProps) {
 }
 
 export function TabItem({ variant, focused }: TabItemProps) {
-  const theme = tabThemes[variant];
-  const labelColor = focused ? theme.color : colors.textMuted;
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
+  const tabThemes = useMemo(() => buildTabThemes(theme.colors), [theme.colors]);
+  const itemTheme = tabThemes[variant];
+  const labelColor = focused ? itemTheme.color : theme.colors.textMuted;
   const anim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const toValue = focused ? 1.03 : 1;
-    Animated.timing(anim, { toValue, duration: 200, useNativeDriver: true }).start();
+    Animated.timing(anim, { toValue, duration: 200, useNativeDriver }).start();
   }, [focused, anim]);
 
   const transformStyle: any = Platform.select({
@@ -116,169 +110,171 @@ export function TabItem({ variant, focused }: TabItemProps) {
     <Animated.View
       accessible
       accessibilityRole="button"
-      accessibilityLabel={theme.label}
+      accessibilityLabel={itemTheme.label}
       style={[
         styles.container,
         {
-          borderColor: theme.color,
-          backgroundColor: focused ? theme.background : colors.surface,
+          borderColor: itemTheme.color,
+          backgroundColor: focused ? itemTheme.background : theme.colors.surface,
         },
         styles.containerActive,
         { transform: transformStyle },
         focused && Platform.OS === 'web' ? { zIndex: 1100 } : {},
       ]}
     >
-      <Sigil variant={variant} color={theme.color} />
-      <Text style={[styles.label, { color: labelColor }]}>{theme.label}</Text>
+      <Sigil variant={variant} color={itemTheme.color} styles={styles} />
+      <Text style={[styles.label, { color: labelColor }]}>{itemTheme.label}</Text>
     </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: spacing.xs,
-    minWidth: 40,
-    marginHorizontal: spacing.xs,
-    borderRadius: 18,
-    borderWidth: 1,
-    backgroundColor: colors.surface,
-    ...Platform.select({
-      web: {
-        paddingVertical: 6,
-        paddingHorizontal: spacing.sm,
-        minWidth: 90,
-        borderRadius: 18,
-      },
-      default: {},
-    }),
-  },
-  containerActive: {
-    ...Platform.select({
-      web: {
-        transform: [{ scale: 1.03 }],
-        zIndex: 1100,
-      },
-      default: {
-        transform: [{ translateY: -2 }],
-      },
-    }),
-    ...tabShadowStyle,
-  },
-  sigil: {
-    width: 16,
-    height: 16,
-    marginBottom: 2,
-    position: 'relative',
-    ...Platform.select({
-      web: {
-        width: 20,
-        height: 20,
-        marginBottom: 2,
-      },
-      default: {},
-    }),
-  },
-  label: {
-    fontSize: typography.small,
-    fontFamily: typography.fontFamily,
-    ...Platform.select({
-      web: {
-        fontSize: 14,
-        fontWeight: '600' as any,
-        marginTop: 2,
-      },
-      default: {},
-    }),
-  },
-  homeBase: {
-    position: 'absolute',
-    width: 12,
-    height: 8,
-    borderWidth: 1,
-    borderRadius: 2,
-    bottom: 2,
-    left: 5,
-  },
-  homeRoofLeft: {
-    position: 'absolute',
-    width: 10,
-    height: 2,
-    borderRadius: 2,
-    top: 6,
-    left: 2,
-    transform: [{ rotate: '-40deg' }],
-  },
-  homeRoofRight: {
-    position: 'absolute',
-    width: 10,
-    height: 2,
-    borderRadius: 2,
-    top: 6,
-    right: 2,
-    transform: [{ rotate: '40deg' }],
-  },
-  bookLeft: {
-    position: 'absolute',
-    width: 7,
-    height: 12,
-    borderWidth: 1,
-    borderRadius: 2,
-    left: 2,
-    top: 4,
-  },
-  bookRight: {
-    position: 'absolute',
-    width: 7,
-    height: 12,
-    borderWidth: 1,
-    borderRadius: 2,
-    right: 2,
-    top: 4,
-  },
-  bookSpine: {
-    position: 'absolute',
-    width: 2,
-    height: 12,
-    top: 4,
-    left: 10,
-    borderRadius: 1,
-  },
-  penBody: {
-    position: 'absolute',
-    width: 14,
-    height: 2,
-    top: 9,
-    left: 2,
-    borderRadius: 2,
-    transform: [{ rotate: '-35deg' }],
-  },
-  penTip: {
-    position: 'absolute',
-    width: 5,
-    height: 5,
-    top: 12,
-    right: 2,
-    borderRadius: 1,
-    transform: [{ rotate: '45deg' }],
-  },
-  profileRing: {
-    position: 'absolute',
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    borderWidth: 2,
-    top: 3,
-    left: 5,
-  },
-  profileDot: {
-    position: 'absolute',
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    bottom: 3,
-    left: 8,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 6,
+      paddingHorizontal: spacing.xs,
+      minWidth: 40,
+      marginHorizontal: spacing.xs,
+      borderRadius: 18,
+      borderWidth: 1,
+      backgroundColor: colors.surface,
+      ...Platform.select({
+        web: {
+          paddingVertical: 6,
+          paddingHorizontal: spacing.sm,
+          minWidth: 90,
+          borderRadius: 18,
+        },
+        default: {},
+      }),
+    },
+    containerActive: {
+      ...Platform.select({
+        web: {
+          transform: [{ scale: 1.03 }],
+          zIndex: 1100,
+        },
+        default: {
+          transform: [{ translateY: -2 }],
+        },
+      }),
+      ...tabShadowStyle,
+    },
+    sigil: {
+      width: 16,
+      height: 16,
+      marginBottom: 2,
+      position: 'relative',
+      ...Platform.select({
+        web: {
+          width: 20,
+          height: 20,
+          marginBottom: 2,
+        },
+        default: {},
+      }),
+    },
+    label: {
+      fontSize: typography.small,
+      fontFamily: typography.fontFamily,
+      ...Platform.select({
+        web: {
+          fontSize: 14,
+          fontWeight: '600' as any,
+          marginTop: 2,
+        },
+        default: {},
+      }),
+    },
+    homeBase: {
+      position: 'absolute',
+      width: 12,
+      height: 8,
+      borderWidth: 1,
+      borderRadius: 2,
+      bottom: 2,
+      left: 5,
+    },
+    homeRoofLeft: {
+      position: 'absolute',
+      width: 10,
+      height: 2,
+      borderRadius: 2,
+      top: 6,
+      left: 2,
+      transform: [{ rotate: '-40deg' }],
+    },
+    homeRoofRight: {
+      position: 'absolute',
+      width: 10,
+      height: 2,
+      borderRadius: 2,
+      top: 6,
+      right: 2,
+      transform: [{ rotate: '40deg' }],
+    },
+    bookLeft: {
+      position: 'absolute',
+      width: 7,
+      height: 12,
+      borderWidth: 1,
+      borderRadius: 2,
+      left: 2,
+      top: 4,
+    },
+    bookRight: {
+      position: 'absolute',
+      width: 7,
+      height: 12,
+      borderWidth: 1,
+      borderRadius: 2,
+      right: 2,
+      top: 4,
+    },
+    bookSpine: {
+      position: 'absolute',
+      width: 2,
+      height: 12,
+      top: 4,
+      left: 10,
+      borderRadius: 1,
+    },
+    penBody: {
+      position: 'absolute',
+      width: 14,
+      height: 2,
+      top: 9,
+      left: 2,
+      borderRadius: 2,
+      transform: [{ rotate: '-35deg' }],
+    },
+    penTip: {
+      position: 'absolute',
+      width: 5,
+      height: 5,
+      top: 12,
+      right: 2,
+      borderRadius: 1,
+      transform: [{ rotate: '45deg' }],
+    },
+    profileRing: {
+      position: 'absolute',
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      borderWidth: 2,
+      top: 3,
+      left: 5,
+    },
+    profileDot: {
+      position: 'absolute',
+      width: 6,
+      height: 6,
+      borderRadius: 3,
+      bottom: 3,
+      left: 8,
+    },
+  });
+}

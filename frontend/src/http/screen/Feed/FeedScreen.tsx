@@ -14,7 +14,7 @@ import type { Poem } from '../../../domain/poem/model/Poem';
 import { useAuth } from '../../../bootstrap/AuthProvider';
 import { Screen } from '../../components/Screen';
 import { normalizeMoodKey, moodOptions, resolveMood } from '../../../support/theme/moods';
-import { colors, spacing, typography } from '../../../support/theme/tokens';
+import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
 import { useFeedViewModel } from './FeedViewModel';
 
 type FeedScreenProps = {
@@ -78,10 +78,12 @@ function FilterChip({
   label,
   active,
   onPress,
+  styles,
 }: {
   label: string;
   active: boolean;
   onPress: () => void;
+  styles: ReturnType<typeof createStyles>;
 }) {
   return (
     <Pressable
@@ -160,8 +162,10 @@ function PoemCard({ poem, index }: PoemCardProps) {
 export default function FeedScreen({
   title = 'Flux',
   subtitle = "Les textes en cours d'envol.",
-  ctaLabel = 'Écrire',
+  ctaLabel = 'Ecrire',
 }: FeedScreenProps) {
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const router = useRouter();
   const { tokens } = useAuth();
   const { items, isLoading, error, reload } = useFeedViewModel();
@@ -189,8 +193,8 @@ export default function FeedScreen({
     overlayAnim.setValue(0);
     if (color) {
       Animated.sequence([
-        Animated.timing(overlayAnim, { toValue: 0.55, duration: 200, useNativeDriver: true }),
-        Animated.timing(overlayAnim, { toValue: 0, duration: 420, useNativeDriver: true }),
+        Animated.timing(overlayAnim, { toValue: 0.55, duration: 200, useNativeDriver }),
+        Animated.timing(overlayAnim, { toValue: 0, duration: 420, useNativeDriver }),
       ]).start(() => setOverlayColor(null));
     }
   }, [selectedMood, overlayAnim]);
@@ -199,10 +203,9 @@ export default function FeedScreen({
     <Screen>
       {overlayColor ? (
         <Animated.View
-          pointerEvents="none"
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: overlayColor, opacity: overlayAnim },
+            { backgroundColor: overlayColor, opacity: overlayAnim, pointerEvents: 'none' },
           ]}
         />
       ) : null}
@@ -222,13 +225,14 @@ export default function FeedScreen({
               label={option.label}
               active={selectedMood === option.key}
               onPress={() => setSelectedMood(option.key)}
+              styles={styles}
             />
           ))}
         </View>
 
         {isLoading ? (
           <View style={styles.centered}>
-            <ActivityIndicator color={colors.textSecondary} />
+            <ActivityIndicator color={theme.colors.textSecondary} />
             <Text style={styles.loadingText}>Chargement...</Text>
           </View>
         ) : null}
@@ -237,7 +241,7 @@ export default function FeedScreen({
           <View style={styles.errorBox}>
             <Text style={styles.errorText}>{error}</Text>
             <Pressable style={styles.retryButton} onPress={reload}>
-              <Text style={styles.retryText}>Réessayer</Text>
+              <Text style={styles.retryText}>Reessayer</Text>
             </Pressable>
           </View>
         ) : null}
@@ -255,7 +259,7 @@ export default function FeedScreen({
                   Pose les premiers mots et lance l'envol.
                 </Text>
                 <Pressable style={styles.emptyButton} onPress={handleWrite}>
-                  <Text style={styles.emptyButtonText}>Écrire un texte</Text>
+                  <Text style={styles.emptyButtonText}>Ecrire un texte</Text>
                 </Pressable>
               </View>
             }
@@ -268,210 +272,212 @@ export default function FeedScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    marginBottom: spacing.md,
-  },
-  title: {
-    fontSize: typography.display,
-    fontFamily: typography.fontFamily,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: typography.body,
-    fontFamily: typography.fontFamily,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-  },
-  ctaButton: {
-    alignSelf: 'flex-start',
-    marginTop: spacing.sm,
-    backgroundColor: colors.accent,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-    borderRadius: 999,
-  },
-  ctaText: {
-    color: colors.textPrimary,
-    fontSize: typography.caption,
-    fontFamily: typography.fontFamily,
-  },
-  filterRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: spacing.md,
-  },
-  filterChip: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    marginRight: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  filterChipActive: {
-    borderColor: colors.accent,
-    backgroundColor: colors.accentSoft,
-  },
-  filterChipPressed: {
-    opacity: 0.75,
-  },
-  filterChipText: {
-    fontSize: typography.caption,
-    color: colors.textSecondary,
-    fontFamily: typography.fontFamily,
-  },
-  filterChipTextActive: {
-    color: colors.textPrimary,
-  },
-  listContent: {
-    paddingBottom: spacing.xxl,
-  },
-  separator: {
-    height: spacing.md,
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...cardShadowStyle,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  cardTitle: {
-    flex: 1,
-    fontSize: typography.body,
-    fontFamily: typography.fontFamily,
-    color: colors.textPrimary,
-    marginRight: spacing.sm,
-  },
-  moodBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: spacing.sm,
-    borderRadius: 999,
-    borderWidth: 1,
-    backgroundColor: colors.surfaceElevated,
-  },
-  moodDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginRight: spacing.xs,
-  },
-  moodLabel: {
-    fontSize: typography.small,
-    fontFamily: typography.fontFamily,
-    color: colors.textPrimary,
-  },
-  cardAuthor: {
-    marginTop: spacing.xs,
-    fontSize: typography.caption,
-    fontFamily: typography.fontFamily,
-    color: colors.textSecondary,
-  },
-  cardMetaRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: spacing.xs,
-  },
-  cardMeta: {
-    fontSize: typography.small,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-    marginRight: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: spacing.sm,
-  },
-  badge: {
-    paddingVertical: 4,
-    paddingHorizontal: spacing.sm,
-    borderRadius: 999,
-    backgroundColor: colors.surfaceMuted,
-    marginRight: spacing.sm,
-    marginBottom: spacing.xs,
-  },
-  badgeText: {
-    fontSize: typography.small,
-    fontFamily: typography.fontFamily,
-    color: colors.textSecondary,
-  },
-  centered: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: spacing.lg,
-  },
-  loadingText: {
-    marginTop: spacing.sm,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-  },
-  errorBox: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: spacing.lg,
-  },
-  errorText: {
-    color: colors.danger,
-    fontFamily: typography.fontFamily,
-    marginBottom: spacing.sm,
-  },
-  retryButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  retryText: {
-    color: colors.textPrimary,
-    fontSize: typography.caption,
-    fontFamily: typography.fontFamily,
-  },
-  emptyState: {
-    alignItems: 'center',
-    paddingVertical: spacing.xxl,
-  },
-  emptyTitle: {
-    fontSize: typography.body,
-    fontFamily: typography.fontFamily,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  emptyText: {
-    fontSize: typography.caption,
-    fontFamily: typography.fontFamily,
-    color: colors.textMuted,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  emptyButton: {
-    backgroundColor: colors.accent,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.lg,
-    borderRadius: 999,
-  },
-  emptyButtonText: {
-    color: colors.textPrimary,
-    fontSize: typography.caption,
-    fontFamily: typography.fontFamily,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      marginBottom: spacing.md,
+    },
+    title: {
+      fontSize: typography.display,
+      fontFamily: typography.fontFamily,
+      color: colors.textPrimary,
+    },
+    subtitle: {
+      fontSize: typography.body,
+      fontFamily: typography.fontFamily,
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+    },
+    ctaButton: {
+      alignSelf: 'flex-start',
+      marginTop: spacing.sm,
+      backgroundColor: colors.accent,
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.md,
+      borderRadius: 999,
+    },
+    ctaText: {
+      color: colors.textPrimary,
+      fontSize: typography.caption,
+      fontFamily: typography.fontFamily,
+    },
+    filterRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: spacing.md,
+    },
+    filterChip: {
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      marginRight: spacing.sm,
+      marginBottom: spacing.sm,
+    },
+    filterChipActive: {
+      borderColor: colors.accent,
+      backgroundColor: colors.accentSoft,
+    },
+    filterChipPressed: {
+      opacity: 0.75,
+    },
+    filterChipText: {
+      fontSize: typography.caption,
+      color: colors.textSecondary,
+      fontFamily: typography.fontFamily,
+    },
+    filterChipTextActive: {
+      color: colors.textPrimary,
+    },
+    listContent: {
+      paddingBottom: spacing.xxl,
+    },
+    separator: {
+      height: spacing.md,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: spacing.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      ...cardShadowStyle,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    cardTitle: {
+      flex: 1,
+      fontSize: typography.body,
+      fontFamily: typography.fontFamily,
+      color: colors.textPrimary,
+      marginRight: spacing.sm,
+    },
+    moodBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 4,
+      paddingHorizontal: spacing.sm,
+      borderRadius: 999,
+      borderWidth: 1,
+      backgroundColor: colors.surfaceElevated,
+    },
+    moodDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginRight: spacing.xs,
+    },
+    moodLabel: {
+      fontSize: typography.small,
+      fontFamily: typography.fontFamily,
+      color: colors.textPrimary,
+    },
+    cardAuthor: {
+      marginTop: spacing.xs,
+      fontSize: typography.caption,
+      fontFamily: typography.fontFamily,
+      color: colors.textSecondary,
+    },
+    cardMetaRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginTop: spacing.xs,
+    },
+    cardMeta: {
+      fontSize: typography.small,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+      marginRight: spacing.sm,
+      marginTop: spacing.xs,
+    },
+    badgeRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginTop: spacing.sm,
+    },
+    badge: {
+      paddingVertical: 4,
+      paddingHorizontal: spacing.sm,
+      borderRadius: 999,
+      backgroundColor: colors.surfaceMuted,
+      marginRight: spacing.sm,
+      marginBottom: spacing.xs,
+    },
+    badgeText: {
+      fontSize: typography.small,
+      fontFamily: typography.fontFamily,
+      color: colors.textSecondary,
+    },
+    centered: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: spacing.lg,
+    },
+    loadingText: {
+      marginTop: spacing.sm,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+    },
+    errorBox: {
+      backgroundColor: colors.surface,
+      borderRadius: 16,
+      padding: spacing.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: spacing.lg,
+    },
+    errorText: {
+      color: colors.danger,
+      fontFamily: typography.fontFamily,
+      marginBottom: spacing.sm,
+    },
+    retryButton: {
+      alignSelf: 'flex-start',
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.sm,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    retryText: {
+      color: colors.textPrimary,
+      fontSize: typography.caption,
+      fontFamily: typography.fontFamily,
+    },
+    emptyState: {
+      alignItems: 'center',
+      paddingVertical: spacing.xxl,
+    },
+    emptyTitle: {
+      fontSize: typography.body,
+      fontFamily: typography.fontFamily,
+      color: colors.textPrimary,
+      marginBottom: spacing.xs,
+    },
+    emptyText: {
+      fontSize: typography.caption,
+      fontFamily: typography.fontFamily,
+      color: colors.textMuted,
+      textAlign: 'center',
+      marginBottom: spacing.md,
+    },
+    emptyButton: {
+      backgroundColor: colors.accent,
+      paddingVertical: spacing.xs,
+      paddingHorizontal: spacing.lg,
+      borderRadius: 999,
+    },
+    emptyButtonText: {
+      color: colors.textPrimary,
+      fontSize: typography.caption,
+      fontFamily: typography.fontFamily,
+    },
+  });
+}

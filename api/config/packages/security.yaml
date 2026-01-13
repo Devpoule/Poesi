@@ -62,9 +62,12 @@ security:
         - { path: ^/api/feathers, roles: ROLE_ADMIN, methods: [POST, PUT, DELETE] }
         - { path: ^/api/poems/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/poems$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/poems/full$, roles: PUBLIC_ACCESS, methods: [GET] }
         - { path: ^/api/poems/\d+/publish$, roles: ROLE_WRITER, methods: [POST] }
         - { path: ^/api/poems/\d+$, roles: ROLE_WRITER, methods: [PUT, DELETE] }
         - { path: ^/api/poems$, roles: ROLE_WRITER, methods: [POST] }
+        - { path: ^/api/feather-votes/poem/\d+$, roles: PUBLIC_ACCESS, methods: [GET] }
+        - { path: ^/api/feather-votes$, roles: ROLE_USER, methods: [POST] }
         - { path: ^/api, roles: ROLE_USER }
 
 when@test:

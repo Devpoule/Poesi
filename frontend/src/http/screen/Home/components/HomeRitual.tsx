@@ -1,5 +1,5 @@
 import { Text, View } from 'react-native';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { ritualHint, ritualPrompt } from '../utils/ritual';
 import { HomeSectionHeader } from './HomeSectionHeader';
 
@@ -7,6 +7,7 @@ import { HomeSectionHeader } from './HomeSectionHeader';
  * Daily ritual prompt section.
  */
 export function HomeRitual() {
+  const styles = useStyles();
   return (
     <View style={styles.section}>
       <HomeSectionHeader

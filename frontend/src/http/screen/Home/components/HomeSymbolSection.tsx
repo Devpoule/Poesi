@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
-import { styles } from '../styles';
-import { symbolItems } from '../utils/symbols';
+import { useStyles } from '../styles';
+import { useSymbolItems } from '../utils/symbols';
 import { HomeSectionHeader } from './HomeSectionHeader';
 import { HomeSymbolMark } from './HomeSymbolMark';
 
@@ -8,6 +8,8 @@ import { HomeSymbolMark } from './HomeSymbolMark';
  * Displays the symbol category grid.
  */
 export function HomeSymbolSection() {
+  const styles = useStyles();
+  const symbolItems = useSymbolItems();
   return (
     <View style={styles.section}>
       <HomeSectionHeader

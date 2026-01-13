@@ -1,11 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { colors, spacing, typography } from './src/support/theme/tokens';
+import { SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { useMemo } from 'react';
+import { ThemeColors, spacing, typography, useTheme } from './src/support/theme/tokens';
 
 export default function App() {
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="dark" />
+      <StatusBar barStyle="dark-content" />
       <View style={styles.container}>
         <Text style={styles.title}>POESI</Text>
         <Text style={styles.subtitle}>Écriture, lecture, résonance.</Text>
@@ -15,7 +17,8 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
@@ -43,4 +46,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily,
     color: colors.textMuted,
   },
-});
+  });
+}
+}

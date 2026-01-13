@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, Platform, Text, View } from 'react-native';
 import type { Poem } from '../../../../domain/poem/model/Poem';
 import { resolveMood } from '../../../../support/theme/moods';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { formatPoemDate, formatStatus } from '../utils/poemFormatting';
 
 type HomePoemCardProps = {
@@ -16,6 +16,7 @@ const useNativeDriver = Platform.OS !== 'web';
  * Animated preview card for a recent poem.
  */
 export function HomePoemCard({ poem, index }: HomePoemCardProps) {
+  const styles = useStyles();
   const reveal = useRef(new Animated.Value(0)).current;
   const mood = resolveMood(poem.moodColor);
   const author = poem.user?.pseudo ?? 'Anonyme';

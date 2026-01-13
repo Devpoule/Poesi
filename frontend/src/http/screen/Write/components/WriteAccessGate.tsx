@@ -1,13 +1,15 @@
 import { Animated, Platform, Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '../../../components/Screen';
+import { Button } from '../../../components/Button';
 import { useRevealAnimation } from '../hooks/useRevealAnimation';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 
 /**
  * Access gate shown to guests before entering the editor.
  */
 export function WriteAccessGate() {
+  const styles = useStyles();
   const router = useRouter();
   const { reveals, revealStyle } = useRevealAnimation(3);
 

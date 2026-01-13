@@ -1,5 +1,6 @@
+import { useMemo } from 'react';
 import { Platform, StyleSheet } from 'react-native';
-import { colors, spacing, typography } from '../../../support/theme/tokens';
+import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
 
 const heroShadowStyle = Platform.select({
   web: { boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.08)' } as any,
@@ -34,13 +35,16 @@ const poemCardShadowStyle = Platform.select({
   },
 }) as any;
 
-export const styles = StyleSheet.create({
-  page: {},
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+  page: {
+    width: '100%',
+  },
   heroWrapper: {
     marginBottom: spacing.md,
   },
   heroCard: {
-    backgroundColor: colors.surfaceElevated,
+    backgroundColor: colors.surface,
     borderRadius: 24,
     padding: spacing.lg,
     borderWidth: 1,
@@ -77,7 +81,7 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     width: 200,
     height: 2,
-    backgroundColor: colors.accentStrong,
+    backgroundColor: colors.accent,
     opacity: 0.35,
     top: 70,
     left: -40,
@@ -85,7 +89,7 @@ export const styles = StyleSheet.create({
   },
   heroKicker: {
     fontSize: typography.caption,
-    fontFamily: typography.headingFont,
+    fontFamily: typography.fontFamily,
     color: colors.textMuted,
     textTransform: 'uppercase',
     letterSpacing: 2,
@@ -93,13 +97,13 @@ export const styles = StyleSheet.create({
   heroTitle: {
     marginTop: spacing.xs,
     fontSize: typography.display,
-    fontFamily: typography.headingFont,
+    fontFamily: typography.fontFamily,
     color: colors.textPrimary,
   },
   heroSubtitle: {
     marginTop: spacing.xs,
     fontSize: typography.body,
-    fontFamily: typography.headingFont,
+    fontFamily: typography.fontFamily,
     color: colors.textSecondary,
   },
   heroBadges: {
@@ -108,7 +112,7 @@ export const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   heroBadge: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceElevated,
     borderRadius: 999,
     borderWidth: 1,
     borderColor: colors.border,
@@ -134,7 +138,7 @@ export const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: typography.caption,
     fontFamily: typography.fontFamily,
-    color: '#FFFFFF',
+    color: colors.textPrimary,
   },
   secondaryButton: {
     marginTop: spacing.sm,
@@ -185,7 +189,7 @@ export const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: typography.title,
-    fontFamily: typography.headingFont,
+    fontFamily: typography.fontFamily,
     color: colors.textPrimary,
   },
   sectionHint: {
@@ -506,4 +510,10 @@ export const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: spacing.md,
   },
-});
+  });
+}
+
+export function useStyles() {
+  const { theme } = useTheme();
+  return useMemo(() => createStyles(theme.colors), [theme.colors]);
+}

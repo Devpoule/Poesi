@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Animated } from 'react-native';
 import { Screen } from '../../../components/Screen';
-import { colors } from '../../../../support/theme/tokens';
+import { useTheme } from '../../../../support/theme/tokens';
 import { useRevealAnimation } from '../hooks/useRevealAnimation';
 import { useWriteContent } from '../hooks/useWriteContent';
 import { useWriteDraft } from '../hooks/useWriteDraft';
 import { useWriteMoodTheme } from '../hooks/useWriteMoodTheme';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { WriteBackdrop } from './WriteBackdrop';
 import { WriteEditorCard } from './WriteEditorCard';
 import { WriteHeader } from './WriteHeader';
@@ -16,13 +16,15 @@ import { WriteMoodPanel } from './WriteMoodPanel';
  * Full write experience for authenticated users.
  */
 export function WriteEditor() {
+  const styles = useStyles();
+  const { theme: appTheme } = useTheme();
   const [mood, setMood] = useState('neutre');
   const { reveals, revealStyle } = useRevealAnimation(3);
   const { draftTooltip, isDraftActive, handleDraftToggle, handleSave, markDirty } =
     useWriteDraft();
   const { title, body, handleTitleChange, handleBodyChange } = useWriteContent(markDirty);
   const theme = useWriteMoodTheme(mood);
-  const idleBorderColor = theme.isNeutral ? colors.border : theme.moodAccent;
+  const idleBorderColor = theme.isNeutral ? appTheme.colors.border : theme.moodAccent;
 
   return (
     <Screen scroll contentStyle={styles.page}>

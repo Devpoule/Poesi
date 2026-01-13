@@ -1,7 +1,7 @@
 import { Text, View } from 'react-native';
 import { moodOptions } from '../../../../support/theme/moods';
 import { getMoodLore } from '../utils/moodLore';
-import { styles } from '../styles';
+import { useStyles } from '../styles';
 import { MoodBadge } from './MoodBadge';
 
 type WriteMoodPanelProps = {
@@ -18,6 +18,7 @@ export function WriteMoodPanel({
   description,
   onSelectMood,
 }: WriteMoodPanelProps) {
+  const styles = useStyles();
   return (
     <>
       <View style={styles.moodGrid}>

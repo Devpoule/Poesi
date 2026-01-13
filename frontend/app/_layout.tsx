@@ -1,11 +1,27 @@
-﻿import { Redirect, Stack, useSegments } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
+import { useMemo } from 'react';
+import { Redirect, Stack, useSegments } from 'expo-router';
+import { LogBox, StyleSheet, Text, View } from 'react-native';
 import { AuthProvider, useAuth } from '../src/bootstrap/AuthProvider';
-import { colors, spacing, typography } from '../src/support/theme/tokens';
+import { ThemeColors, ThemeProvider, spacing, typography, useTheme } from '../src/support/theme/tokens';
+
+LogBox.ignoreLogs(['props.pointerEvents is deprecated. Use style.pointerEvents']);
+const warnFilterKey = '__poesiWarnFilter';
+if (!(globalThis as any)[warnFilterKey]) {
+  (globalThis as any)[warnFilterKey] = true;
+  const originalWarn = console.warn;
+  console.warn = (...args: unknown[]) => {
+    if (typeof args[0] === 'string' && args[0].includes('props.pointerEvents is deprecated')) {
+      return;
+    }
+    originalWarn(...args);
+  };
+}
 
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { tokens, isLoading } = useAuth();
-  const segments = useSegments();
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
+  const segments = useSegments() as string[];
   const inAuthGroup = segments[0] === '(auth)';
   const publicTabs = new Set(['home', 'poems', 'feed', 'write']);
   const isPublicTab =
@@ -32,27 +48,31 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
       <AuthGate>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="(tabs)" />
         </Stack>
       </AuthGate>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  loading: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-    padding: spacing.lg,
-  },
-  loadingText: {
-    fontSize: typography.body,
-    color: colors.textSecondary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    loading: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.background,
+      padding: spacing.lg,
+    },
+    loadingText: {
+      fontSize: typography.body,
+      color: colors.textSecondary,
+    },
+  });
+}

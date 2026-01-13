@@ -1,18 +1,18 @@
 import { Tabs } from 'expo-router';
 import { Platform, Pressable, Text, View } from 'react-native';
 import { TabItem } from '../../src/http/components/TabItem';
-import { spacing, layout, ThemeProvider, useTheme } from '../../src/support/theme/tokens';
+import { spacing, layout, useTheme } from '../../src/support/theme/tokens';
 
 export default function TabsLayout() {
   return (
-    <ThemeProvider>
+    <>
       <InnerTabs />
-    </ThemeProvider>
+      <ThemeToggle />
+    </>
   );
 }
-
 function InnerTabs() {
-  const { theme, toggle, mode } = useTheme();
+  const { theme } = useTheme();
   const colors = theme.colors;
   return (
     <Tabs
@@ -28,8 +28,8 @@ function InnerTabs() {
           paddingBottom: spacing.xs,
           overflow: 'visible',
           position: Platform.select({ web: 'fixed', default: 'absolute' }) as any,
-          left: Platform.OS === 'web' ? layout.sidePercent : spacing.md,
-          right: Platform.OS === 'web' ? layout.sidePercent : spacing.md,
+          left: layout.sidePercent,
+          right: layout.sidePercent,
           top: Platform.OS === 'web' ? 14 : undefined,
           bottom: Platform.OS === 'web' ? undefined : 14,
           borderRadius: 24,
@@ -63,14 +63,14 @@ function InnerTabs() {
       <Tabs.Screen
         name="poems"
         options={{
-          title: 'Poèmes',
+          title: 'Poemes',
           tabBarIcon: ({ focused }) => <TabItem variant="poems" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="write"
         options={{
-          title: 'Écrire',
+          title: 'Ecrire',
           tabBarIcon: ({ focused }) => <TabItem variant="write" focused={focused} />,
         }}
       />
@@ -88,10 +88,19 @@ function InnerTabs() {
 // floating toggle placed above tabs on web
 function ThemeToggle() {
   const { toggle, mode } = useTheme();
+  const label = mode === 'dark' ? 'Light' : 'Dark';
   return (
-    <View style={{ position: 'fixed', right: 24, top: 18, zIndex: 2000 }}>
+    <View
+      style={
+        Platform.select({
+          web: { position: 'fixed', right: 24, top: 18, zIndex: 2000 } as any,
+          default: { position: 'absolute', right: 24, top: 18, zIndex: 2000 },
+        }) as any
+      }
+    >
       <Pressable onPress={toggle} style={{ padding: 8, borderRadius: 8, backgroundColor: 'transparent' }}>
-        <Text style={{ color: mode === 'dark' ? '#FFF' : '#111' }}>{mode === 'dark' ? '☾' : '☀︎'}</Text>
+        <Text style={{ color: mode === 'dark' ? '#FFF' : '#111' }}>{label}</Text>
       </Pressable>
     </View>
   );
+}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   Platform,
@@ -10,11 +10,13 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '../../components/Screen';
-import { colors, spacing, typography } from '../../../support/theme/tokens';
+import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
 
 const useNativeDriver = Platform.OS !== 'web';
 
 export default function RegisterScreen() {
+  const { theme } = useTheme();
+  const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [pseudo, setPseudo] = useState('');
@@ -56,7 +58,7 @@ export default function RegisterScreen() {
       <Animated.View style={[styles.header, revealStyle(reveals[0])]}>
         <Text style={styles.kicker}>Poesi</Text>
         <Text style={styles.title}>Inscription</Text>
-        <Text style={styles.subtitle}>Demande un accès pour écrire.</Text>
+        <Text style={styles.subtitle}>Demande un acces pour ecrire.</Text>
       </Animated.View>
 
       <Animated.View style={[styles.card, revealStyle(reveals[1])]}>
@@ -69,7 +71,7 @@ export default function RegisterScreen() {
           autoCorrect={false}
           keyboardType="email-address"
           placeholder="ton@email.fr"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={theme.colors.textMuted}
         />
         <Text style={styles.label}>Pseudo</Text>
         <TextInput
@@ -79,7 +81,7 @@ export default function RegisterScreen() {
           autoCapitalize="none"
           autoCorrect={false}
           placeholder="ton pseudo"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={theme.colors.textMuted}
         />
         <Text style={styles.label}>Mot de passe</Text>
         <TextInput
@@ -88,21 +90,22 @@ export default function RegisterScreen() {
           onChangeText={setPassword}
           secureTextEntry
           placeholder="********"
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={theme.colors.textMuted}
         />
         {notice ? <Text style={styles.notice}>{notice}</Text> : null}
         <Pressable style={styles.button} onPress={submit}>
-          <Text style={styles.buttonText}>Demander un accès</Text>
+          <Text style={styles.buttonText}>Demander un acces</Text>
         </Pressable>
         <Pressable style={styles.link} onPress={() => router.push('/(auth)/login')}>
-          <Text style={styles.linkText}>Déjà un compte ? Se connecter</Text>
+          <Text style={styles.linkText}>Deja un compte ? Se connecter</Text>
         </Pressable>
       </Animated.View>
     </Screen>
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   content: {
     justifyContent: 'center',
   },
@@ -177,4 +180,5 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily,
     color: colors.textSecondary,
   },
-});
+  });
+}
