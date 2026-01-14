@@ -22,8 +22,12 @@ export function Screen({ children, style, contentStyle, scroll = false }: Screen
   const { theme } = useTheme();
   const colors = theme.colors;
   const { width } = useWindowDimensions();
-  const sideInset = Math.round(width * 0.1);
-  const styles = createStyles(colors, sideInset);
+  const sideInset = width < 720 ? spacing.sm : Math.round(width * 0.06);
+  const panelWidth = 260;
+  const panelGap = spacing.md;
+  const panelInset =
+    Platform.OS === 'web' && width >= 1100 ? panelWidth + panelGap : 0;
+  const styles = createStyles(colors, sideInset, width, panelInset);
   return (
     <SafeAreaView style={[styles.safeArea, style]}>
       <View style={styles.atmosphere}>
@@ -46,7 +50,7 @@ export function Screen({ children, style, contentStyle, scroll = false }: Screen
   );
 }
 
-function createStyles(colors: any, sideInset: number) {
+function createStyles(colors: any, sideInset: number, width: number, panelInset: number) {
   return StyleSheet.create({
     safeArea: {
       flex: 1,
@@ -104,11 +108,12 @@ function createStyles(colors: any, sideInset: number) {
       flex: 1,
       flexGrow: 1,
       position: 'relative',
-      paddingHorizontal: sideInset,
+      paddingLeft: sideInset + panelInset,
+      paddingRight: sideInset + panelInset,
       paddingTop: spacing.lg,
       paddingBottom: spacing.lg,
       ...(Platform.select({
-        web: { paddingTop: 96 } as ViewStyle,
+        web: { paddingTop: width < 720 ? spacing.xl : 96 } as ViewStyle,
         default: {} as ViewStyle,
       }) as ViewStyle),
     },

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Animated } from 'react-native';
 import { Screen } from '../../../components/Screen';
 import { useTheme } from '../../../../support/theme/tokens';
@@ -10,21 +9,23 @@ import { useStyles } from '../styles';
 import { WriteBackdrop } from './WriteBackdrop';
 import { WriteEditorCard } from './WriteEditorCard';
 import { WriteHeader } from './WriteHeader';
-import { WriteMoodPanel } from './WriteMoodPanel';
+import { getMoodLore } from '../utils/moodLore';
 
 /**
  * Full write experience for authenticated users.
  */
 export function WriteEditor() {
   const styles = useStyles();
-  const { theme: appTheme } = useTheme();
-  const [mood, setMood] = useState('neutre');
-  const { reveals, revealStyle } = useRevealAnimation(3);
+  const { theme: appTheme, accentKey } = useTheme();
+  const { reveals, revealStyle } = useRevealAnimation(2);
   const { draftTooltip, isDraftActive, handleDraftToggle, handleSave, markDirty } =
     useWriteDraft();
   const { title, body, handleTitleChange, handleBodyChange } = useWriteContent(markDirty);
+  const mood = accentKey ?? 'neutre';
   const theme = useWriteMoodTheme(mood);
   const idleBorderColor = theme.isNeutral ? appTheme.colors.border : theme.moodAccent;
+  const moodLore = getMoodLore(mood);
+  const moodDescription = moodLore?.description ?? '';
 
   return (
     <Screen scroll contentStyle={styles.page}>
@@ -37,6 +38,7 @@ export function WriteEditor() {
       <Animated.View style={revealStyle(reveals[0])}>
         <WriteHeader
           moodAccent={theme.moodAccent}
+          subtitle={moodDescription}
           draftTooltip={draftTooltip}
           isDraftActive={isDraftActive}
           onDraftToggle={handleDraftToggle}
@@ -46,24 +48,9 @@ export function WriteEditor() {
       <Animated.View
         style={[
           styles.card,
-          styles.moodPanel,
-          { borderColor: theme.moodAccent, backgroundColor: theme.moodSurfaceStrong },
-          revealStyle(reveals[1]),
-        ]}
-      >
-        <WriteMoodPanel
-          selectedMood={mood}
-          description={theme.moodDescription}
-          onSelectMood={setMood}
-        />
-      </Animated.View>
-
-      <Animated.View
-        style={[
-          styles.card,
           styles.editorCard,
           { borderColor: theme.moodAccent, backgroundColor: theme.moodSurfaceLight },
-          revealStyle(reveals[2]),
+          revealStyle(reveals[1]),
         ]}
       >
         <WriteEditorCard

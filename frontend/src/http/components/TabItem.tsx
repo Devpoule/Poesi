@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Animated, Platform, StyleSheet, Text, View } from 'react-native';
+import { Animated, Platform, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { ThemeColors, spacing, typography, useTheme } from '../../support/theme/tokens';
 
 type TabVariant = 'home' | 'poems' | 'write' | 'guide' | 'profile';
@@ -97,6 +97,8 @@ function Sigil({ variant, color, styles }: SigilProps) {
 
 export function TabItem({ variant, focused }: TabItemProps) {
   const { theme } = useTheme();
+  const { width } = useWindowDimensions();
+  const isCompact = width < 480;
   const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const tabThemes = useMemo(() => buildTabThemes(theme.colors), [theme.colors]);
   const itemTheme = tabThemes[variant];
@@ -134,7 +136,7 @@ export function TabItem({ variant, focused }: TabItemProps) {
       ]}
     >
       <Sigil variant={variant} color={itemTheme.color} styles={styles} />
-      <Text style={[styles.label, { color: labelColor }]}>{itemTheme.label}</Text>
+      {isCompact ? null : <Text style={[styles.label, { color: labelColor }]}>{itemTheme.label}</Text>}
     </Animated.View>
   );
 }
@@ -145,17 +147,17 @@ function createStyles(colors: ThemeColors) {
       alignItems: 'center',
       justifyContent: 'center',
       paddingVertical: 6,
-      paddingHorizontal: spacing.xs,
-      minWidth: 40,
-      marginHorizontal: spacing.xs,
-      borderRadius: 18,
-      borderWidth: 1,
+      paddingHorizontal: 2,
+      minWidth: 30,
+      marginHorizontal: 0,
+      borderRadius: 14,
+      borderWidth: 0,
       backgroundColor: colors.surface,
       ...Platform.select({
         web: {
           paddingVertical: 6,
           paddingHorizontal: spacing.sm,
-          minWidth: 90,
+          minWidth: 80,
           borderRadius: 18,
         },
         default: {},

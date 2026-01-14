@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
 
 const cardShadowStyle = Platform.select({
@@ -13,7 +13,8 @@ const cardShadowStyle = Platform.select({
   },
 }) as any;
 
-function createStyles(colors: ThemeColors) {
+function createStyles(colors: ThemeColors, width: number) {
+  const isCompact = width < 720;
   return StyleSheet.create({
     page: {
       width: '100%',
@@ -53,13 +54,13 @@ function createStyles(colors: ThemeColors) {
       marginBottom: spacing.lg,
     },
     gridCard: {
-      width: '47%',
+      width: isCompact ? '100%' : '47%',
       backgroundColor: colors.surface,
       borderRadius: 20,
       padding: spacing.md,
       borderWidth: 1,
       borderColor: colors.border,
-      marginRight: spacing.sm,
+      marginRight: isCompact ? 0 : spacing.sm,
       marginBottom: spacing.sm,
       ...cardShadowStyle,
     },
@@ -94,13 +95,13 @@ function createStyles(colors: ThemeColors) {
     },
     infoCard: {
       flexGrow: 1,
-      minWidth: 180,
+      minWidth: isCompact ? '100%' : 180,
       backgroundColor: colors.surface,
       borderRadius: 18,
       padding: spacing.md,
       borderWidth: 1,
       borderColor: colors.border,
-      marginRight: spacing.sm,
+      marginRight: isCompact ? 0 : spacing.sm,
       marginBottom: spacing.sm,
     },
     infoTitle: {
@@ -185,5 +186,6 @@ function createStyles(colors: ThemeColors) {
 
 export function useStyles() {
   const { theme } = useTheme();
-  return useMemo(() => createStyles(theme.colors), [theme.colors]);
+  const { width } = useWindowDimensions();
+  return useMemo(() => createStyles(theme.colors, width), [theme.colors, width]);
 }

@@ -8,11 +8,12 @@ import { ThemeColors, spacing, typography, useTheme } from '../../../support/the
 const useNativeDriver = Platform.OS !== 'web';
 
 export default function ProfileScreen() {
-  const { theme } = useTheme();
+  const { theme, mode, toggleMode } = useTheme();
   const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const { logout, tokens } = useAuth();
   const router = useRouter();
   const reveals = useRef([
+    new Animated.Value(0),
     new Animated.Value(0),
     new Animated.Value(0),
     new Animated.Value(0),
@@ -109,6 +110,90 @@ export default function ProfileScreen() {
     </Screen>
   );
 }
+
+function ThemeIcon({ mode, colors }: { mode: 'light' | 'dark'; colors: ThemeColors }) {
+  const iconColor = colors.textPrimary;
+  if (mode === 'dark') {
+    return (
+      <View style={stylesIcon.moon}>
+        <View style={[stylesIcon.moonFill, { backgroundColor: iconColor }]} />
+        <View style={[stylesIcon.moonCutout, { backgroundColor: colors.surface }]} />
+      </View>
+    );
+  }
+  return (
+    <View style={stylesIcon.sun}>
+      <View style={[stylesIcon.sunCore, { backgroundColor: iconColor }]} />
+      <View style={[stylesIcon.sunRayTop, { backgroundColor: iconColor }]} />
+      <View style={[stylesIcon.sunRayBottom, { backgroundColor: iconColor }]} />
+      <View style={[stylesIcon.sunRayLeft, { backgroundColor: iconColor }]} />
+      <View style={[stylesIcon.sunRayRight, { backgroundColor: iconColor }]} />
+    </View>
+  );
+}
+
+const stylesIcon = StyleSheet.create({
+  sun: {
+    width: 18,
+    height: 18,
+    marginRight: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sunCore: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  sunRayTop: {
+    position: 'absolute',
+    width: 2,
+    height: 4,
+    top: 0,
+    borderRadius: 2,
+  },
+  sunRayBottom: {
+    position: 'absolute',
+    width: 2,
+    height: 4,
+    bottom: 0,
+    borderRadius: 2,
+  },
+  sunRayLeft: {
+    position: 'absolute',
+    width: 4,
+    height: 2,
+    left: 0,
+    borderRadius: 2,
+  },
+  sunRayRight: {
+    position: 'absolute',
+    width: 4,
+    height: 2,
+    right: 0,
+    borderRadius: 2,
+  },
+  moon: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    marginRight: spacing.sm,
+    overflow: 'hidden',
+  },
+  moonFill: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+  },
+  moonCutout: {
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    right: -1,
+    top: 1,
+  },
+});
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
@@ -226,6 +311,23 @@ function createStyles(colors: ThemeColors) {
       fontSize: typography.caption,
       fontFamily: typography.fontFamily,
       color: colors.textSecondary,
+    },
+    lightButton: {
+      marginTop: spacing.sm,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+      borderRadius: 999,
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      backgroundColor: colors.surface,
+    },
+    lightButtonText: {
+      fontSize: typography.caption,
+      fontFamily: typography.fontFamily,
+      color: colors.textPrimary,
     },
   });
 }

@@ -4,6 +4,7 @@ import { SaveIndicator } from './SaveIndicator';
 
 type WriteHeaderProps = {
   moodAccent: string;
+  subtitle?: string;
   draftTooltip: string;
   isDraftActive: boolean;
   onDraftToggle: () => void;
@@ -14,6 +15,7 @@ type WriteHeaderProps = {
  */
 export function WriteHeader({
   moodAccent,
+  subtitle,
   draftTooltip,
   isDraftActive,
   onDraftToggle,
@@ -22,7 +24,9 @@ export function WriteHeader({
   return (
     <View style={styles.header}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>Atelier d'écriture &#x270E;</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>Atelier d'ecriture &#x270E;</Text>
+        </View>
         <SaveIndicator
           label={draftTooltip}
           color={moodAccent}
@@ -30,7 +34,9 @@ export function WriteHeader({
           onToggle={onDraftToggle}
         />
       </View>
-      <Text style={styles.subtitle}>Un espace silencieux, sans mesure ni compteur.</Text>
+      <Text style={styles.subtitle}>
+        {subtitle ?? 'Un espace silencieux, sans mesure ni compteur.'}
+      </Text>
     </View>
   );
 }

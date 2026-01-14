@@ -1,7 +1,9 @@
 import { Text, View } from 'react-native';
 import { moodOptions } from '../../../../support/theme/moods';
+import { useTheme } from '../../../../support/theme/tokens';
 import { getMoodLore } from '../utils/moodLore';
 import { useStyles } from '../styles';
+import { Button } from '../../../components/Button';
 import { MoodBadge } from './MoodBadge';
 
 type WriteMoodPanelProps = {
@@ -19,6 +21,8 @@ export function WriteMoodPanel({
   onSelectMood,
 }: WriteMoodPanelProps) {
   const styles = useStyles();
+  const { accentKey, setAccentKey } = useTheme();
+  const canApply = selectedMood !== 'neutre' && accentKey !== selectedMood;
   return (
     <>
       <View style={styles.moodGrid}>
@@ -37,6 +41,19 @@ export function WriteMoodPanel({
         })}
       </View>
       <Text style={styles.moodDescription}>{description}</Text>
+      {canApply ? (
+        <View style={styles.moodAdaptCard}>
+          <Text style={styles.moodAdaptText}>
+            Adapter la couleur du site a cette ambiance ?
+          </Text>
+          <Button
+            title="Appliquer au site"
+            onPress={() => setAccentKey(selectedMood)}
+            variant="primary"
+            style={styles.moodAdaptButton}
+          />
+        </View>
+      ) : null}
     </>
   );
 }

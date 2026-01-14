@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Screen } from '../../components/Screen';
@@ -14,9 +15,16 @@ type LoreScreenProps = {
   subtitle: string;
   info: InfoCard[];
   items: LoreItem[];
+  extraContent?: ReactNode;
 };
 
-export function LoreScreen({ title, subtitle, info, items }: LoreScreenProps) {
+export function LoreScreen({
+  title,
+  subtitle,
+  info,
+  items,
+  extraContent,
+}: LoreScreenProps) {
   const styles = useStyles();
   const router = useRouter();
   return (
@@ -33,10 +41,12 @@ export function LoreScreen({ title, subtitle, info, items }: LoreScreenProps) {
         {info.map((card) => (
           <View key={card.title} style={styles.infoCard}>
             <Text style={styles.infoTitle}>{card.title}</Text>
-            <Text style={styles.infoText}>{card.text}</Text>
-          </View>
-        ))}
-      </View>
+          <Text style={styles.infoText}>{card.text}</Text>
+        </View>
+      ))}
+    </View>
+
+      {extraContent}
 
       <View style={styles.list}>
         {items.map((item) => (

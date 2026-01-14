@@ -73,9 +73,13 @@ function createStyles(colors: ThemeColors) {
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  titleRow: {
+    flex: 1,
+    paddingRight: spacing.sm,
+  },
   title: {
     fontSize: typography.display,
-    fontFamily: typography.fontFamily,
+    fontFamily: typography.headingFont,
     color: colors.textPrimary,
   },
   subtitle: {

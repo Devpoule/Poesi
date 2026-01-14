@@ -6,6 +6,7 @@ import { HomeHero } from './components/HomeHero';
 import { HomeHighlights } from './components/HomeHighlights';
 import { HomeJourney } from './components/HomeJourney';
 import { HomeLoreSection } from './components/HomeLoreSection';
+import { MoodPaletteSection } from '../../components/MoodPaletteSection';
 import { HomeRitual } from './components/HomeRitual';
 import { useHomeRevealAnimation } from './hooks/useHomeRevealAnimation';
 import { useStyles } from './styles';
@@ -17,7 +18,7 @@ export default function HomeScreen() {
   const styles = useStyles();
   const router = useRouter();
   const { tokens } = useAuth();
-  const { reveals, revealStyle } = useHomeRevealAnimation(5);
+  const { reveals, revealStyle } = useHomeRevealAnimation(6);
 
   const handleExplore = () => {
     router.push('/(tabs)/poems');
@@ -53,14 +54,18 @@ export default function HomeScreen() {
       </Animated.View>
 
       <Animated.View style={revealStyle(reveals[2])}>
-        <HomeJourney />
+        <MoodPaletteSection />
       </Animated.View>
 
       <Animated.View style={revealStyle(reveals[3])}>
-        <HomeLoreSection onNavigate={(item) => handleLore(item.route)} />
+        <HomeJourney />
       </Animated.View>
 
       <Animated.View style={revealStyle(reveals[4])}>
+        <HomeLoreSection onNavigate={(item) => handleLore(item.route)} />
+      </Animated.View>
+
+      <Animated.View style={revealStyle(reveals[5])}>
         <HomeRitual />
       </Animated.View>
     </Screen>

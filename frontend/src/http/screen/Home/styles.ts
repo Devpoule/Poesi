@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
 
 const heroShadowStyle = Platform.select({
@@ -35,7 +35,8 @@ const poemCardShadowStyle = Platform.select({
   },
 }) as any;
 
-function createStyles(colors: ThemeColors) {
+function createStyles(colors: ThemeColors, width: number) {
+  const isCompact = width < 720;
   return StyleSheet.create({
   page: {
     width: '100%',
@@ -164,13 +165,13 @@ function createStyles(colors: ThemeColors) {
   },
   highlightCard: {
     flexGrow: 1,
-    minWidth: 150,
+    minWidth: isCompact ? '100%' : 150,
     backgroundColor: colors.surface,
     borderRadius: 18,
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
-    marginRight: spacing.sm,
+    marginRight: isCompact ? 0 : spacing.sm,
     marginBottom: spacing.sm,
   },
   highlightTitle: {
@@ -190,13 +191,13 @@ function createStyles(colors: ThemeColors) {
   },
   journeyCard: {
     flexGrow: 1,
-    minWidth: 160,
+    minWidth: isCompact ? '100%' : 160,
     backgroundColor: colors.surface,
     borderRadius: 18,
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
-    marginRight: spacing.sm,
+    marginRight: isCompact ? 0 : spacing.sm,
     marginBottom: spacing.sm,
   },
   journeyIndex: {
@@ -248,13 +249,13 @@ function createStyles(colors: ThemeColors) {
     flexWrap: 'wrap',
   },
   loreCard: {
-    width: '47%',
+    width: isCompact ? '100%' : '47%',
     backgroundColor: colors.surface,
     borderRadius: 18,
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
-    marginRight: spacing.sm,
+    marginRight: isCompact ? 0 : spacing.sm,
     marginBottom: spacing.sm,
   },
   loreTag: {
@@ -318,8 +319,16 @@ function createStyles(colors: ThemeColors) {
     backgroundColor: colors.surface,
     paddingVertical: 6,
     paddingHorizontal: spacing.sm,
-    marginRight: spacing.sm,
+    marginRight: isCompact ? spacing.xs : spacing.sm,
     marginBottom: spacing.sm,
+  },
+  moodPillHalf: {
+    width: '47%',
+    marginRight: spacing.xs,
+  },
+  moodPillActive: {
+    borderColor: colors.accent,
+    backgroundColor: colors.accentSoft,
   },
   moodDot: {
     width: 8,
@@ -332,18 +341,40 @@ function createStyles(colors: ThemeColors) {
     fontFamily: typography.fontFamily,
     color: colors.textSecondary,
   },
+  moodLabelActive: {
+    color: colors.textPrimary,
+  },
+  moodDescriptionCard: {
+    marginTop: spacing.sm,
+    backgroundColor: colors.surfaceMuted,
+    borderRadius: 18,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  moodDescriptionTitle: {
+    fontSize: typography.body,
+    fontFamily: typography.headingFont,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  moodDescriptionText: {
+    fontSize: typography.caption,
+    fontFamily: typography.fontFamily,
+    color: colors.textSecondary,
+  },
   symbolGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
   symbolCard: {
-    width: '47%',
+    width: isCompact ? '100%' : '47%',
     backgroundColor: colors.surface,
     borderRadius: 18,
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
-    marginRight: spacing.sm,
+    marginRight: isCompact ? 0 : spacing.sm,
     marginBottom: spacing.sm,
   },
   symbolLabel: {
@@ -595,5 +626,6 @@ function createStyles(colors: ThemeColors) {
 
 export function useStyles() {
   const { theme } = useTheme();
-  return useMemo(() => createStyles(theme.colors), [theme.colors]);
+  const { width } = useWindowDimensions();
+  return useMemo(() => createStyles(theme.colors, width), [theme.colors, width]);
 }

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Redirect, Stack, useSegments } from 'expo-router';
 import { LogBox, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { AuthProvider, useAuth } from '../src/bootstrap/AuthProvider';
@@ -47,6 +47,21 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const styleId = 'poesi-caret-style';
+    let styleTag = document.getElementById(styleId) as HTMLStyleElement | null;
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = styleId;
+      styleTag.innerHTML = `
+        body { caret-color: transparent; }
+        input, textarea { caret-color: auto; }
+      `;
+      document.head.appendChild(styleTag);
+    }
+  }, []);
+
   return (
     <ThemeProvider>
       <AuthProvider>
