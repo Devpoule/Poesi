@@ -1,4 +1,4 @@
-import moodsLore from '../../../../../../api/resources/lore/moods.initial.json';
+import moodsLore from '../../../../../../backend/resources/lore/moods.initial.json';
 
 export type MoodLoreEntry = {
   key: string;

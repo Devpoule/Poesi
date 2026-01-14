@@ -1,6 +1,6 @@
 ﻿# POESI - Structure du projet
 
-api/src/
+backend/src/
 - Domain/
   - Entity/
   - Enum/

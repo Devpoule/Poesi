@@ -113,7 +113,7 @@ function createStyles(colors: any, sideInset: number, width: number, panelInset:
       paddingTop: spacing.lg,
       paddingBottom: spacing.lg,
       ...(Platform.select({
-        web: { paddingTop: width < 720 ? spacing.xl : 96 } as ViewStyle,
+        web: { paddingTop: width < 720 ? 120 : 150 } as ViewStyle,
         default: {} as ViewStyle,
       }) as ViewStyle),
     },

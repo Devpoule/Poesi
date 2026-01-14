@@ -3,13 +3,13 @@
 This project ships a ready-to-import Postman collection and environment file.
 
 Files:
-- `api/docs/postman/poesi.postman_collection.json`
-- `api/docs/postman/poesi.environment.json`
+- `backend/docs/postman/poesi.postman_collection.json`
+- `backend/docs/postman/poesi.environment.json`
 
 ## Quick start (no JavaScript)
 1) Import the collection and the environment in Postman.
-   - File -> Import -> select `api/docs/postman/poesi.postman_collection.json`
-   - File -> Import -> select `api/docs/postman/poesi.environment.json`
+   - File -> Import -> select `backend/docs/postman/poesi.postman_collection.json`
+   - File -> Import -> select `backend/docs/postman/poesi.environment.json`
 2) Select the "POESI Local" environment.
 3) Run login, then manually copy the token into:
    - `admin_token` for admin requests
@@ -47,8 +47,8 @@ If you want to run the collection from the command line:
 
 ```
 npm install -g newman
-newman run api/docs/postman/poesi.postman_collection.json \
-  -e api/docs/postman/poesi.environment.json
+newman run backend/docs/postman/poesi.postman_collection.json \
+  -e backend/docs/postman/poesi.environment.json
 ```
 
 You can keep the environment variables empty and fill them by hand,

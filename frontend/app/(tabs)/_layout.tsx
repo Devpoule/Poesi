@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Tabs } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
+import { Tabs, usePathname } from 'expo-router';
 import {
   Platform,
   Pressable,
@@ -13,6 +13,16 @@ import { ThemeColors, spacing, useTheme } from '../../src/support/theme/tokens';
 import { HomeMoodSection } from '../../src/http/screen/Home/components/HomeMoodSection';
 
 export default function TabsLayout() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const active = document.activeElement as HTMLElement | null;
+    if (active && typeof active.blur === 'function') {
+      active.blur();
+    }
+  }, [pathname]);
+
   return (
     <>
       <InnerTabs />
@@ -119,7 +129,7 @@ function GlobalMoodPanel() {
   const isWide = isWeb && width >= 1100;
   const activeKey = accentKey ?? 'neutre';
   const panelRight = spacing.md;
-  const panelTop = isWide ? 96 : 18;
+  const panelTop = isWide ? 180 : 18;
   const [isOpen, setIsOpen] = useState(false);
   const open = isWide ? true : isOpen;
   const toggleOpen = () => setIsOpen((prev) => !prev);
@@ -191,7 +201,7 @@ function GlobalMoodPanel() {
                 if (!isWide) setIsOpen(false);
               }}
               title="Mood"
-              hint="Ambiance | État d'esprit."
+              hint="Ambiance"
               columns={isWeb ? 2 : 1}
             />
             <Pressable style={styles.modeButton} onPress={toggle}>

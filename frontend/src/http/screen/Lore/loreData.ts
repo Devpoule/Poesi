@@ -1,8 +1,8 @@
-import totems from '../../../../../api/resources/lore/totems.initial.json';
-import feathers from '../../../../../api/resources/lore/feathers.initial.json';
-import moods from '../../../../../api/resources/lore/moods.initial.json';
-import relics from '../../../../../api/resources/lore/relics.initial.json';
-import symbols from '../../../../../api/resources/lore/symbols.initial.json';
+import totems from '../../../../../backend/resources/lore/totems.initial.json';
+import feathers from '../../../../../backend/resources/lore/feathers.initial.json';
+import moods from '../../../../../backend/resources/lore/moods.initial.json';
+import relics from '../../../../../backend/resources/lore/relics.initial.json';
+import symbols from '../../../../../backend/resources/lore/symbols.initial.json';
 import { moodOptions, normalizeMoodKey } from '../../../support/theme/moods';
 
 type LoreItem = {

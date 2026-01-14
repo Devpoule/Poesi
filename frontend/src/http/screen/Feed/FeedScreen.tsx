@@ -170,9 +170,12 @@ export default function FeedScreen({
   const { tokens } = useAuth();
   const { items, isLoading, error, reload } = useFeedViewModel();
   const [selectedMood, setSelectedMood] = useState('all');
-  const [overlayColor, setOverlayColor] = useState<string | null>(null);
-  const overlayAnim = useRef(new Animated.Value(0)).current;
   const writeLabel = tokens ? ctaLabel : 'Se connecter';
+
+  const activeMood = useMemo(
+    () => (selectedMood === 'all' ? null : moodOptions.find((m) => m.key === selectedMood) ?? null),
+    [selectedMood]
+  );
 
   const filteredItems = useMemo(() => {
     if (selectedMood === 'all') {
@@ -185,31 +188,15 @@ export default function FeedScreen({
     router.push(tokens ? '/(tabs)/write' : '/(auth)/login');
   };
 
-  useEffect(() => {
-    // animate a brief color overlay when selectedMood changes
-    const mood = selectedMood === 'all' ? null : moodOptions.find((m) => m.key === selectedMood);
-    const color = mood ? mood.color : null;
-    setOverlayColor(color);
-    overlayAnim.setValue(0);
-    if (color) {
-      Animated.sequence([
-        Animated.timing(overlayAnim, { toValue: 0.55, duration: 200, useNativeDriver }),
-        Animated.timing(overlayAnim, { toValue: 0, duration: 420, useNativeDriver }),
-      ]).start(() => setOverlayColor(null));
-    }
-  }, [selectedMood, overlayAnim]);
-
   return (
     <Screen>
-      {overlayColor ? (
-        <Animated.View
+      <View style={styles.container}>
+        <View
           style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: overlayColor, opacity: overlayAnim, pointerEvents: 'none' },
+            styles.moodBackdrop,
+            activeMood && { backgroundColor: hexToRgba(activeMood.color, 0.08) },
           ]}
         />
-      ) : null}
-      <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.subtitle}>{subtitle}</Text>
@@ -276,6 +263,11 @@ function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: {
       flex: 1,
+      paddingHorizontal: spacing.md,
+    },
+    moodBackdrop: {
+      ...StyleSheet.absoluteFillObject,
+      zIndex: -1,
     },
     header: {
       marginBottom: spacing.md,
@@ -294,10 +286,12 @@ function createStyles(colors: ThemeColors) {
     ctaButton: {
       alignSelf: 'flex-start',
       marginTop: spacing.sm,
-      backgroundColor: colors.accent,
+      backgroundColor: colors.surface,
+      borderRadius: 999,
       paddingVertical: spacing.xs,
       paddingHorizontal: spacing.md,
-      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: colors.border,
     },
     ctaText: {
       color: colors.textPrimary,
@@ -335,6 +329,8 @@ function createStyles(colors: ThemeColors) {
       color: colors.textPrimary,
     },
     listContent: {
+      paddingTop: spacing.md,
+      paddingHorizontal: spacing.sm,
       paddingBottom: spacing.xxl,
     },
     separator: {
@@ -469,7 +465,9 @@ function createStyles(colors: ThemeColors) {
       marginBottom: spacing.md,
     },
     emptyButton: {
-      backgroundColor: colors.accent,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
       paddingVertical: spacing.xs,
       paddingHorizontal: spacing.lg,
       borderRadius: 999,
@@ -480,4 +478,18 @@ function createStyles(colors: ThemeColors) {
       fontFamily: typography.fontFamily,
     },
   });
+}
+
+function hexToRgba(hex: string, alpha: number) {
+  if (!hex || typeof hex !== 'string') {
+    return 'transparent';
+  }
+  const normalized = hex.replace('#', '');
+  if (normalized.length !== 6) {
+    return 'transparent';
+  }
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }

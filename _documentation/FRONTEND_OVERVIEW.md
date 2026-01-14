@@ -13,7 +13,7 @@ La structure principale se trouve dans `frontend/`.
 - `src/http/screen/`: ecrans et composants de presentation.
 - `src/bootstrap/`: providers globaux (auth, theme).
 - `src/infrastructure/`: acces API, storage, serialisation.
-- `api/resources/lore/`: donnees lore (moods, totems, etc.) utilisees dans l'UI.
+- `backend/resources/lore/`: donnees lore (moods, totems, etc.) utilisees dans l'UI.
 
 ## 2) Navigation (Expo Router)
 
@@ -43,7 +43,7 @@ La palette mood globale est affichee par le layout tabs:
 `frontend/src/http/screen/Home/HomeScreen.tsx`
 Contient les sections:
 - hero (entree principale)
-- highlights / parcours
+- highlights
 - panel moods
 - principes (lore)
 - rituel
@@ -59,7 +59,7 @@ Le mood actif du site est utilise pour la teinte de l'interface.
 
 ### Guide / Glossaire
 `frontend/src/http/screen/Lore/*`
-Chaque page lit les JSON dans `api/resources/lore/`.
+Chaque page lit les JSON dans `backend/resources/lore/`.
 
 ### Profil
 `frontend/src/http/screen/Profile/ProfileScreen.tsx`
@@ -87,7 +87,7 @@ Affiche la session, totem, stats et le toggle dark/light.
 
 ## 7) Donnees lore
 
-`api/resources/lore/*`
+`backend/resources/lore/*`
 - `moods.initial.json`, `totems.initial.json`, `feathers.initial.json`, etc.
 Utilises par:
 - `frontend/src/http/screen/Lore/loreData.ts`

@@ -25,7 +25,7 @@ cd <PROJECT_ROOT>
 
 ## 3) Installer le backend
 
-Placez-vous dans `api/` et installez les dependances.
+Placez-vous dans `backend/` et installez les dependances.
 
 ```bash
 cd api

@@ -3,11 +3,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '../../../bootstrap/AuthProvider';
 import { Screen } from '../../components/Screen';
 import { HomeHero } from './components/HomeHero';
-import { HomeHighlights } from './components/HomeHighlights';
-import { HomeJourney } from './components/HomeJourney';
-import { HomeLoreSection } from './components/HomeLoreSection';
-import { MoodPaletteSection } from '../../components/MoodPaletteSection';
-import { HomeRitual } from './components/HomeRitual';
+import { HomeDiscover } from './components/HomeDiscover';
 import { useHomeRevealAnimation } from './hooks/useHomeRevealAnimation';
 import { useStyles } from './styles';
 
@@ -18,7 +14,7 @@ export default function HomeScreen() {
   const styles = useStyles();
   const router = useRouter();
   const { tokens } = useAuth();
-  const { reveals, revealStyle } = useHomeRevealAnimation(6);
+  const { reveals, revealStyle } = useHomeRevealAnimation(2);
 
   const handleExplore = () => {
     router.push('/(tabs)/poems');
@@ -39,7 +35,7 @@ export default function HomeScreen() {
   const writeLabel = tokens ? 'Ecrire un texte' : 'Se connecter';
 
   return (
-    <Screen scroll contentStyle={styles.page}>
+    <Screen scroll contentStyle={[styles.page, styles.homeTopOffset]}>
       <Animated.View style={revealStyle(reveals[0])}>
         <HomeHero
           onExplore={handleExplore}
@@ -50,23 +46,7 @@ export default function HomeScreen() {
       </Animated.View>
 
       <Animated.View style={revealStyle(reveals[1])}>
-        <HomeHighlights />
-      </Animated.View>
-
-      <Animated.View style={revealStyle(reveals[2])}>
-        <MoodPaletteSection />
-      </Animated.View>
-
-      <Animated.View style={revealStyle(reveals[3])}>
-        <HomeJourney />
-      </Animated.View>
-
-      <Animated.View style={revealStyle(reveals[4])}>
-        <HomeLoreSection onNavigate={(item) => handleLore(item.route)} />
-      </Animated.View>
-
-      <Animated.View style={revealStyle(reveals[5])}>
-        <HomeRitual />
+        <HomeDiscover />
       </Animated.View>
     </Screen>
   );

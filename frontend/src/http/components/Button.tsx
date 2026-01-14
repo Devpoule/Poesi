@@ -36,12 +36,22 @@ export function Button({
   hoverBackgroundColor,
   textColor,
 }: ButtonProps) {
-  const { theme } = useTheme();
+  const { theme, mode } = useTheme();
   const colors = theme.colors;
   const isPrimary = variant === 'primary';
   const bg = backgroundColor ?? (isPrimary ? colors.accent : colors.surface);
   const hoverBg = hoverBackgroundColor ?? (isPrimary ? colors.accentStrong : colors.surfaceElevated);
-  const txt = textColor ?? (isPrimary ? '#FFFFFF' : colors.textSecondary);
+  const txt =
+    textColor ??
+    (isPrimary
+      ? isLightColor(bg)
+        ? mode === 'dark'
+          ? '#2B221B'
+          : colors.textPrimary
+        : '#FFFFFF'
+      : isLightColor(bg) && mode === 'dark'
+      ? '#2B221B'
+      : colors.textSecondary);
 
   const styles = createStyles(colors);
   return (
@@ -96,6 +106,18 @@ function createStyles(colors: any) {
       opacity: 0.85,
     },
   });
+}
+
+function isLightColor(color: string) {
+  if (!color || typeof color !== 'string' || !color.startsWith('#') || color.length !== 7) {
+    return false;
+  }
+  const r = parseInt(color.slice(1, 3), 16);
+  const g = parseInt(color.slice(3, 5), 16);
+  const b = parseInt(color.slice(5, 7), 16);
+  // Perceived luminance
+  const luma = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luma > 0.65;
 }
 
 export default Button;

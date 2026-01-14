@@ -21,11 +21,11 @@ Il accompagne les fichiers JSON d'archive.
 
 Les éléments de l'univers sont définis dans des fichiers JSON d'archive :
 
-- `api/resources/lore/totems.initial.json`
-- `api/resources/lore/moods.initial.json`
-- `api/resources/lore/symbols.initial.json`
-- `api/resources/lore/feathers.initial.json`
-- `api/resources/lore/relics.initial.json`
+- `backend/resources/lore/totems.initial.json`
+- `backend/resources/lore/moods.initial.json`
+- `backend/resources/lore/symbols.initial.json`
+- `backend/resources/lore/feathers.initial.json`
+- `backend/resources/lore/relics.initial.json`
 
 Règles :
 - `*.initial.json` = **immuable**

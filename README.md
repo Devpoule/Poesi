@@ -165,7 +165,7 @@ POESI uses JWT for API authentication.
 
 - Register: `POST /api/users`
 - Login: `POST /api/login_check`
-- Auth header: `Authorization: Bearer <token>`
+  - Auth header: `Authorization: Bearer <token>`
 
 Example login payload:
 
@@ -189,8 +189,8 @@ Example register payload:
 }
 ```
 
-See `api/docs/authentication.md` for details.
-See `api/docs/auth-roles.md` for role-specific guidance.
+See `backend/docs/authentication.md` for details.
+See `backend/docs/auth-roles.md` for role-specific guidance.
 
 ### Local seeding & Postman testing
 

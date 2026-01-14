@@ -101,7 +101,7 @@ Authorization: Bearer <token>
 - `POST /api/token/refresh`: public
 - `/api/*`: requires `ROLE_USER`
 
-See `api/docs/auth-roles.md` for role-specific guidance.
+See `backend/docs/auth-roles.md` for role-specific guidance.
 
 ## Rate limiting
 
