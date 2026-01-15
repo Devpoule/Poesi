@@ -124,7 +124,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setTotem(?Totem $totem): self
     {
+        if ($this->totem === $totem) {
+            return $this;
+        }
+
+        // Detach from previous totem
+        if ($this->totem !== null) {
+            $this->totem->getUsers()->removeElement($this);
+        }
+
         $this->totem = $totem;
+
+        // Sync inverse side
+        if ($totem !== null && !$totem->getUsers()->contains($this)) {
+            $totem->addUser($this);
+        }
 
         return $this;
     }

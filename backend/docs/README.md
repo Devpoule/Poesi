@@ -9,6 +9,7 @@ This directory documents:
 - API conventions
 - symbolic lore
 - Postman/Newman testing resources
+- coding standards (PHPDoc, PSR-12, erreurs, tests)
 
 ## What belongs here
 - Architectural notes (layering, design choices)
@@ -16,6 +17,7 @@ This directory documents:
 - API conventions (error format, response shapes, naming rules)
 - Exception mapping and error policies
 - Postman collection usage
+- Coding standards and PHPDoc conventions for the backend
 
 ## What does NOT belong here
 - Generated documentation

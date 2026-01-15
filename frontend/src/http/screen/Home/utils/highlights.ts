@@ -22,4 +22,4 @@ export const highlightItems: HighlightItem[] = [
   },
 ];
 
-export const heroBadges = ['Sans score', 'Lecture lente', 'Symboles'];
+export const heroBadges = ['Sans score', 'En toute intimité', 'Librement', 'A son rythme'];
