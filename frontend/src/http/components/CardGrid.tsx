@@ -3,6 +3,9 @@ import { Platform, Pressable, StyleSheet, Text, View, useWindowDimensions } from
 import { CardPortrait } from './CardPortrait';
 import { ThemeColors, spacing, typography, useTheme } from '../../support/theme/tokens';
 
+/**
+ * Standard responsive card item used by CardGrid.
+ */
 export type CardGridItem = {
   key: string;
   title: string;
@@ -20,6 +23,10 @@ type CardGridProps = {
   compact?: boolean;
 };
 
+/**
+ * Responsive 2–4 columns grid for cards (image or color fallback),
+ * with optional selection and click handling.
+ */
 export function CardGrid({
   items,
   selectedKey,
@@ -171,4 +178,3 @@ function createStyles(colors: ThemeColors, width: number, compact: boolean) {
     },
   });
 }
-

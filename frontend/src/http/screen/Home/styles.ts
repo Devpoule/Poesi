@@ -225,34 +225,7 @@ function createStyles(colors: ThemeColors, width: number) {
     color: colors.textSecondary,
   },
   discoverGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  discoverCard: {
-    width: isCompact ? '100%' : '47%',
-    backgroundColor: colors.surface,
-    borderRadius: 18,
-    padding: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginRight: isCompact ? 0 : spacing.sm,
-    marginBottom: spacing.sm,
-    ...heroShadowStyle,
-  },
-  discoverTitle: {
-    fontSize: typography.body,
-    fontFamily: typography.headingFont,
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  discoverText: {
-    fontSize: typography.caption,
-    fontFamily: typography.fontFamily,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-  },
-  discoverButton: {
-    alignSelf: 'flex-start',
+    // legacy placeholders (conservés pour compat éventuelle)
   },
   section: {
     marginBottom: spacing.lg,
