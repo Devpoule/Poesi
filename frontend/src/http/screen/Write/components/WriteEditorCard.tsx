@@ -14,6 +14,8 @@ type WriteEditorCardProps = {
   onTitleChange: (value: string) => void;
   onBodyChange: (value: string) => void;
   onSave: () => void;
+  isSaving?: boolean;
+  saveError?: string;
 };
 
 /**
@@ -32,6 +34,8 @@ export function WriteEditorCard({
   onTitleChange,
   onBodyChange,
   onSave,
+  isSaving,
+  saveError,
 }: WriteEditorCardProps) {
   return (
     <>
@@ -50,6 +54,8 @@ export function WriteEditorCard({
         primaryHoverColor={primaryHoverColor}
         primaryTextColor={primaryTextColor}
         onSave={onSave}
+        isSaving={isSaving}
+        saveError={saveError}
       />
     </>
   );

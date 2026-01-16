@@ -28,6 +28,7 @@ type FeedScreenProps = {
 type PoemCardProps = {
   poem: Poem;
   index: number;
+  styles: ReturnType<typeof createStyles>;
 };
 
 type FilterOption = {
@@ -103,7 +104,7 @@ function FilterChip({
   );
 }
 
-function PoemCard({ poem, index }: PoemCardProps) {
+function PoemCard({ poem, index, styles }: PoemCardProps) {
   const reveal = useRef(new Animated.Value(0)).current;
   const mood = resolveMood(poem.moodColor);
   const author = poem.user?.pseudo ?? 'Anonyme';
@@ -242,7 +243,7 @@ export default function FeedScreen({
           <FlatList
             data={filteredItems}
             keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item, index }) => <PoemCard poem={item} index={index} />}
+            renderItem={({ item, index }) => <PoemCard poem={item} index={index} styles={styles} />}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
             ListEmptyComponent={
               <View style={styles.emptyState}>

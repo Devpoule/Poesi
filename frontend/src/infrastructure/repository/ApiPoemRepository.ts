@@ -1,4 +1,4 @@
-﻿import type { PoemRepository, PoemListParams, PoemPage, PoemPagination } from '../../domain/poem/repository/PoemRepository';
+import type { PoemRepository, PoemListParams, PoemPage, PoemPagination } from '../../domain/poem/repository/PoemRepository';
 import type { ApiResponse } from '../../support/http/apiResponse';
 import { apiFetch } from '../api/client';
 import { fromApi, type PoemDto } from '../api/serializer/PoemSerializer';
@@ -37,4 +37,22 @@ export class ApiPoemRepository implements PoemRepository {
       pagination,
     };
   }
+
+  async create(payload: { title: string; content: string; moodColor: string }) {
+    const response = await apiFetch<ApiResponse<PoemDto>>('/api/poems', {
+      method: 'POST',
+      body: JSON.stringify({
+        title: payload.title,
+        content: payload.content,
+        moodColor: payload.moodColor,
+      }),
+    });
+
+    if (!response.status || !response.data) {
+      throw new Error(response.message ?? 'Impossible de sauvegarder le texte.');
+    }
+
+    return fromApi(response.data);
+  }
 }
+

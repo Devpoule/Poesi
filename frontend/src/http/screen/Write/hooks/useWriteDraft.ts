@@ -17,7 +17,7 @@ export function useWriteDraft() {
   const [saveNote, setSaveNote] = useState(DEFAULT_NOTE);
   const [isDraftActive, setIsDraftActive] = useState(true);
 
-  const statusNote = isDraftActive ? saveNote : 'Sauvegarde désactivée';
+  const statusNote = isDraftActive ? saveNote : 'Sauvegarde desactivee';
   const draftTooltip = useMemo(() => buildDraftTooltip(statusNote), [statusNote]);
 
   const handleDraftToggle = () => {
@@ -36,8 +36,8 @@ export function useWriteDraft() {
     }
   };
 
-  const handleSave = () => {
-    setSaveNote('Brouillon enregistré');
+  const handleSave = (note?: string) => {
+    setSaveNote(note ?? 'Brouillon enregistre');
   };
 
   return {
@@ -47,5 +47,7 @@ export function useWriteDraft() {
     handleDraftToggle,
     markDirty,
     handleSave,
+    setSaveNote,
   };
 }
+

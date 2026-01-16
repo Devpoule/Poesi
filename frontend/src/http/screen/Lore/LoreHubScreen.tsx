@@ -10,12 +10,20 @@ export default function LoreHubScreen() {
   const router = useRouter();
   const { theme } = useTheme();
 
+  const routeImages: Record<string, any> = {
+    totems: require('../../../../assets/totems/cards/totem_card_egg.png'),
+    feathers: require('../../../../assets/feathers/cards/feather_card_gold.png'),
+    relics: require('../../../../assets/relics/cards/relic_card_phoenix_feather.png'),
+    symbols: require('../../../../assets/symbols/cards/symbol_card_halo.png'),
+  };
+
   const gridItems = loreRoutes.map((item) => ({
     key: item.key,
     title: item.title,
     description: item.description,
     tag: item.tag,
     accent: theme.colors.accentSoft,
+    image: routeImages[item.key],
   }));
 
   return (

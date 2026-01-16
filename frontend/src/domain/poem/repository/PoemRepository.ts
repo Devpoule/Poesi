@@ -23,4 +23,5 @@ export type PoemPage = {
 
 export type PoemRepository = {
   list: (params?: PoemListParams) => Promise<PoemPage>;
+  create: (payload: { title: string; content: string; moodColor: string }) => Promise<Poem>;
 };
