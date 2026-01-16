@@ -16,9 +16,18 @@ type ScreenProps = {
   style?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
   scroll?: boolean;
+  scrollRef?: React.RefObject<ScrollView>;
+  onContentSizeChange?: (width: number, height: number) => void;
 };
 
-export function Screen({ children, style, contentStyle, scroll = false }: ScreenProps) {
+export function Screen({
+  children,
+  style,
+  contentStyle,
+  scroll = false,
+  scrollRef,
+  onContentSizeChange,
+}: ScreenProps) {
   const { theme } = useTheme();
   const colors = theme.colors;
   const { width } = useWindowDimensions();
@@ -38,8 +47,10 @@ export function Screen({ children, style, contentStyle, scroll = false }: Screen
       </View>
       {scroll ? (
         <ScrollView
+          ref={scrollRef}
           contentContainerStyle={[styles.content, contentStyle]}
           showsVerticalScrollIndicator={false}
+          onContentSizeChange={onContentSizeChange}
         >
           {children}
         </ScrollView>

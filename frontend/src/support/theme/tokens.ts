@@ -55,17 +55,17 @@ export const spacing = {
 // Serif for titles, warm sans for UI.
 const headingFont =
   Platform.select({
-    ios: 'Georgia',
+    ios: 'Didot',
     android: 'serif',
-    web: '"Baskerville", "Libre Baskerville", "Georgia", serif',
+    web: '"Playfair Display", "Libre Baskerville", "Georgia", serif',
     default: 'serif',
   }) ?? 'serif';
 
 const uiFont =
   Platform.select({
-    ios: 'Avenir Next',
+    ios: 'SF Pro Text',
     android: 'sans-serif',
-    web: '"Avenir Next", "DM Sans", "Trebuchet MS", sans-serif',
+    web: '"Manrope", "Avenir Next", "Inter", "Segoe UI", sans-serif',
     default: 'System',
   }) ?? 'System';
 

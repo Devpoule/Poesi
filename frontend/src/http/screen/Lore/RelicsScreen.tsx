@@ -1,7 +1,10 @@
+import { useLocalSearchParams } from 'expo-router';
 import { LoreScreen } from './LoreScreen';
 import { relicItems } from './loreData';
 
 export default function RelicsScreen() {
+  const params = useLocalSearchParams();
+  const anchorKey = typeof params.relic === 'string' ? params.relic : undefined;
   return (
     <LoreScreen
       title="Reliques"
@@ -12,6 +15,7 @@ export default function RelicsScreen() {
         { title: 'Quand', text: 'Elles apparaissent, elles ne se chassent pas.' },
       ]}
       items={relicItems}
+      initialAnchorKey={anchorKey}
     />
   );
 }

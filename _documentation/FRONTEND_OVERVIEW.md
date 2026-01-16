@@ -50,7 +50,7 @@ Contient les sections:
 
 ### Feed / Poems
 `frontend/src/http/screen/Feed/FeedScreen.tsx`
-Liste de poemes + filtres de mood.
+Liste de poèmes + filtres de mood.
 
 ### Ecrire
 `frontend/src/http/screen/Write/WriteScreen.tsx`

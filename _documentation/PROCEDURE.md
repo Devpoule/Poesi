@@ -105,7 +105,7 @@ Si les seeds ont ete executes, utilisez :
 - `user_1@test.local` / `user`
 - `admin@test.local` / `admin`
 
-Une fois connecte, le token JWT est ajoute automatiquement.
+Une fois connecté, le token JWT est ajoute automatiquement.
 
 ---
 

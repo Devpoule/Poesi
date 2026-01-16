@@ -1,7 +1,11 @@
+import { useLocalSearchParams } from 'expo-router';
 import { LoreScreen } from './LoreScreen';
 import { featherItems } from './loreData';
 
 export default function FeathersScreen() {
+  const params = useLocalSearchParams();
+  const anchorKey = typeof params.feather === 'string' ? params.feather : undefined;
+
   return (
     <LoreScreen
       title="Plumes"
@@ -12,6 +16,7 @@ export default function FeathersScreen() {
         { title: 'Quand', text: "Elles se revelent apres interaction ou lecture attentive." },
       ]}
       items={featherItems}
+      initialAnchorKey={anchorKey}
     />
   );
 }

@@ -10,7 +10,9 @@ import {
 } from 'react-native';
 import { TabItem } from '../../src/http/components/TabItem';
 import { ThemeColors, spacing, useTheme } from '../../src/support/theme/tokens';
+import { SidePanel } from '../../src/http/components/SidePanel';
 import { HomeMoodSection } from '../../src/http/screen/Home/components/HomeMoodSection';
+import { useAuth } from '../../src/bootstrap/AuthProvider';
 
 export default function TabsLayout() {
   const pathname = usePathname();
@@ -34,6 +36,7 @@ export default function TabsLayout() {
 function InnerTabs() {
   const { theme } = useTheme();
   const colors = theme.colors;
+  const { tokens } = useAuth();
   const { width } = useWindowDimensions();
   const isCompact = width < 720;
   const isWeb = Platform.OS === 'web';
@@ -46,34 +49,43 @@ function InnerTabs() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: colors.surfaceElevated,
-          borderTopColor: 'transparent',
-          height: Platform.select({ web: 64, default: 68 }) as number,
-          paddingHorizontal: Platform.select({ web: spacing.md, default: 0 }) as number,
-          paddingTop: spacing.xs,
-          paddingBottom: spacing.xs,
-          overflow: 'visible',
-          position: isWeb ? 'fixed' : 'absolute',
-          left: isWeb ? sideInset : 0,
-          right: isWeb ? sideInset : 0,
-          top: isWeb && !isCompact ? 14 : undefined,
-          bottom: isWeb ? (isCompact ? 14 : undefined) : 0,
-          borderRadius: isWeb ? 24 : 0,
-          zIndex: Platform.select({ web: 1000, default: undefined }) as any,
-          ...Platform.select({
-            web: { boxShadow: '0px 12px 30px rgba(0,0,0,0.25)' } as any,
-            default: {
-              shadowColor: '#000',
-              shadowOpacity: 0.12,
-              shadowRadius: 10,
-              shadowOffset: { width: 0, height: -4 },
-              elevation: 6,
-            },
-          }),
-        },
+        tabBarStyle: [
+          {
+            backgroundColor: colors.surfaceElevated,
+            borderTopColor: 'transparent',
+            height: Platform.select({ web: 64, default: 68 }) as number,
+            paddingHorizontal: Platform.select({ web: spacing.md, default: 0 }) as number,
+            paddingTop: spacing.xs,
+            paddingBottom: spacing.xs,
+            overflow: 'visible',
+            position: isWeb ? 'fixed' : 'absolute',
+            left: isWeb ? sideInset : 0,
+            right: isWeb ? sideInset : 0,
+            top: isWeb && !isCompact ? 14 : undefined,
+            bottom: isWeb ? (isCompact ? 14 : undefined) : 0,
+            borderRadius: isWeb ? 24 : 0,
+            zIndex: Platform.select({ web: 1000, default: undefined }) as any,
+            ...Platform.select({
+              web: { boxShadow: '0px 12px 30px rgba(0,0,0,0.25)' } as any,
+              default: {
+                shadowColor: '#000',
+                shadowOpacity: 0.12,
+                shadowRadius: 10,
+                shadowOffset: { width: 0, height: -4 },
+                elevation: 6,
+              },
+            }),
+          },
+          Platform.OS === 'web' && !tokens
+            ? { justifyContent: 'space-evenly', display: 'flex' }
+            : null,
+        ],
         tabBarItemStyle: Platform.select({
-          web: { marginHorizontal: spacing.xs / 2 } as any,
+          web: {
+            marginHorizontal: tokens ? spacing.xs / 2 : 0,
+            minWidth: width < 720 ? 64 : 84,
+            flex: 1,
+          } as any,
           default: { flex: 1, marginHorizontal: 0, paddingHorizontal: 0 },
         }),
         tabBarHideOnKeyboard: true,
@@ -90,14 +102,14 @@ function InnerTabs() {
       <Tabs.Screen
         name="poems"
         options={{
-          title: 'Poemes',
+          title: 'Poèmes',
           tabBarIcon: ({ focused }) => <TabItem variant="poems" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="write"
         options={{
-          title: 'Ecrire',
+          title: 'Écrire',
           tabBarIcon: ({ focused }) => <TabItem variant="write" focused={focused} />,
         }}
       />
@@ -111,8 +123,11 @@ function InnerTabs() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profil',
-          tabBarIcon: ({ focused }) => <TabItem variant="profile" focused={focused} />,
+          title: tokens ? 'Profil' : 'Connexion',
+          tabBarIcon: ({ focused }) => (
+            <TabItem variant="profile" focused={focused} labelOverride={tokens ? 'Profil' : 'Connexion'} />
+          ),
+          href: tokens ? '/profile' : '/(auth)/login',
         }}
       />
     </Tabs>
@@ -174,11 +189,11 @@ function GlobalMoodPanel() {
               accessible={false}
             />
           ) : null}
-          <View
+          <SidePanel
+            width={panelWidth}
             style={[
               styles.panel,
               isCompact && styles.panelCompact,
-              isWide && { width: panelWidth },
               !isWide && styles.panelMobile,
             ]}
           >
@@ -209,7 +224,7 @@ function GlobalMoodPanel() {
                 {mode === 'dark' ? 'Mode clair' : 'Mode sombre'}
               </Text>
             </Pressable>
-          </View>
+          </SidePanel>
         </View>
       ) : null}
     </>
@@ -219,22 +234,10 @@ function GlobalMoodPanel() {
 function createPaletteStyles(colors: ThemeColors) {
   return StyleSheet.create({
     panel: {
-      backgroundColor: colors.surface,
-      borderRadius: 16,
       padding: spacing.sm,
-      borderWidth: 1,
-      borderColor: colors.border,
       minWidth: 260,
-      ...Platform.select({
-        web: { boxShadow: '0px 10px 24px rgba(0,0,0,0.18)' } as any,
-        default: {
-          shadowColor: '#000',
-          shadowOpacity: 0.18,
-          shadowRadius: 14,
-          shadowOffset: { width: 0, height: 8 },
-          elevation: 8,
-        },
-      }),
+      borderWidth: 0,
+      backgroundColor: 'transparent',
     },
     panelCompact: {
       padding: spacing.xs,

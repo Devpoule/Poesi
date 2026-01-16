@@ -1,7 +1,16 @@
+import { useLocalSearchParams } from 'expo-router';
 import { LoreScreen } from './LoreScreen';
 import { totemItems } from './loreData';
 
 export default function TotemsScreen() {
+  const params = useLocalSearchParams();
+  const anchorKey =
+    typeof params.totem === 'string'
+      ? params.totem
+      : typeof params.anchor === 'string'
+        ? params.anchor
+        : undefined;
+
   return (
     <LoreScreen
       title="Totems"
@@ -12,6 +21,7 @@ export default function TotemsScreen() {
         { title: 'Quand', text: "Choisi par l'auteur pour accompagner ses textes." },
       ]}
       items={totemItems}
+      initialAnchorKey={anchorKey}
     />
   );
 }

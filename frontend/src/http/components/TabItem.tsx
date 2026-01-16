@@ -13,6 +13,7 @@ type TabTheme = {
 type TabItemProps = {
   variant: TabVariant;
   focused: boolean;
+  labelOverride?: string;
 };
 
 type SigilProps = {
@@ -40,8 +41,8 @@ function buildTabThemes(colors: ThemeColors): Record<TabVariant, TabTheme> {
   };
   return {
     home: { label: 'Accueil', ...palette },
-    poems: { label: 'Poemes', ...palette },
-    write: { label: 'Ecrire', ...palette },
+    poems: { label: 'Poèmes', ...palette },
+    write: { label: 'Écrire', ...palette },
     guide: { label: 'Guide', ...palette },
     profile: { label: 'Profil', ...palette },
   };
@@ -95,13 +96,14 @@ function Sigil({ variant, color, styles }: SigilProps) {
   );
 }
 
-export function TabItem({ variant, focused }: TabItemProps) {
+export function TabItem({ variant, focused, labelOverride }: TabItemProps) {
   const { theme } = useTheme();
   const { width } = useWindowDimensions();
   const isCompact = width < 480;
   const styles = useMemo(() => createStyles(theme.colors), [theme.colors]);
   const tabThemes = useMemo(() => buildTabThemes(theme.colors), [theme.colors]);
-  const itemTheme = tabThemes[variant];
+  const baseTheme = tabThemes[variant];
+  const itemTheme = { ...baseTheme, label: labelOverride ?? baseTheme.label };
   const labelColor = focused ? itemTheme.color : theme.colors.textMuted;
   const anim = useRef(new Animated.Value(1)).current;
 

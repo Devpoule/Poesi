@@ -1,39 +1,38 @@
-import { Pressable, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Screen } from '../../components/Screen';
+import { useTheme } from '../../../support/theme/tokens';
+import { PageLayout } from '../../components/PageLayout';
+import { CardGrid } from '../../components/CardGrid';
 import { useStyles } from './styles';
 import { loreRoutes } from './loreRoutes';
 
 export default function LoreHubScreen() {
   const styles = useStyles();
   const router = useRouter();
+  const { theme } = useTheme();
+
+  const gridItems = loreRoutes.map((item) => ({
+    key: item.key,
+    title: item.title,
+    description: item.description,
+    tag: item.tag,
+    accent: theme.colors.accentSoft,
+  }));
 
   return (
-    <Screen scroll contentStyle={styles.page}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Guide Poesi</Text>
-        <Text style={styles.subtitle}>
-          Comprendre les reperes symboliques pour mieux circuler dans Poesi.
-        </Text>
-      </View>
-
-      <View style={styles.grid}>
-        {loreRoutes.map((item) => (
-          <Pressable
-            key={item.key}
-            style={styles.gridCard}
-            onPress={() => router.push(item.route)}
-          >
-            {item.tag ? (
-              <View style={styles.gridCardTag}>
-                <Text style={styles.gridCardTagText}>{item.tag}</Text>
-              </View>
-            ) : null}
-            <Text style={styles.gridCardTitle}>{item.title}</Text>
-            <Text style={styles.gridCardText}>{item.description}</Text>
-          </Pressable>
-        ))}
-      </View>
-    </Screen>
+    <PageLayout
+      title="Guide Poesi"
+      subtitle="Comprendre les reperes symboliques pour mieux circuler dans Poesi."
+      contentStyle={styles.page}
+    >
+      <CardGrid
+        items={gridItems}
+        onItemPress={(key) => {
+          const target = loreRoutes.find((i) => i.key === key);
+          if (target) router.push(target.route);
+        }}
+        hideAccentMarker
+        compact
+      />
+    </PageLayout>
   );
 }

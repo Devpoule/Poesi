@@ -13,6 +13,8 @@ import { useRouter } from 'expo-router';
 import type { Poem } from '../../../domain/poem/model/Poem';
 import { useAuth } from '../../../bootstrap/AuthProvider';
 import { Screen } from '../../components/Screen';
+import { PageHeader } from '../../components/PageHeader';
+import { Section } from '../../components/Section';
 import { normalizeMoodKey, moodOptions, resolveMood } from '../../../support/theme/moods';
 import { ThemeColors, spacing, typography, useTheme } from '../../../support/theme/tokens';
 import { useFeedViewModel } from './FeedViewModel';
@@ -197,25 +199,28 @@ export default function FeedScreen({
             activeMood && { backgroundColor: hexToRgba(activeMood.color, 0.08) },
           ]}
         />
-        <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
-          <Pressable style={styles.ctaButton} onPress={handleWrite}>
-            <Text style={styles.ctaText}>{writeLabel}</Text>
-          </Pressable>
-        </View>
-
-        <View style={styles.filterRow}>
-          {filterOptions.map((option) => (
-            <FilterChip
-              key={option.key}
-              label={option.label}
-              active={selectedMood === option.key}
-              onPress={() => setSelectedMood(option.key)}
-              styles={styles}
-            />
-          ))}
-        </View>
+        <Section style={styles.headerCard}>
+          <PageHeader
+            title={title}
+            subtitle={subtitle}
+            action={
+              <Pressable style={styles.ctaButton} onPress={handleWrite}>
+                <Text style={styles.ctaText}>{writeLabel}</Text>
+              </Pressable>
+            }
+          />
+          <View style={styles.filterRow}>
+            {filterOptions.map((option) => (
+              <FilterChip
+                key={option.key}
+                label={option.label}
+                active={selectedMood === option.key}
+                onPress={() => setSelectedMood(option.key)}
+                styles={styles}
+              />
+            ))}
+          </View>
+        </Section>
 
         {isLoading ? (
           <View style={styles.centered}>
@@ -269,19 +274,14 @@ function createStyles(colors: ThemeColors) {
       ...StyleSheet.absoluteFillObject,
       zIndex: -1,
     },
-    header: {
+    headerCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: spacing.md,
+      borderWidth: 1,
+      borderColor: colors.border,
       marginBottom: spacing.md,
-    },
-    title: {
-      fontSize: typography.display,
-      fontFamily: typography.fontFamily,
-      color: colors.textPrimary,
-    },
-    subtitle: {
-      fontSize: typography.body,
-      fontFamily: typography.fontFamily,
-      color: colors.textSecondary,
-      marginTop: spacing.xs,
+      ...cardShadowStyle,
     },
     ctaButton: {
       alignSelf: 'flex-start',
@@ -301,7 +301,7 @@ function createStyles(colors: ThemeColors) {
     filterRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginBottom: spacing.md,
+      marginTop: spacing.sm,
     },
     filterChip: {
       paddingVertical: spacing.xs,

@@ -14,7 +14,12 @@ const cardShadowStyle = Platform.select({
 }) as any;
 
 function createStyles(colors: ThemeColors, width: number) {
+  const colCount = width >= 1200 ? 4 : width >= 900 ? 3 : 2; // minimum 2, maximum 4
   const isCompact = width < 720;
+  const itemWidth =
+    colCount === 4 ? '23%' : colCount === 3 ? '30%' : '46%';
+  const itemMaxWidth = colCount === 4 ? 180 : colCount === 3 ? 220 : 260;
+  const itemMinWidth = colCount === 4 ? 150 : colCount === 3 ? 180 : 160;
   return StyleSheet.create({
     page: {
       width: '100%',
@@ -119,19 +124,56 @@ function createStyles(colors: ThemeColors, width: number) {
     },
     list: {
       marginBottom: spacing.lg,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
     },
     itemCard: {
       backgroundColor: colors.surface,
       borderRadius: 20,
-      padding: spacing.md,
+      padding: spacing.sm,
       borderWidth: 1,
       borderColor: colors.border,
       marginBottom: spacing.sm,
+      width: isCompact ? '48%' : itemWidth,
+      maxWidth: isCompact ? 260 : itemMaxWidth,
+      minWidth: isCompact ? 140 : itemMinWidth,
+      marginRight: 0,
+      alignSelf: 'flex-start',
+    },
+    itemCardNarrow: {
+      width: isCompact ? '44%' : colCount === 4 ? '22%' : colCount === 3 ? '28%' : '44%',
+      maxWidth: isCompact ? 240 : colCount === 4 ? 170 : colCount === 3 ? 210 : 240,
+      minWidth: isCompact ? 140 : colCount === 4 ? 140 : colCount === 3 ? 170 : 150,
+    },
+    itemCardSelected: {
+      borderColor: colors.accent,
+      backgroundColor: colors.surfaceMuted,
     },
     itemHeader: {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: spacing.xs,
+    },
+    itemImage: {
+      width: '60%',
+      maxWidth: 220,
+      alignSelf: 'center',
+      aspectRatio: 0.72,
+      marginBottom: spacing.xs,
+      ...Platform.select({
+        web: {
+          width: '52%',
+          maxWidth: 180,
+        },
+        default: {},
+      }),
+    },
+    itemColorCard: {
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surfaceMuted,
     },
     itemAccent: {
       width: 8,

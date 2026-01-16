@@ -1,7 +1,7 @@
 import { Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../../bootstrap/AuthProvider';
-import { Screen } from '../../components/Screen';
+import { PageLayout } from '../../components/PageLayout';
 import { HomeHero } from './components/HomeHero';
 import { HomeDiscover } from './components/HomeDiscover';
 import { useHomeRevealAnimation } from './hooks/useHomeRevealAnimation';
@@ -35,7 +35,7 @@ export default function HomeScreen() {
   const writeLabel = tokens ? 'Ecrire un texte' : 'Se connecter';
 
   return (
-    <Screen scroll contentStyle={[styles.page, styles.homeTopOffset]}>
+    <PageLayout title="Accueil" subtitle="Ecrire, lire, laisser la resonance faire son oeuvre." contentStyle={[styles.page, styles.homeTopOffset]}>
       <Animated.View style={revealStyle(reveals[0])}>
         <HomeHero
           onExplore={handleExplore}
@@ -48,6 +48,6 @@ export default function HomeScreen() {
       <Animated.View style={revealStyle(reveals[1])}>
         <HomeDiscover />
       </Animated.View>
-    </Screen>
+    </PageLayout>
   );
 }

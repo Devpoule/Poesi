@@ -1,7 +1,9 @@
-import type { ReactNode } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Screen } from '../../components/Screen';
+import { PageLayout } from '../../components/PageLayout';
+import { Section } from '../../components/Section';
+import { CardGrid } from '../../components/CardGrid';
 import { LoreItem } from './loreData';
 import { useStyles } from './styles';
 
@@ -16,6 +18,11 @@ type LoreScreenProps = {
   info: InfoCard[];
   items: LoreItem[];
   extraContent?: ReactNode;
+  initialAnchorKey?: string;
+  selectedKey?: string;
+  onItemPress?: (key: string) => void;
+  hideAccentMarker?: boolean;
+  compactCards?: boolean;
 };
 
 export function LoreScreen({
@@ -24,48 +31,69 @@ export function LoreScreen({
   info,
   items,
   extraContent,
+  initialAnchorKey,
+  selectedKey,
+  onItemPress,
+  hideAccentMarker = false,
+  compactCards = false,
 }: LoreScreenProps) {
   const styles = useStyles();
   const router = useRouter();
+  const scrollRef = useRef<ScrollView>(null);
+  const [contentReady, setContentReady] = useState(false);
+  const anchorKey = initialAnchorKey;
+  const positions = useRef<Record<string, number>>({});
+
+  const handleItemLayout = (key: string) => (event: any) => {
+    positions.current[key] = event.nativeEvent.layout.y;
+  };
+
+  useEffect(() => {
+    if (!anchorKey || !contentReady) {
+      return;
+    }
+    const y = positions.current[anchorKey];
+    if (typeof y === 'number') {
+      scrollRef.current?.scrollTo({ y: Math.max(y - 12, 0), animated: true });
+    }
+  }, [anchorKey, contentReady]);
+
   return (
-    <Screen scroll contentStyle={styles.page}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+    <PageLayout
+      title={title}
+      subtitle={subtitle}
+      action={
         <Pressable style={styles.backLink} onPress={() => router.push('/(tabs)/guide')}>
           <Text style={styles.backLinkText}>Retour au guide</Text>
         </Pressable>
-      </View>
+      }
+      scrollRef={scrollRef}
+      onContentSizeChange={() => setContentReady(true)}
+      contentStyle={styles.page}
+    >
 
-      <View style={styles.infoRow}>
-        {info.map((card) => (
-          <View key={card.title} style={styles.infoCard}>
-            <Text style={styles.infoTitle}>{card.title}</Text>
-          <Text style={styles.infoText}>{card.text}</Text>
+      <Section>
+        <View style={styles.infoRow}>
+          {info.map((card) => (
+            <View key={card.title} style={styles.infoCard}>
+              <Text style={styles.infoTitle}>{card.title}</Text>
+              <Text style={styles.infoText}>{card.text}</Text>
+            </View>
+          ))}
         </View>
-      ))}
-    </View>
+      </Section>
 
       {extraContent}
 
-      <View style={styles.list}>
-        {items.map((item) => (
-          <View key={item.key} style={styles.itemCard}>
-            <View style={styles.itemHeader}>
-              {item.accent ? (
-                <View style={[styles.itemAccent, { backgroundColor: item.accent }]} />
-              ) : null}
-              <Text style={styles.itemTitle}>{item.title}</Text>
-              {item.tag ? (
-                <View style={styles.itemTag}>
-                  <Text style={styles.itemTagText}>{item.tag}</Text>
-                </View>
-              ) : null}
-            </View>
-            <Text style={styles.itemText}>{item.description}</Text>
-          </View>
-        ))}
+      <View onLayout={handleItemLayout('grid')}>
+        <CardGrid
+          items={items}
+          onItemPress={onItemPress}
+          selectedKey={selectedKey}
+          hideAccentMarker={hideAccentMarker}
+          compact={compactCards}
+        />
       </View>
-    </Screen>
+    </PageLayout>
   );
 }
