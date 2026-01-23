@@ -149,7 +149,7 @@ of the project.
 ```bash
 git clone https://github.com/your-organization/poesi.git
 cd poesi
-cd api
+cd backend
 
 composer install
 cp .env .env.local
@@ -201,10 +201,10 @@ symfony console app:seed-all
 ```
 
 Postman collection and environment files are available in:
-- `api/docs/postman/poesi.postman_collection.json`
-- `api/docs/postman/poesi.environment.json`
+- `backend/docs/postman/poesi.postman_collection.json`
+- `backend/docs/postman/poesi.environment.json`
 
-See `api/docs/postman.md` for step-by-step usage.
+See `backend/docs/postman.md` for step-by-step usage.
 
 ### Architecture Overview
 
