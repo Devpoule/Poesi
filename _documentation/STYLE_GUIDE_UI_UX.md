@@ -1,6 +1,6 @@
 ## Guide de style — Poesi (draft)
 
-But : rafraîchir l'UI/UX en s'appuyant sur les visuels fournis dans `_documentation/visuels`.
+But : rafraîchir l'UI/UX en s'appuyant sur les visuels fournis dans `_documentation/visuals`.
 
 Contrainte principale : garder l'esprit chaleureux et organique des visuels tout en modernisant les proportions, l'espacement et la typographie pour un rendu plus frais sur web/mobile.
 
