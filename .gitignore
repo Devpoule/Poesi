@@ -22,7 +22,6 @@
 
 ### composer ###
 composer.phar
-composer.lock
 /composer.local.json
 ### composer ###
 
